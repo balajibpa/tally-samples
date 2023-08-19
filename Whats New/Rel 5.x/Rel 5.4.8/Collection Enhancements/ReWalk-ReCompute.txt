@@ -1,0 +1,137 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+/*
+Objective(s) – 
+- 	The objective of this program is to demonstrate the new attributes introduced 
+	at collection i.e. ReWalk and ReCompute
+		
+Syntax -
+	ReWalk 		:<LogicalValue>
+	ReCompute 	:<MethodName> : <Expression>
+
+	$$IsCollSrcObjChanged:<Expression>
+Last modification – 
+-	Created on 18/10/2016
+-	Updated on 02/11/2016
+
+*/
+
+[Report: TSPL Smp ReWalkReCompute]
+	
+	Title		: "Rewalk and Recompute"
+	Form		: TSPL Smp ReWalkReCompute
+	Variable	: svFromDate, svToDate
+	
+	Set   	  	: SVFromDate	: $$MonthStart:##SVCurrentDate
+	Set     	: SVToDate		: $$MonthEnd:##SVCurrentDate
+
+[Form: TSPL Smp ReWalkReCompute]
+
+	Use		: TSPL SMP Illustration
+	Add		: Part	: TSPL Smp ReportPeriod, TSPL Smp ReWalkReCompute
+	Button	: Change Period
+
+	Local	: Field	: Form SubTitle				: Info		: "Illustration for attributes ReWalk and ReCompute"
+		
+	Local	: Field	: TSPL Smp Purpose			: Info		: "Many a time, there are requirements where objects being walked in a collection needs to be " +
+			+ "walked once for certain computation followed by, ensuring that these computations are reflected back as methods in all the objects. " +
+			+ "The attributes 'ReWalk' and 'ReCompute' are introduced for this purpose. The objects are being walked in the first iteration with the " +
+			+ "values accumulated in some variable and the objects are walked again to re-compute the methods with the accumulated variable " +
+			+ "values" + $$NewLine + "- Attribute 'ReCompute' functions only if the attribute 'ReWalk' is set to Yes"
+	Local	: Field	: TSPL Smp Syntax			: Info		: "Rewalk 	     : <LogicalValue>" + $$NewLine + "ReCompute	: <MethodName> : <Expression>"
+	Local	: Field	: TSPL Smp Example			: Info		: "The owner of a company wants to know the salesman wise sales for the day with cumulative sales till date." +
+			+ $$NewLine + "Note: This report retrieves the information from the sales vouchers having cost centre allocations (salesman)"
+
+[Part: TSPL Smp ReWalkReCompute]
+	
+	Line			: TSPL Smp SalesManReportTitle, TSPL Smp SalesManReportDet
+	Repeat			: TSPL Smp SalesManReportDet: TSPLSMPSalesManSummary
+	Scroll			: Vertical
+	Border			: Thin Bottom
+	Common Border	: Yes
+	
+	[Line: TSPL Smp SalesManReportTitle]
+		
+		Use		: TSPL Smp SalesManReportDet
+		Border	: Thin Top Bottom
+		
+		Local	: Field		: Default						: Style	: Normal Bold
+		Local	: Field		: Default						: Type	: String
+		Local	: Field		: Default						: Align	: Center
+		Local	: Field		: Default						: Lines	: 0
+				
+		Local	: Field		: TSPL Smp SalesVchDate			: Info	: "Date"
+		Local	: Field		: TSPL Smp SalesManName			: Info	: "Name of the Salesman"
+		Local	: Field		: TSPL Smp SalesManSalesAmt		: Info	: "Salesman wise Sales Value"
+		Local	: Field		: TSPL Smp CumSalesTillDate		: Info	: "Total Sales Till Date"
+	
+	[Line: TSPL Smp SalesManReportDet]
+		
+		Field		: TSPL Smp SalesVchDate, TSPL Smp SalesManName
+		Right Field	: TSPL Smp SalesManSalesAmt, TSPL Smp CumSalesTillDate
+		Border		: Thin Top		: $IsObjChanged AND $$Line > 1
+		
+		[Field: TSPL Smp SalesVchDate]
+			
+			Use			: Uni Date Field
+			Set as		: If $IsObjChanged Then $VchDt Else ""
+			Width		: 8
+		
+		[Field: TSPL Smp CumSalesTillDate]
+			
+			Use			: Amount Field
+			Set as		: If $IsObjChanged Then $CumulativeSale else ""
+			Format		: "DrCr"
+			Border		: Thin Left
+
+		[Field: TSPL Smp SalesManName]
+				
+			Use			: Name Field
+			Set as		: $SalesManName
+			Style		: Normal
+			Align		: Left
+			Border		: Thin Left
+
+		[Field: TSPL Smp SalesManSalesAmt]
+			
+			Use			: Amount Field
+			Set as		: $SalesManSalesAmt
+			Border		: Thin Left
+			Format		: "DrCr"
+			Style		: Normal
+			
+[Collection: TSPL SMP SalesManSummary]
+                
+	Source Collection	: TSPL SMP Vch Sales
+
+	WalkEx				: TSPL SMP SalesAccVch			: NOT $IsInvoice AND $$NumItems:InventoryEntries = 0
+	WalkEx				: TSPL SMP SalesAccVchwith Items: NOT $IsInvoice AND $$NumItems:InventoryEntries > 0
+	WalkEx				: TSPL SMP SalesInvVch			: $IsInvoice
+
+[Collection: TSPL SMP SalesAccVch]
+
+	Walk   				: Ledger Entries, Category Allocations, Cost Centre Allocations
+
+	Compute Var			: cvCumulative			: Amount	: $$NettAmount:##cvCumulative:$Amount	
+	By					: VchDt					: $Date
+	By					: SalesManName			: $Name
+	Compute				: IsObjChanged			: $$IsCollSrcObjChanged
+	Aggr Compute		: SalesManSalesAmt		: Sum		: $Amount
+	
+;;Rewalk and Recompute
+
+	ReWalk				: Yes
+	ReCompute			: CumulativeSale		: ##cvCumulative
+	
+[Collection: TSPL SMP SalesAccVchwith Items]
+	
+	Use					: TSPL SMP SalesAccVch
+	Delete				: Walk
+	Add					: Walk					: Ledger Entries, Inventory Allocations, Category Allocations, Cost Centre Allocations
+
+[Collection: TSPL SMP SalesInvVch]
+	
+	Use					: TSPL SMP SalesAccVch
+	Delete				: Walk
+	Add					: Walk					: Inventory Entries, Accounting Allocations, Category Allocations, Cost Centre Allocations
+
+;; End of file

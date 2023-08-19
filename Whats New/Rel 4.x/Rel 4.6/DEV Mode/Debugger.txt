@@ -1,0 +1,42 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+/*
+Objective(s) -
+-	This code demonstrates the usage of Debugger Actions and Functions
+
+Syntax -
+-	<Application Path>\Tally.exe /DevMode
+
+Dependencies -
+-	Exe must be open with Command Line Parameter /DevMode
+
+Last Modification -
+-	Created on 19-4-2013
+*/
+	
+[Menu: TSPL Smp Debugger]
+
+	Use			: TSPL Smp DevMode Common Menus
+	Add			: Button		: TSPL Smp Expression Diagnostics
+	Title		: "Expression Diagnostics"
+
+[Button: TSPL Smp Expression Diagnostics]
+	
+	Key         : CTRL + D
+    Title       : If ##IsDebuggerOn Then "End Debugging" Else "Start Debugging"
+    Action		: Call 		: TSPL Smp DebuggerOnOff
+	
+[Function : TSPL Smp DebuggerOnOff]
+	
+	0010 : If 	: $$IsDebuggerOn		;; Function returns true if Status of the Debugger is 'On'
+	0020 : 		Stop Debug	: "tdldebug.log"
+	0025 : 		Msg Box		: "Expression Diagnostics"	: "Debug Information has been dumped to tdldebug.log"
+	0030 : Else
+	0040 : 		Start Debug		;; If the status of debugger is off, then this Action is executed to Start the Debug
+	0050 : End If
+	0060 : Set	: IsDebuggerOn 	: $$IsDebuggerOn
+	
+[System: Variable]
+
+	Variable	: IsDebuggerOn	: Logical	: No
+	
+;; End of file

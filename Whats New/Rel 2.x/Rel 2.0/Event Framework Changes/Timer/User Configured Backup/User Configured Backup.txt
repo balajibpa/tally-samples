@@ -1,0 +1,90 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) :-
+-	To configure User configured backup and take the backup automatically
+-	This TDL helps to minimize data loss in case of corruption provided 
+    the User Configured Backup Feature is enabled.
+
+Capabilities Used :-
+-	Action 'Backup Company'
+-	System Events
+-	List Variables
+
+Last Updation :-
+-	Altered on 29/06/2010
+*/
+
+[System: Event]	;; System Events to take backup on occurence of configured event
+
+	AppStartEvent	: System Start 	: ##TSPLFFEBackupOn = "Tally Application Start"	: Call	: TSPL FFE Backup Function
+	CmpLoadEvent	: Load Company 	: ##TSPLFFEBackupOn = "Load Company"			: Call 	: TSPL FFE Backup Function
+	CmpCloseEvent 	: Close Company	: ##TSPLFFEBackupOn = "Close Company"			: Call	: TSPL FFE Backup Function
+	AppEndEvent		: System End	: ##TSPLFFEBackupOn = "Tally Application End"	: Call	: TSPL FFE Backup Function
+
+[Function: TSPL FFE Backup Function]	;; Function checking configured conditions and invoking Backup
+
+	Variable	: Backup Det Var: String
+
+	00	: IF 	: ##TSPLFFEEnableUCB
+	10	: 	IF		: ##TSPLFFEUCBPrompt
+	20	: 		QUERY BOX 	: "Backup Company ?" : Yes:No
+	30	: 		IF	: $$LastResult
+	40	: 			CALL	: TSPL FFE Backup Company
+	50	: 		ENDIF
+	60	: 	ELSE	:
+	70	: 		CALL	: TSPL FFE Backup Company
+	80	: 	ENDIF
+	90	: ENDIF
+
+[Function: TSPL FFE Backup Company]	;; Function taking Backup using 'BACKUP COMPANY' Action
+
+	Local Formula	: BackUpAllItems		: ##TSPLFFEBackupData = "All Companies"
+	Local Formula	: BackUpCurCompany		: ##TSPLFFEBackupData = "Current Company"
+	Local Formula	: BackUpSelCompanies	: ##TSPLFFEBackupData = "Selected Companies"
+
+	00	: SET		: SVBackupPath			: @@TSPLFFEDestPath
+	01	: SET		: SVBackupSrc			: if $$IsEmpty:##SVBackupSrc then ##SVCurrentPath else ##SVBackupSrc
+	05	: SET		: BackupDetVar			: ##SVBackupPath + ", " + ##SVCurrentPath + ", " + ##SVCurrentCompany + +
+											", " + @@TSPLFFECoNumber
+	10	: DO IF		: @BackUpAllItems		: BACKUP COMPANY:"":$$FullListEx:"":ListofAllBackupCompanies:##SVBackupPath:##SVBackupSrc:$Name:$CompanyNumber
+	20	: DO IF		: @BackUpCurCompany		: BACKUP COMPANY:","		: ##BackupDetVar
+	30	: DO IF		: @BackUpSelCompanies	: BACKUP COMPANY:"":$$FullListEx:"":TSPLFFESelBackupCompaniesSumm:##SVBackupPath:##SVBackupSrc:$Name:$CompanyNumber
+
+[Collection: TSPL FFE Sel Backup Companies] ;; Collection from List Variables
+
+	Data Source	: Variable		: TSPL FFE Backup Companies
+	Filter		: TSPL FFE NonZeroCompany
+
+[Collection: TSPL FFE Sel Backup Companies Summ]
+
+	Source Collection	: TSPL FFE Sel Backup Companies
+	By					: Name			: $Name
+	By					: CompanyNumber	: $CompanyNumber
+	Fetch				: Dest, Src
+
+[System: Formula]	;; Formulae constructing Folder and Sub Folder Path for Backup File
+
+	TSPL FFE DestPath		: ##TSPLFFEDestinationPath + "\" + @@TSPLFFEDateForm + "\" + @@TSPLFFETimeForm
+	TSPL FFE CoNumber		: $$String:($CompanyNumber:Company:##SVCurrentCompany):5
+	TSPL FFE DateForm		: $$String:@@TSPLFFESysDate
+	TSPL FFE TimeForm		: @@TSPLFFEHrsForm + @@TSPLFFEMtsForm
+
+	TSPL FFE HrsForm		: If $$StringPart:@@TSPLFFESysTime:0:2 CONTAINS ":" +
+								Then $$StringPart:@@TSPLFFESysTime:0:1 +
+								Else $$StringPart:@@TSPLFFESysTime:0:2
+
+	TSPL FFE MtsForm		: If $$StringPart:@@TSPLFFESysTime:0:2 CONTAINS ":" +
+								Then $$StringPart:@@TSPLFFESysTime:2:2 +
+								Else $$StringPart:@@TSPLFFESysTime:3:2
+
+	TSPL FFE SysDate		: $$SysInfo:SystemDate
+	TSPL FFE SysTime		: $$SysInfo:SystemTime
+
+	TSPL FFE NonZeroCompany	: $CompanyNumber != "0"
+
+;; Include Files
+
+[Include: UCB Config Changes.txt]
+
+;; End-of-File

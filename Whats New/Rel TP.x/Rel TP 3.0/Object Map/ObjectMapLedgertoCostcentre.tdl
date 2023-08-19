@@ -1,0 +1,127 @@
+/*	
+	How to use Object Map in TallyPrime
+	
+	Objective : 	Convert Ledger as Employee by using Object Map.
+
+
+ Follow the given below steps to achieve the same.
+
+	1. Call the function from form level
+	2. Walk through the collection and create a new object and set as 'Cost Centre'
+	3. Execute the Object Map from function and save the target
+	4. Set all required methods under Object Map
+
+*/	
+
+
+[Report: TSPL Object Map Ledger as Employee]
+	
+	Title			: $$LocaleString:"Convert Ledger as Employee"
+	Form			: TSPL Object Map Ledger as Employee
+	
+[Form: TSPL Object Map Ledger as Employee]
+	
+	
+	Use				: TSPL SMP Illustration
+	
+	Add 			: Button : Object Map Ledger as Employee 			   ;; Add Button for convert Ledger as Employee 
+	
+	Height			: 100% Screen
+	Width			: 100% Screen
+	
+	Local	: Part	: TSPL SMP Syntax		: Invisible	: Yes
+	Local	: Field	: FormSubTitle			: Info		: $$LocaleString:"Illustration for Object Map"
+		
+	Local	: Field	: TSPL Smp Purpose		: Indent	: 2
+	Local	: Field	: TSPL Smp Purpose		: Info		: $$NewLine + $$LocaleString:"Convert Ledger as Employee using Object Map "
+														
+	Local	: Field	: TSPL SMP Example		: Info		: $$NewLine	+ 	"[Function: TSPL Object Map Convert Ledger as Employee]"		  + $$NewLine + $$Newline + +
+																			'01: New Object: Cost Centre'					+ $$Newline + +
+	                                                                        '02: Execute Object Map : TSPL Object Map Ledger Convert as Employee' + $$Newline + +
+	                                                                        '03: Save Target'								+ $$Newline + $$NewLine + +
+	                                                                    "[Object Map: TSPL Object Map Ledger Convert as Employee]" + $$NewLine + $$NewLine + +
+																			'Set as	: Name 				: $Name 		  	 	 : Yes' + $$NewLine + +
+																			'Set as : Category			: "Primary Cost Category": Yes' + $$NewLine + +
+																			'Set as	: EmpDisplayName	: $Name					 : Yes' + $$NewLine + +
+																			'Set as	: ForPayroll		: Yes' 						   + $$NewLine + $$NewLine + +
+																			'Object Map	: TSPL Object Map Tax Regime Details'+ $$NewLine + $$NewLine + +
+																		"[Object Map: TSPL Object Map Tax Regime Details]"	 + $$NewLine + $$NewLine + +
+																			'Insert Collection Object: TaxRegimeDetails'     + $$NewLine + $$NewLine + +
+																			'Set as	: ApplicableFrom	: "01-Jun-2022" 	: Yes' 	   + $$NewLine + +
+																			'Set as	: TaxRegime			: "Regular Tax Regime"	: Yes'
+					
+	Local	: Field	: TSPL SMP ExampleNote	: Info		: "Converting a set of Ledgers as Employees using Object Map. Click on the Button 'Convert as Employee' to proceed."
+
+
+[Button: Object Map Ledger as Employee]
+	
+	Title   : $$LocaleString:"Convert as Employee"
+	Key	    : F3
+	Action  : Alter	 : TSPL Object Map Ledger as Employee Report
+	
+
+[Report: TSPL Object Map Ledger as Employee Report]
+			
+	Form	: TSPL Object Map Ledger as Employee Form
+		
+[Form: TSPL Object Map Ledger as Employee Form]
+				
+	Part    : Form Sub Title, TSPL Object Map Display Group
+	Local   : Field	: FormSubTitle	: Info		: "List of Group"
+	Width   : 20% Page
+	
+	On	    :  Form Accept	: Yes	: Call		: TSPL Object Map Convert Ledger as Employee          		 ;  Call Function
+
+[Function: TSPL Object Map Convert Ledger as Employee]
+	
+	01: Walk Collection 	: TSPLLedgerSelectionColl
+	02: New Object			: Cost Centre
+	03: Execute Object Map 	: TSPL Object Map Ledger Convert as Employee									 	 ; Call Object Map
+	04: Save Target
+	05: End Walk
+	06: Msg Box: "Sucess" : "Ledger converted as Employees successfully"
+
+[Object Map: TSPL Object Map Ledger Convert as Employee]
+	
+	Set as	: Name 				: $Name 					: Yes 
+	Set as  : Category			: "Primary Cost Category"	: Yes
+	Set as	: EmpDisplayName	: $Name						: Yes
+	Set as	: ForPayroll		: Yes	
+	
+	Object Map	: TSPL Object Map Tax Regime Details
+	
+[Object Map: TSPL Object Map Tax Regime Details]
+	
+	Insert Collection Object: TaxRegimeDetails
+	
+	Set as	: ApplicableFrom	: "01-Jun-2022" 			: Yes
+	Set as	: TaxRegime			: "Regular Tax Regime"		: Yes
+	
+[Part: TSPL Object Map Display Group]
+	
+	Line: TSPL Object Map Group Name
+		
+	[Line: TSPL Object Map Group Name]
+			
+		Field: Long Prompt, TSPL Object Map Group Field
+		
+		Local : Field	: Long Prompt : Info	: "Select Group Name"
+		
+		[Field: TSPL Object Map Group Field]
+			
+			Use			: Name Field
+			Table		: TSPL Group Selection Coll									     ; Show Group Name in a table
+			Show Table	: Always
+			
+[Collection: TSPL Group Selection Coll]
+	
+	Type	: Group
+			
+[Collection: TSPL Ledger Selection Coll]
+	
+	Type 	: Ledger
+	Child Of: #TSPLObjectMapGroupField
+	
+	Fetch	: Name, Parent
+
+;; End of File

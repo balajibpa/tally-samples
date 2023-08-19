@@ -1,0 +1,117 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+-  To persist the Report & System Scope Variables in a user specified file 
+and reload the same.
+
+Capabilities Used -
+- 	Actions 'SAVE VARIABLE' & 'LOAD VARIABLE'
+
+Syntax -
+- 	SAVE VARIABLE 	: <FileName> [:<List of Variables>]
+- 	LOAD VARIABLE	: <FileName> [:<List of Variables>]
+
+Updation History -
+- 	Created on 03/02/2011
+-	Altered on 08/02/2011
+*/
+
+[Report: TSPL Smp VarPersist]
+	
+	Form 	: TSPL Smp VarPersist
+	Title	: "Report and System Scope TSPL Smp Persistence"
+	Variable: TSPL Smp VP RepVar1, TSPL Smp VP RepVar2
+
+/* Variables 'TSPL Smp VP RepVar1' & 'TSPL Smp VP RepVar2' declared locally
+at Report Scope */
+
+[Form: TSPL Smp VarPersist]
+	
+	Parts 	: Form SubTitle, TSPL Smp VarPersist
+	Buttons	: TSPL Smp VarLoad
+	Width	: 75% Page
+
+/* On Exection of the action SAVE VARIABLE, value of all report scope variables 
+(TSPL Smp VP RepVar1 & TSPL Smp VP RepVar2) and the System Scope Variables 
+"TSPL Smp VP SysVar" will be persisted to the file SLReportCfg.pvf */
+
+	On 		: Form Accept	: Yes	: SAVE VARIABLE	: SLReportCfg.pvf : *, ().TSPL Smp VP SysVar
+
+	Local	: Field : Form SubTitle	: Info			: "Save and Load Variable (Report & System Scope)"
+	Local	: Field : Form SubTitle	: Width			: 75% Page
+
+[Part: TSPL Smp VarPersist]
+	 
+	Lines 	: TSPL Smp VarPersist Info, TSPL Smp VarPersist Title, TSPL Smp VarPersist Details
+
+	[Line: TSPL Smp VarPersist Info]
+
+		Fields	: Simple Field
+		Local	: Field : Simple Field			: Info		: "Please enter values and accept the Form to save the variables. On re-entering this Menu Item, alter the System Value and click on 'Load Variable' Button to retrieve the previously saved values."
+		Local	: Field : Simple Field			: Lines		: 0	
+		Local	: Field : Simple Field			: Width		: 75% Page
+		Local	: Field : Simple Field			: Align		: Center
+		Space Bottom	: 1
+	
+	[Line: TSPL Smp VarPersist Title]
+		
+		Use		: TSPL Smp VarPersist Details
+		Local 	: Field : TSPL Smp VP System	: Info 		: "System Scope Variable"
+		Local 	: Field : TSPL Smp VP Report1	: Info		: "Report Scope Variable"
+		Local 	: Field : TSPL Smp VP Report2	: Info		: "Report Scope Variable"
+		Border	: Thin Top Bottom
+
+	[Line: TSPL Smp VarPersist Details]
+		
+		Fields	: TSPL Smp VP System, TSPL Smp VP Report1, TSPL Smp VP Report2
+		
+		[Field: TSPL Smp VP System]
+			
+			Use			: Name Field
+			Set Always 	: Yes
+			Modifies	: TSPL Smp VP SysVar	: True
+			Width		: 25% Page
+			Align		: Center
+
+		[Field: TSPL Smp VP Report1]
+			
+			Use			: Name Field
+			Set Always 	: Yes
+			Modifies 	: TSPL Smp VP RepVar1	: True
+			Width		: 25% Page
+			Align		: Center
+			
+		[Field: TSPL Smp VP Report2]
+			
+			Use			: Name Field
+			Set Always 	: Yes
+			Modifies 	: TSPL Smp VP RepVar2	: True
+			Width		: 25% Page
+			Align		: Center
+
+[Button: TSPL Smp VarLoad]
+	
+	Key		: Alt + L
+	Action  : LOAD VARIABLE : "SLReportCfg.pvf" 	: ().TSPL Smp VP SysVar
+	Title	: "Load Variable"
+
+/* On Exection of the action LOAD VARIABLE, value of all report scope variables 
+(TSPL Smp ReportVarPersist & TSPL Smp ReportVarPersist1) and the System Scope 
+Variable "TSPL Smp SysVarPersist" will be loaded from the file SLReportCfg.pvf */
+
+;; Variable Declaration
+
+[Variable: TSPL Smp VP RepVar1]
+	
+	Type 		: String
+	
+[Variable: TSPL Smp VP RepVar2]
+	
+	Type 		: String
+
+[System: Variable]
+
+	Variable	: TSPL Smp VP SysVar	: String	: ""
+
+;; End-of-File

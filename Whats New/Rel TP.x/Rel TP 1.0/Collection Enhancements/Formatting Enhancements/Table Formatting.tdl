@@ -1,0 +1,68 @@
+/*
+Objective : To demonstarted new formatting attributes for the Table i.e. Color, Style and Column Align
+
+*/
+
+[Report	: TSPL Formatting Enhancements]
+	
+	Title	: $$LocaleString:"Table Formatting Attributes"
+	Form	: TSPL Formatting Enhancements
+	
+[Form	: TSPL Formatting Enhancements]
+
+	Use				: TSPL SMP Illustration
+		
+	Height			: 100% Screen
+	Width			: 100% Screen
+	
+	Local	: Part	: TSPL SMP Syntax		: Invisible	: Yes
+	Local	: Field	: FormSubTitle			: Info		: $$LocaleString:"Illustration for Formatting attributes at Table"
+		
+	Local	: Field	: TSPL Smp Purpose		: Indent		: 2
+	Local	: Field	: TSPL Smp Purpose		: Info		: $$LocaleString:"The attributes Style, Color and Column Align has been introduced at Table definition." ++
+															$$LocaleString:"The below mentioned code describes an approach to use formatting attributes."
+			
+	
+	Local	: Field	: TSPL SMP Example		: Info		: $$NewLine	+ "[Collection	: TSPL All Ledgers with Closing Balance]" + $$NewLine + +
+														"         |"  + $$NewLine + +
+															"Color		  : @@TSPLFontColor" + $$NewLine + +
+															"Style		  : @@TSPLStyleColumn1, @@TSPLStyleColumn2" + $$NewLine + +
+															"Column Align : Left, Left" 
+	Local	: Field	: TSPL SMP ExampleNote	: Info		: "List of All Ledgers is populated where the value is credit the font style for the column Closing Balance changes to tiny and the closing balance amount has been aligned left instead of default setting as right." 	
+
+	
+	Part				: TSPL Formatting Enhancements
+	Vertical Alignment	: Top
+	Horizontal Align	: Left
+	No Confirm			: Yes
+
+[Part	: TSPL Formatting Enhancements]
+	
+	Line	: TSPL Formatting Enhancements
+	
+	[Line	: TSPL Formatting Enhancements]
+		
+		Field	: Medium Prompt, Name Field
+		Local	: Field		: Medium prompt		: Info			: $$LocaleString:"Table with Color Attribute"
+		Local	: Field		: Name Field		: Table			: TSPL All Ledgers with Closing Balance
+		Local	: Field		: Name Field		: Show Table	: Always and Never Hide
+		
+[Collection	: TSPL All Ledgers with Closing Balance]
+	
+	Type		: Ledger
+	Title		: $$LocaleString:"List of Ledgers"
+	Sub Title	: $$LocaleString:"Particulars", $$LocaleString:"Closing Balance"
+	Format		: $Name, 25
+	Format		: $ClosingBalance : "DrCr"
+	Color		: @@TSPLFontColor
+	Style		: @@TSPLStyleColumn1, @@TSPLStyleColumn2
+	Column Align: Left, Left
+	Align		: Centre
+	
+[System: Formula]
+	
+	TSPL FontColor		: "Blue"
+	TSPL StyleColumn1	: If NOT ($$IsDr:$ClosingBalance) Then "Normal" Else "Normal Bold"
+	TSPL StyleColumn2	: If NOT ($$IsDr:$ClosingBalance) Then "Tiny" Else "Normal Bold"
+	
+;; End of file

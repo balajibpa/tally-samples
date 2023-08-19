@@ -1,0 +1,172 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+-	This Sample TDL demonstrates the usage of Function PrinterInfo and their Parameters
+
+Syntax -
+-   $$PrinterInfo:<Printer Name String Formula>:<Information Type>
+
+The Information Types are self explanatory
+
+Last Modification -
+-	Updated on 01-06-2012
+*/
+
+[System: Formula]
+
+	Printer Left MarginMMs	: $$PrinterInfo:##SVPrinterName:LeftMarginInMMS
+	Printer Top MarginMMs	: $$PrinterInfo:##SVPrinterName:TopMarginInMMS
+	Printer Right MarginMMs	: $$PrinterInfo:##SVPrinterName:RightMarginInMMS
+	Printer IsPrinterExists	: $$PrinterInfo:##SVPrinterName:PrinterExists
+	Printer PrintSizeInches	: $$PrinterInfo:##SVPrinterName:PrintSizeInInches
+	Printer PrintSizeMMs	: $$PrinterInfo:##SVPrinterName:PrintSizeInMMs
+	Printer PrintSizeLines	: $$PrinterInfo:##SVPrinterName:PrintSizeInLines
+	Printer PaperSizeInches	: $$PrinterInfo:##SVPrinterName:PaperSizeInInches
+	Printer PaperSizeMMs	: $$PrinterInfo:##SVPrinterName:PaperSizeInMMs
+	Printer PaperSizeLines	: $$PrinterInfo:##SVPrinterName:PaperSizeInLines
+	Printer PaperType		: $$PrinterInfo:##SVPrinterName:PaperType
+	Printer PortName		: $$PrinterInfo:##SVPrinterName:PortName
+	Printer Orientation		: $$PrinterInfo:##SVPrinterName:Orientation
+
+;; Report, Printer Info in Report, begins here
+
+[Report: TSPL Smp Printer Info]
+	
+	Form	: TSPL Smp Printer Info
+	Variable: SVPrinterName		: String
+	Title	: "Function PrinterInfo"
+	
+[Form: TSPL Smp Printer Info]
+	
+	Parts	: Form SubTitle, TSPL Smp Printer Info
+	Buttons	: Chg Printer, Print Button
+	
+	Width	: 35% Page
+	Local	: Field	: Form SubTitle		: Info	: "Function PrinterInfo"
+	
+[Part: TSPL Smp Printer Info]
+	
+	Lines	: PIR PrinterName
+	Lines	: PIR LeftMarginMMs, PIR TopMarginMMs, PIR RightMarginMMs
+	Lines	: PIR PrinterExists, PIR PrintSizeInInches, PIR PrintSizeInMMs, PIR PrintSizeInLines
+	Lines	: PIR PaperSizeInInches, PIR PaperSizeInMMs, PIR PaperSizeInLines
+	Lines	: PIR PaperType, PIR PortName, PIR Orientation
+
+	[Line: PIR PrinterName]
+		
+		Fields	: Medium Prompt, Name Field
+		Local	: Field	: Medium Prompt	: Info	: "Printer :"
+		Local	: Field	: Name Field	: Set as: $$String:##SVPrinterName
+
+	[Line: PIR LeftMarginMMs]
+		
+		Fields	: Medium Prompt, Name Field
+		Local	: Field	: Medium Prompt	: Info	: "Left Margin (MMs) :"
+		Local	: Field	: Name Field	: Set as: $$String:@@PrinterLeftMarginMMs
+		SpaceTop: 0.5
+
+	[Line: PIR TopMarginMMs]
+		
+		Fields	: Medium Prompt, Name Field
+		Local	: Field	: Medium Prompt	: Info	: "Top Margin (MMs) :"
+		Local	: Field	: Name Field	: Set as: $$String:@@PrinterTopMarginMMs
+
+	[Line: PIR RightMarginMMs]
+		
+		Fields	: Medium Prompt, Name Field
+		Local	: Field	: Medium Prompt	: Info	: "Right Margin (MMs) :"
+		Local	: Field	: Name Field	: Set as: $$String:@@PrinterRightMarginMMs
+
+	[Line: PIR PrinterExists]
+		
+		Fields	: Medium Prompt, Name Field
+		Local	: Field	: Medium Prompt	: Info	: "Printer Exists :"
+		Local	: Field	: Name Field	: Set as: $$String:@@PrinterIsPrinterExists
+		SpaceTop: 0.5
+
+	[Line: PIR PrintSizeInInches]
+		
+		Fields	: Medium Prompt, Name Field
+		Local	: Field	: Medium Prompt	: Info	: "Print Size (Inches) :"
+		Local	: Field	: Name Field	: Set as: $$String:@@PrinterPrintSizeInches
+		SpaceTop: 0.5
+
+	[Line: PIR PrintSizeInMMs]
+		
+		Fields	: Medium Prompt, Name Field
+		Local	: Field	: Medium Prompt	: Info	: "Print Size (MMs) :"
+		Local	: Field	: Name Field	: Set as: $$String:@@PrinterPrintSizeMMs
+
+	[Line: PIR PrintSizeInLines]
+		
+		Fields	: Medium Prompt, Name Field
+		Local	: Field	: Medium Prompt	: Info	: "Print Size (Lines) :"
+		Local	: Field	: Name Field	: Set as: $$String:@@PrinterPrintSizeLines
+
+	[Line: PIR PaperSizeInInches]
+		
+		Fields	: Medium Prompt, Name Field
+		Local	: Field	: Medium Prompt	: Info	: "Paper Size (Inches) :"
+		Local	: Field	: Name Field	: Set as: $$String:@@PrinterPaperSizeInches
+		SpaceTop: 0.5
+
+	[Line: PIR PaperSizeInMMs]
+		
+		Fields	: Medium Prompt, Name Field
+		Local	: Field	: Medium Prompt	: Info	: "Paper Size (MMs) :"
+		Local	: Field	: Name Field	: Set as: $$String:@@PrinterPaperSizeMMs
+
+	[Line: PIR PaperSizeInLines]
+		
+		Fields	: Medium Prompt, Name Field
+		Local	: Field	: Medium Prompt	: Info	: "Paper Size (Lines) :"
+		Local	: Field	: Name Field	: Set as: $$String:@@PrinterPaperSizeLines
+
+	[Line: PIR PaperType]
+		
+		Fields	: Medium Prompt, Name Field
+		Local	: Field	: Medium Prompt	: Info	: "Paper Type :"
+		Local	: Field	: Name Field	: Set as: $$String:@@PrinterPaperType
+		SpaceTop: 0.5
+
+	[Line: PIR PortName]
+		
+		Fields	: Medium Prompt, Name Field
+		Local	: Field	: Medium Prompt	: Info	: "Port Name :"
+		Local	: Field	: Name Field	: Set as: $$String:@@PrinterPortName
+
+	[Line: PIR Orientation]
+		
+		Fields	: Medium Prompt, Name Field
+		Local	: Field	: Medium Prompt	: Info	: "Orientation :"
+		Local	: Field	: Name Field	: Set as: $$String:@@PrinterOrientation
+
+;; Button and Report to change the Printer associated with the above Report, begins here
+
+[Button: Chg Printer]
+	
+	Key		: Alt + C
+	Action	: Modify Variable	: Chg Printer
+
+[Report: Chg Printer]
+	
+	Use		: Modify Variables
+	Local	: Field	: MV Title			: Info		: "Printers"
+	Local	: Part	: Modify Variables	: Lines		: Chg Printer
+	Title	: "Select Distributor"
+
+	[Line: Chg Printer]
+		
+		Fields		: Medium Prompt, Chg Printer
+		Local       : Field : Medium Prompt : Info 		: "Name of Printer"
+
+		[Field: Chg Printer]
+
+			Use         : Name Field
+			Table       : List of Printers
+			Show Table  : Always
+			Modifies    : SVPrinterName
+			Variable    : SVPrinterName
+
+;; End-of-File

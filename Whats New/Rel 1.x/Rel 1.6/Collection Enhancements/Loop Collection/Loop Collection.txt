@@ -1,0 +1,35 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+
+Menu for Loop Collection Samples
+
+Specification(s)
+- 	At least one company must be selected to view the Menu Item 'Cost Centre wise Voucher'
+- 	More than one company must be selected to view the Menu Items 'Multi Company Outstandings'
+	and 'Multi Company Daybook'
+- 	Current Company must be group company for the Menu Item 'Group Company Stock Summary' to be
+	enabled
+
+*/
+
+[Menu: Smp LoopCollection]
+
+	Title		: "Loop Collection"
+	Indent	 	: "Sample Codes"	
+	Item	 	: Blank	
+	Key Item 	: "Cost Centre wise Voucher"	: C : Display : CCVouchersRep			: NOT $$IsEmpty:$$SelectedCmps AND $$IsSimpleCompany:##SVCurrentCompany AND NOT $$SelectedCmps < 1
+	Key Item 	: "Group Company Stock Summary"	: S : Display : GrpCmpSSRep				: NOT $$IsEmpty:$$SelectedCmps AND NOT $$IsSimpleCompany:##SVCurrentCompany
+	Item	 	: Blank
+
+	Indent	 	: "Use Cases"
+	Item	 	: Blank	
+	Key Item 	: "Multi Company Day Book"		: D : Display : MultiCmpDBRep 			: NOT $$IsEmpty:$$SelectedCmps AND NOT $$SelectedCmps <= 1
+	Key Item 	: "Multi Company Outstandings" 	: O : Display : MultiCmpOutstandingRep 	: NOT $$IsEmpty:$$SelectedCmps AND NOT $$SelectedCmps <= 1
+
+[Include: Cost Centre Wise Voucher.txt]
+[Include: Group Company Stock Summary.txt]
+[Include: Multi Company Daybook.txt]
+[Include: Multi Company Outstanding.txt]
+
+;; End-of-File

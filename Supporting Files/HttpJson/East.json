@@ -1,0 +1,117 @@
+{
+	"Branch": "East",
+	"Customer": [
+		{
+			"Name": "Shorabh Ghosh",
+			"State": "West Bengal",
+			"Contact":
+			{
+				"OfficeNo": "033-66282789",
+				"Mobile": "990208391",
+				"Email": "Shoghosh@gmail.com "
+			},
+			"Address": [
+				"C/o. Ghosh Info Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		},
+		{
+			"Name": "Ranbir Mishra",
+			"State": "Bihar",
+			"Contact":
+			{
+				"OfficeNo": "0612-66282559",
+				"Mobile": "990209867",
+				"Email": "ranb@gmail.com "
+			},
+			"Address": [
+				"C/o. Mishra Tech Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		},
+		{
+			"Name": "Sid Panda",
+			"State": "Odisha",
+			"Contact":
+			{
+				"OfficeNo": "0674-66282909",
+				"Mobile": "990209819",
+				"Email": "sid@gmail.com "
+			},
+			"Address": [
+				"C/o. Panda Infotech Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		},
+		{
+			"Name": "Abhinash Dal",
+			"State": "Odisha",
+			"Contact":
+			{
+				"OfficeNo": "0674-66282989",
+				"Mobile": "990209819",
+				"Email": "dal@gmail.com "
+			},
+			"Address": [
+				"C/o. SDalTech Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		},
+		{
+			"Name": "Shanu",
+			"State": "Jharkhand",
+			"Contact":
+			{
+				"OfficeNo": "0651-66564909",
+				"Mobile": "990209819",
+				"Email": "sanu@gmail.com "
+			},
+			"Address": [
+				"C/o. Stech Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		},
+		{
+			"Name": "Uttiya Chatterjee",
+			"State": "West Bengal",
+			"Contact":
+			{
+				"OfficeNo": "033-66282909",
+				"Mobile": "990209819",
+				"Email": "uttiya@gmail.com "
+			},
+			"Address": [
+				"C/o. Chatterjee Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		},
+		{
+			"Name": "Sayan Biswas",
+			"State": "West Bengal",
+			"Contact":
+			{
+				"OfficeNo": "033-66276459",
+				"Mobile": "990209807",
+				"Email": "sayan@gmail.com "
+			},
+			"Address": [
+				"C/o. Biswas Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		}
+	]
+}

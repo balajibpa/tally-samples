@@ -1,0 +1,18 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Menu: Function and Attribute Enhancements]
+	
+	Key Item 	: "Report Attribute - Plain XML"	: X : Display	: TSPL Smp Plain XML			: NOT $$IsEmpty:$$SelectedCmps
+	Key Item 	: "Field Attribute - Format for Qty": F : Display	: TSPL Smp Format for Qty		: NOT $$IsEmpty:$$SelectedCmps
+	Key Item 	: "Function - ContextKeyword"		: C : Display	: TSPL Smp Context Keyword Rep	: NOT $$IsEmpty:$$SelectedCmps
+	Key Item 	: "Function - RemoteUserID"			: R : Call		: TSPL Smp Remote User Report	: NOT $$IsEmpty:$$SelectedCmps AND (NOT $$IsRemoteCompany OR ($$IsRemoteCompany AND ($$CmpUserName = @@TSPLSmpTallyNETID1 OR $$CmpUserName = @@TSPLSmpTallyNETID2)))
+	Title		: "Function/Attribute Enhancements"
+	
+;; Include Files
+
+[Include: Report Attribute Plain XML.txt]
+[Include: Field Attribute Format for Qty.txt]
+[Include: Function ContextKeyword.txt]
+[Include: Function RemoteUserID.txt]
+
+;; End-of-File

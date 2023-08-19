@@ -1,0 +1,97 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+- This sample TDL demonstrates the newly introduced DateTime data type
+
+- Default Format is 'dd-mmm-yyyy 12 hour'
+
+- Input Keywords allowed
+	Today			>> This returns current date and time
+	Tomorrow		>> This returns tomorrow's date
+	Yesterday(Yday)	>> This returns y's date
+	Month			>> This will return current month's beginning date
+	Week			>> This will set the date as the current week’s beginning 
+	Year			>> This will set the date as the 1-jan of the current year
+	
+- Input Formats allowed i.e. for Attribute Format at Field
+	Long Date		>> This would return date in 'day, dd mmm, yyyy' Format
+	Short Date 		>> This would return date in 'dd-m-yy' Format
+	Date only		>> This would return only the Date.
+	
+	12 hour			>> This would return time as 09:09 PM
+	24 hour			>> This would return time as 21:09
+	With Secs		>> This would retunr time with seconds based on hour clock i.e. 21:09:09
+	With MilliSecs	>> This would retunr time with seconds based on hour clock i.e. 21:09:09:054
+	PrefixAMPM		>> By default in 12 hour clock AM or PM is sufixed. This would prefix
+	Time only		>> This would return only the Time.
+
+-Supported Functions
+
+	$$DateTime 		>> The function $$datetime is used to convert a datetime 
+					   specified in string format into the "DateTime" data type.
+
+-Operational Functions
+
+	$$AddHours
+	$$SubHours
+	$$Addminutes
+	$$SubMinutes
+	$$AddSeconds
+	$$SubSeconds
+
+Last modification -
+-	Altered on
+*/
+	
+[Report: TSPL Smp CDT Set DateTimeFormat]
+	
+	Title	: "Set DateTime Format"
+	Form	: TSPL Smp CDT Set DateTimeFormat
+	
+[Form: TSPL Smp CDT Set DateTime Format]
+	
+	Use		: TSPL Smp CDT Set Format
+	Local	: Field		: Form Subtitle			  	: Info		: "Set DateTime Format in which you want to display Date, Time or DateTime"
+	Local	: Line		: TSPL Smp CDT Set Format 	: Local 	: Field	: Medium Prompt					: Info		: "DateTime Format :"
+	Local	: Line		: TSPL Smp CDT Set Format 	: Local 	: Field	: TSPL Smp CDT SetFormatField	: Delete	: Table
+	Local	: Line		: TSPL Smp CDT Set Format 	: Local 	: Field	: TSPL Smp CDT SetFormatField	: Add		: Table	: TSPL Smp CDT DateTime FormatTable
+	Delete	: On		
+	Add		: On		: Form Accept	: Yes		: Alter		: TSPL Smp CDT DateTime Val Set 
+	
+[Collection: TSPL Smp CDT DateTime FormatTable]
+	
+	Title		: "DateTime Formats"
+	List Name	: "Short Date","Long Date","Universal Date", "Short Date, Separator:'/'", "Date Only","Time Only", + 
+					"24 Hour", "24 hour, With MilliSecs, Short Date", "12 hour, With MilliSecs, Prefix AMPM, Long Date"
+	
+;;;;Report to select Input Keywords ( or Define an Input DateTime or Date/Time Value);;;;;	
+	
+[Report: TSPL Smp CDT DateTime Val Set]
+	
+	Form 	:  TSPL Smp CDT DateTime Val Set
+	Title   : "DateTime"
+
+[Form: TSPL Smp CDT DateTime Val Set]
+	
+	Use		: TSPL Smp CDT Val Set
+	Local	: Field	: FormSubtitle					: Info	: "DateTime Keywords & Formats"
+	Local	: Line	: TSPL Smp CDT InputKeywordLine : Local	: Field	: TSPL Smp CDT Set InputKeywordField: Delete	: Table
+	Local	: Line	: TSPL Smp CDT InputKeywordLine : Local	: Field	: TSPL Smp CDT Set InputKeywordField: Add		: Table		:  TSPL Smp CDT DateTimeInputKeywordTable	: NOT ##TSPLSmpCDTFormatVar = "Time Only"
+	Local	: Line	: TSPL Smp CDT InputKeywordLine : Local	: Field	: TSPL Smp CDT Set InputKeywordField: Add		: Table		:  TSPL Smp CDT TimeInputKeywordTable		: ##TSPLSmpCDTFormatVar = "Time Only"
+	Local	: Line	: TSPL Smp CDT InputSet			: Local	: Field	: Medium Prompt			 			: Info		: "Input DateTime Value"
+	Local	: Line	: TSPL Smp CDT InputSet			: Local	: Field	: TSPL Smp CDT InputField 			: Delete	: Type
+	Local	: Line	: TSPL Smp CDT InputSet			: Local	: Field	: TSPL Smp CDT InputField 			: Add		: Type		: DateTime
+	Local	: Line	: TSPL Smp CDT OutputField		: Local	: Field	: Medium Prompt						: Setas		: "DateTime"
+	Local	: Line	: TSPL Smp CDT OutputField		: Local	: Field	: TSPL Smp CDT Output Field			: Delete	: Type
+	Local	: Line	: TSPL Smp CDT OutputField		: Local	: Field	: TSPL Smp CDT Output Field			: Add		: Type		: DateTime
+
+;; Collection of all the combinations of Date Keywords & Qualifiers available for Date Data Type
+
+[Collection: TSPL Smp CDT DateTimeInputKeywordTable]
+
+	Use			: TSPL Smp CDT DateInputKeywordTable, TSPL Smp CDT TimeInputKeywordTable
+
+	Title		: "List of DateTime Input Keywords"
+
+;; End-of-File

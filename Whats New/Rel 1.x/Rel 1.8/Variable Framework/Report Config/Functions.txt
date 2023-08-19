@@ -1,0 +1,218 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This TDL File contains Functions for Saving Configurations set by the User, 
+	Retrieving the same when required and Deleting if not needed
+
+Last modification – 
+-	Altered on 22/04/2010
+
+Dependencies - 
+-	File(s) :- Compound Var Usage in Report Config.txt, Sundry.txt, UI Changes.txt and
+			   Variables & Buttons.txt
+*/
+
+[Function: Smp Save Config]	;; To save the current config with a unique name
+
+	Variable	: Smp Base Report	: String
+
+	00	: SET	: Smp Base Report	: $$ContextKeyword:Yes
+	10	: ALTER	: SmpConfigName
+
+[Function: Smp Check Config Name in List]	;; Validating the Config Name for its existence
+
+	Parameter	: User Config Name	: String
+	Variable	: ListVarIndex		: Number
+	Variable	: ListVarSubIndex	: Number
+	Variable	: ListVarExists		: Logical
+
+	00	: SET	: ListVarExists		: No
+	10	: CALL	: Smp Config Existence Check
+
+	20	: IF	: NOT ##ListVarExists
+	30	: 	LIST ADD	: SmpSaveConfig		: ##SmpBaseReport
+	40	: ENDIF
+
+	50	: SET	: SmpSaveConfig[##ListVarIndex].SmpReportName	: ##SmpBaseReport
+	51	: SET	: SmpSaveConfig[##ListVarIndex].SmpCompanyName	: ##SVCurrentCompany
+	52	: IF	: $IsSecurityOn:Company:##SVCurrentCompany
+	53	: 	SET	: SmpSaveConfig[##ListVarIndex].SmpUserName		: ##SVUserName
+	54	: ENDIF
+	55	: LOG	: "Started at " + $$MachineTime
+
+	60	: SET	: ListVarExists		: No
+	70	: CALL	: Smp Sub Config Existence Check
+
+	80	: IF	: NOT ##ListVarExists
+	90	: 	LIST ADD: SmpSaveConfig[##ListVarIndex].SmpConfig		: ##UserConfigName
+	100	: 	CALL	: Smp Save Config Values
+	110	: ELSE	:
+	120	: 	QUERY BOX	: "Config with the given name exists. \n Do you wish to overwrite the same?":Yes:No
+	130	: 	IF	: $$LastResult
+	140	:		CALL	: Smp Save Config Values
+	150	:	ENDIF
+	160	: ENDIF
+	170	: LOG	: "Ended at " + $$MachineTime
+
+[Function: Smp Save Config Values]	;; Saving i.e., adding/altering Config Values
+
+;; For Stock Summary
+
+	00	: SET	: SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpConfigName		: ##UserConfigName
+	10	: SET	: SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpShowQty 		: #SSShowQty
+	20	: SET	: SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpShowRate		: #SSShowRate
+	30	: SET	: SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpShowValue		: #SSShowValue
+
+	40	: IF	: ##SmpBaseReport CONTAINS "Stock"
+	50	: 	SET	: SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpShowOpenBal		: #SSShowOpening
+	60	: ELSE	: 
+	70	: 	SET	: SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpShowOpenBal		: #DSPShowOp
+	80	: ENDIF
+
+	90	: SET	: SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpShowGoodsInw	: #SSShowInwards
+	100	: SET	: SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpShowGoodsOutw	: #SSShowOutwards
+
+	110	: IF	: ##SmpBaseReport CONTAINS "Stock"
+	120	: 	SET	: SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpShowClosBal		: #SSShowClosing
+	130	: ELSE	: 
+	140	: 	SET	: SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpShowClosBal		: #DSPShowCl
+	150	: ENDIF
+
+	160	: SET	: SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpShowAllItems	: #SSShowAllItems
+	170	: SET	: SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpShowConsGP 		: $$AccessObj:Line:"SmpConsGP":#LogicalField
+	180	: SET	: SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpShowAltUnits	: #SSShowAlternate
+	190	: SET	: SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpShowTailUnits	: $$AccessObj:Line:"SmpShowTail":#LogicalField
+	200	: SET	: SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpAppearItemName	: #DSPInvNameStyle
+
+;; For Trial Balance
+	210	: SET	: SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpShowTrans		: #DSPShowTrans
+	220	: SET	: SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpShowNettTrans	: #DSPShowNett
+	230	: SET	: SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpShowPercent		: #DSPShowPerc
+	240	: SET	: SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpShowPercentType	: #DSPShowPercType
+	250	: SET	: SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpAppearNames		: #DSPNameStyle
+	260	: SET	: SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpScaleFactor		: #DSPSetScale
+	270	: SET	: SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpSortingMethod	: #DSPSorting
+	280	: SET	: SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpExplodeAllLevels: #DSPExplodeAllLevels
+
+[Function: Smp Config Existence Check]	;; List Variable 'Report Name' Existence Check
+
+	Variable	: CompVarCount		: Number
+
+	00	: SET	: CompVarCount		: $$ListCount:SmpSaveConfig
+
+	10	: IF	: ##CompVarCount > 0
+	20	: 	FOR RANGE 	: IteratorVar 		: Number 		: 1 : ##CompVarCount	: 1
+	30	: 		IF		: ##SmpSaveConfig[##IteratorVar].SmpReportName = ##SmpBaseReport
+	40	:			SET	: ListVarExists		: Yes
+	50	: 			SET	: ListVarIndex		: ##IteratorVar
+	60	: 			BREAK
+	70	:		ENDIF
+	80	: 	END FOR
+	90	: ENDIF
+
+	100	: IF	: NOT ##ListVarExists
+	110	: 	SET	: ListVarIndex		: ##CompVarCount + 1
+	120	: ENDIF
+
+[Function: Smp Sub Config Existence Check]	;; List Variable 'Config Name' Existence Check
+
+	Variable	: CompVarCount	: Number
+
+	00	: SET	: CompVarCount	: $$ListCount:SmpSaveConfig[##ListVarIndex].SmpConfig
+
+	10	: IF	: ##CompVarCount > 0
+	20	: 	FOR RANGE 	: IteratorVar 		: Number 		: 1 : ##CompVarCount	: 1
+	30	: 		IF		: ##SmpSaveConfig[##ListVarIndex].SmpConfig[##IteratorVar].SmpConfigName = ##UserConfigName
+	40	: 			SET		: ListVarExists		: Yes
+	50	: 			SET		: ListVarSubIndex	: ##IteratorVar
+	60	: 			BREAK
+	70	:		ENDIF
+	80	: 	END FOR
+	90	: ENDIF
+
+	100	: IF	: NOT ##ListVarExists
+	110	:	SET	: ListVarSubIndex		: ##CompVarCount + 1
+	120	: ENDIF
+
+[Function: Smp Retrieve Config]	;; While retrieving from config list - Validation Check for configuration existence
+
+	Variable	: ListVarIndex		: Number
+	Variable	: ListVarSubIndex	: Number
+	Variable	: UserConfigIndex	: Number
+
+	Variable	: Smp BaseReport	: String
+	Variable	: ListVarExists		: Logical
+
+	00	: IF	: $$ContextKeyword = "Configuration"
+	01	: 	SET	: Smp Base Report	: $$ContextKeyword:Yes
+	02	: ELSE	: 
+	03	: 	SET	: Smp Base Report	: $$ContextKeyword
+	04	: ENDIF
+
+	10	: CALL	: SmpConfigExistenceCheck
+	20	: IF	: ##ListVarExists
+	30	: 	ALTER	: SmpListofConfigs
+	40	: ELSE	: 
+	50	: 	MSGBOX	: "Error"		: "No Configuration \n exists for Report \n" + ##SmpBaseReport
+	60	: ENDIF
+
+[Function: Smp Delete Config]
+
+	Variable	: ListVarIndex		: Number
+	Variable	: ListVarSubIndex	: Number
+	Variable	: UserConfigIndex	: Number
+
+	Variable	: Smp BaseReport	: String
+	Variable	: ListVarExists		: Logical
+
+	00	: SET	: Smp Base Report	: $$ContextKeyword:Yes
+	10	: CALL	: SmpConfigExistenceCheck
+	20	: IF	: ##ListVarExists
+	30	:	SET		: Smp Delete Config	: Yes
+	40	: 	ALTER	: SmpListofConfigs
+	50	:	SET		: Smp Delete Config	: No
+	60	: ELSE	: 
+	70	: 	MSGBOX	: "Error"		: "No Configuration \n exists for Report \n" + ##SmpBaseReport
+	80	: ENDIF
+
+[Function: Smp Set Variable Values]	;; While retrieving from the value from the config list
+
+;; For Stock Summary
+	00	: SET	: ListVarSubIndex	: ##UserConfigIndex
+	10	: SET	: DSPShowQty		: ##SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpShowQty
+	20	: SET	: DSPShowRate		: ##SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpShowRate
+	30	: SET	: DSPShowValue		: ##SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpShowValue
+	40	: SET	: DSPShowOpening	: ##SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpShowOpenBal
+	50	: SET	: DSPShowInwards	: ##SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpShowGoodsInw
+	60	: SET	: DSPShowOutwards	: ##SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpShowGoodsOutw
+	70	: SET	: DSPShowClosing	: ##SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpShowClosBal
+
+	80	: SET	: DSP ShowAllItems	: ##SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpShowAllItems
+	90	: SET	: ShowConsumption	: ##SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpShowConsGP
+	100	: SET	: DSPQtyAlternate	: ##SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpShowAltUnits
+	110	: SET	: DSPShowTail		: ##SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpShowTailUnits
+	120	: SET	: DSPInvNameStyle	: ##SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpAppearItemName
+
+;; For Trial Balance
+	130	: SET	: DSPShowTrans		: ##SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpShowTrans
+	140	: SET	: DSPShowNett		: ##SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpShowNettTrans
+	150	: SET	: DSPShowPerc		: ##SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpShowPercent
+	160	: SET	: DSPShowPercType	: ##SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpShowPercentType
+	170	: SET	: DSPNameStyle		: ##SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpAppearNames
+	180	: SET	: SVScaleFactor		: ##SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpScaleFactor
+	190	: SET	: SVSortMethod		: ##SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpSortingMethod
+	200	: SET	: ExplodeAllLevels	: ##SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex].SmpExplodeAllLevels
+	210	: IF	: ##ExplodeAllLevels
+	220	:	SET	: ExplodeFlag		: Yes
+	230	: ENDIF
+
+[Function: Smp Delete Variable Values]
+
+	00	: SET		: ListVarSubIndex	: ##UserConfigIndex
+	10	: QUERY BOX	: "This operation will delete \nthe selected Config. \nAre you sure?":Yes:No
+	20	: IF	: $$LastResult
+	30	: 	LIST DELETE	: SmpSaveConfig[##ListVarIndex].SmpConfig	: ##SmpSaveConfig[##ListVarIndex].SmpConfig[##ListVarSubIndex]
+	40	: ENDIF
+
+;; End-of-File

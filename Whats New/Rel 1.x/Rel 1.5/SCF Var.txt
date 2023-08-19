@@ -1,0 +1,110 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This code demonstrates the usage of Enhancements Source Var, Compute Var 
+	and Filter Var within Collections
+- 	With Source Var, we can introduce a variable within Summary Collection
+	which can access methods and variables in the Source Collection (Object
+	within Source Collection is referred as Source Object)
+-	With Compute Var, we can introduce a variable within Collection which 
+	can access the Methods of the Objects within the current Collection 
+	irrespective of being a Source or Summary Collection (Object
+	resulting out of a Summary Collection is referred as Leaf Object)
+-	Filter Var can be introduced to access all the methods of Summary 
+	Collection which can be used for filtering the Leaf Object 
+	(Object post filter is referred as Final Object)
+-	These variables can be used for computation and filtering purposes 
+	within the Collection.  The scope of these variables are within the 
+	Collection only.
+-	This Report prints the Group Trial Balance. By using Compute Var, we 
+	are retaining the Group Name and while calculating the total balance 
+	of ledgers under this Group, we are using the same variable under 
+	Child Of Attribute of Ledger Collection.
+
+Last modification – 
+-	Altered on 09/11/2009
+*/
+
+[Report: SCF CFBK Rep]
+
+	Use			: DSP Template
+	Form		: SCF CFBK Rep
+	Set         : SVFromDate    : $$MonthStart:##SVCurrentDate
+	Set         : SVToDate      : $$MonthEnd:##SVCurrentDate
+
+[Form: SCF CFBK Rep]
+
+	Use			: DSP Template
+	Parts		: SCF CFBK Rep
+
+[Part: SCF CFBK Rep]
+
+	Lines		: SCF CFBK Rep Title, SCF CFBK Rep Details
+	Repeat		: SCF CFBK Rep Details		: SCF Smp Stock Item
+	Scroll		: Vertical
+	CommonBorder: Yes
+
+	[Line: SCF CFBK Rep Title]
+
+		Use		: SCF CFBK Rep Details
+
+		Local	: Field	: Default				: Type		: String
+		Local	: Field	: Default				: Align		: Center
+
+		Local	: Field	: SCF CFBK Rep Name		: Set as	: "Particulars"
+		Local	: Field	: SCF CFBK Rep Name		: Widespaced: Yes
+		Local	: Field	: SCF CFBK Rep Party	: Set as	: "Qty"
+		Border	: Flush Totals
+
+	[Line: SCF CFBK Rep Details]
+
+		Fields			: SCF CFBK Rep Name
+		Right Fields 	: SCF CFBK Rep Party
+
+		[Field: SCF CFBK Rep Name]
+
+			Use			: Name Field
+			Set as		: $IName
+
+		[Field: SCF CFBK Rep Party]
+
+			Use			: Qty Primary Field
+			Set as		: $BilledQty
+			Format		: "NoZero"
+			Border		: Thin Left
+
+;; Collection Definition
+
+[Collection: SCF CFBK Voucher]
+
+	Type		: Voucher
+	Filter		: SCF IsSalesVT
+;; Cmp Var is used in the above Filter
+	Compute Var	: Compute Var in Source	: Logical	: $$IsSales:$VoucherTypeName OR $$IsPurchase:$VoucherTypeName
+	Fetch		: VoucherTypeName, VoucherNumber
+
+[Collection: SCF Smp Stock Item]
+
+	Source Collection	: SCF CFBK Voucher
+	Source Var			: Src Var		: String	: $VoucherNumber + "/" + $VoucherTypeName
+	Walk				: Inventory Entries
+
+;; If the Source Variable Src Var contains "12", then IName Variable stores only 
+;; Stock Item Name method else Stock Item Name + value of the variable Src Var
+;; The grouping is finally done on the resultant value
+	Compute Var			: IName			: String	: if ##SrcVar CONTAINS "12" then $StockItemName else $StockItemName + "-" + ##SrcVar
+	By					: IName			: ##IName
+	Aggr Compute		: BilledQty		: SUM		: $BilledQty
+
+;; The following Filter var retains a logical value if method BilledQty is greater than 100
+;; used in Filtering Final Object
+	Filter Var			: Fil Var		: Logical	: $$Number:$BilledQty > 100
+	Filter				: Final Filter
+
+[System: Formula]
+
+	SCF IsSalesVT	: ##ComputeVarinSource
+	Final Filter	: ##FilVar
+
+;; End-of-File

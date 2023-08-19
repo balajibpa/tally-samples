@@ -1,0 +1,28 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Menu for Collection Enhancements
+*/
+
+[Menu: Collection Enhancements for 1.8]
+
+	Indent		: "Using DLL Collection"
+	Item 		: Blank
+	Key Item 	: "Retrieve XML from DLL"				: X : Display 	: DLL XML Get CollObjPath
+	Key Item 	: "Retrieve XML Sub Collection from DLL": S : Display 	: DLL XML Get Required CollObjPath 
+	Key Item	: "DLL with Pre-Request Report"			: P : Display	: DLL XML Post PreReq Collection
+	Key Item    : "Input Parameter to DLL Collection"   : I : Alter   	: DLL Input
+	Item 		: Blank
+	Indent		: "Other Enhancements"
+	Item 		: Blank
+	Key Item	: "Dynamic Table Support with Scope"	: U	: Alter		: Smp StkBatchName
+	Key Item	: "Building Collection from Variable"	: V	: Call		: CV Repeat Variable with Collection
+	Item 		: Blank
+
+
+;; Include Files
+
+[Include: DLL Collection\DLL Collection.txt]
+[Include: Unique attribute.txt]
+
+;; End-of-File

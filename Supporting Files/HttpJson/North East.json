@@ -1,0 +1,85 @@
+{
+	"Branch": "North East",
+	"Customer": [
+		{
+			"Name": "Jahnu Barua",
+			"State": "Assam",
+			"Contact":
+			{
+				"OfficeNo": "03842-66282789",
+				"Mobile": "990208391",
+				"Email": "jahnu@gmail.com "
+			},
+			"Address": [
+				"C/o. Barua Info Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		},
+		{
+			"Name": "Nissan Das",
+			"State": "Assam",
+			"Contact":
+			{
+				"OfficeNo": "03842-66282559",
+				"Mobile": "990209867",
+				"Email": "nissan@gmail.com "
+			},
+			"Address": [
+				"C/o. Das Tech Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		},
+		{
+			"Name": "Saibal",
+			"State": "Assam",
+			"Contact":
+			{
+				"OfficeNo": "0361-66282909",
+				"Mobile": "990209819",
+				"Email": "saibal@gmail.com "
+			},
+			"Address": [
+				"C/o. Saibal Infotech Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		},
+		{
+			"Name": "Nabendu Das",
+			"State": "Manipur",
+			"Contact":
+			{
+				"OfficeNo": "0385-66282989",
+				"Mobile": "990209819",
+				"Email": "nabendu@gmail.com "
+			},
+			"Address": [
+				"C/o. Nbdas Tech Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		},
+		{
+			"Name": "Shubham",
+			"State": "Sikkim",
+			"Contact":
+			{
+				"OfficeNo": "03592-66276459",
+				"Mobile": "990209807",
+				"Email": "shub@gmail.com "
+			},
+			"Address": [
+				"C/o. Shubham Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		}
+	]
+}

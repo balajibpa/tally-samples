@@ -1,0 +1,16 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Demo TDLs for DLL XML Collection
+*/
+
+[Menu: DLL Samples]
+
+	Key Item	: "Existing Function CALLDLL"	: C : Execute 	: CallDLL Func
+	Key Item	: "DLL Collection Introduced"	: D	: Menu		: Collection Enhancements for 1.8
+
+;; Include Files
+
+[Include: CallDLL.txt]
+
+;; End-of-File

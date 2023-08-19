@@ -1,0 +1,32 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+-	This code demonstrates the usage of Timer Events
+-	This code is written to invoke the Timer while Tally Application starts 
+	and Timer is set to take User Configured Backup every hour.
+
+Dependencies -
+-	User Configured Backup
+
+Last Modification -
+-	Created on 14-08-2010
+*/
+
+[Function: TSPL Smp Start Backup Timer]
+
+	00	: START TIMER	: TSPL Smp Backup Timer		: 3600
+
+[Function: TSPL Smp End Backup Timer]
+
+	00	: STOP TIMER	: TSPL Smp Backup Timer
+
+[System: Event]
+
+	TSPL Smp Backup	Timer: TIMER	: Yes	: CALL	: TSPL FFE Backup Function
+
+;; Include Files
+
+[Include: User Configured Backup\User Configured Backup.txt]
+
+;; End-of-File

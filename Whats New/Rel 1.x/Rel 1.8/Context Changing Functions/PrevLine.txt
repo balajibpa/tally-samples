@@ -1,0 +1,76 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This Code demonstrates the usage of Interface Object Context changing 
+	function 'PrevLine'
+-	This function also changes the Data Object Context
+
+Syntax -
+-	$$PrevLine:<Field Value>
+-	$$PrevLine:<Method Value>
+
+Updation History – 
+-	Created on 20/04/2010
+*/
+
+[Report: ICCF PrevLine]
+
+	Form		: ICCF PrevLine
+	Title		: "PrevLine"
+
+[Form: ICCF PrevLine]
+
+	Parts		: Form SubTitle, ICCF PrevLine
+	Local: Field: Form SubTitle	: Info		: "Understanding Function PrevLine"
+
+[Part: ICCF PrevLine]
+
+	Lines		: ICCF PrevLine Title, ICCF PrevLine
+	Repeat		: ICCF PrevLine	: Ledger
+	Scroll		: Vertical
+	CommonBorder: Yes
+
+	[Line: ICCF PrevLine Title]
+
+		Use		: ICCF PrevLine
+		Local	: Field	: Default			: Align	: Center
+		Local	: Field	: Default			: Style	: Normal Bold
+
+		Local	: Field	: ICCF PL Name		: Set As: "Name"
+		Local	: Field	: ICCF PL Parent	: Set As: "Parent"
+		Local	: Field	: ICCF PL PrevName	: Set As: "Previous Line's Field Name"
+		Local	: Field	: ICCF PL PrevParent: Set As: "Previous Line's Field Parent"
+		Border	: Thin Top Bottom
+
+	[Line: ICCF PrevLine]
+
+		Fields		: ICCF PL Name, ICCF PL Parent
+		Right Fields: ICCF PL PrevName, ICCF PL PrevParent
+
+		[Field: ICCF PL Name]
+
+			Use		: Name Field
+			Set As	: $Name
+			Style	: Normal
+
+		[Field: ICCF PL Parent]
+
+			Use		: Name Field
+			Set As	: $Parent
+			Border	: Thin Left
+			Style	: Normal
+
+		[Field: ICCF PL PrevName]
+
+			Use		: Name Field
+			Set As	: $$PrevLine:#ICCFPLName
+			Border	: Thin Left
+
+		[Field: ICCF PL PrevParent]
+
+			Use		: Name Field
+			Set As	: $$PrevLine:#ICCFPLParent
+			Border	: Thin Left
+
+;; End-of-File

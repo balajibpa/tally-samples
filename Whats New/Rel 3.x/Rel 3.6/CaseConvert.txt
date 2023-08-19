@@ -1,0 +1,146 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+-	This Sample TDL demonstrates the Built-in Function $$CaseConverter
+
+Syntax -
+-    $$CaseConvert:<CaseKeyword>:<Expression>
+
+Where CaseKeyword can be UpperCase, LowerCase, TitleCase, or FirstUpperCase
+	  Expression can be any string 
+
+Last Modification -
+-	Updated on 04-06-2012
+*/
+
+;; Report, CaseConvert in Report, begins here
+
+[System: Formula]
+	
+	TSPL Smp CasConvert Expression : "i work for ABC ltd and hAve an accouNt witH state baNk oF inDia."
+
+[Report: TSPL Smp CaseConvert]
+	
+	Form	: TSPL Smp CaseConvert
+	Title	: "Function CaseConvert"
+	
+[Form: TSPL Smp CaseConvert]
+	
+	Parts	: Form SubTitle, TSP Smp Original String, TSPL Smp CaseConvert
+	
+	Width	: 70% Page
+	Local	: Field	: Form SubTitle	: Info			: "Function CaseConvert"
+	Local	: Field	: Form SubTitle	: Color 		: Royal Blue
+	Local	: Line	: Form SubTitle	: Space Bottom 	: 0.5
+
+[Part: TSP Smp Original String]
+	
+	Lines		: TSPL Smp CaseConvert Original String, TSPL Smp CaseConvert Original String Title
+	Space Bottom: 0.25
+
+	[Part: TSPL Smp CaseConvert]
+
+		Lines	: TSPL Smp CaseConvert Normal, TSPL Smp CaseConvert AllCapital, TSPL Smp CaseConvert UpperCase, TSPL Smp CaseConvert FirstUpperCase, TSPL Smp CaseConvert ProperCase, TSPL Smp CaseConvert TitleCase, TSPL Smp CaseConvert TitleCaseExact
+		Lines	: TSPL Smp CaseConvert AllLower, TSPL Smp CaseConvert LowerCase, TSPL Smp CaseConvert SmallCase
+		
+		Local	: Line	: Default 		: Space Bottom 	: 0.25
+		Local	: Field	: Medium Prompt : Style 		: Normal Bold
+
+		[Line: TSPL Smp CaseConvert Original String Title]
+			
+			Fields	: Name Field
+			
+			SpaceTop: 0.50
+			Local	: Field : Name Field : Set As		: "String using various case keywords"
+			Local	: Field : Name Field : Full Width 	: Yes
+			Local	: Field : Name Field : Align		: Centre
+			Local	: Field : Name Field : Border		: Thin Bottom
+			Local	: Field	: Name Field : Color 		: Royal Blue
+			
+		[Line: TSPL Smp CaseConvert Original String]
+
+			Fields	: Medium Prompt, TSPL Smp CaseConvert Expression
+		
+			Local	: Field	: Default							: Color	: Blue
+		
+			Local	: Field	: Medium Prompt						: Info	: "Original String" 
+			Local	: Field	: TSPL Smp CaseConvert Expression	: Set as: @@TSPLSmpCasConvertExpression 
+
+		[Line: TSPL Smp CaseConvert AllCapital]
+			
+			Fields	: Medium Prompt, TSPL Smp CaseConvert Expression
+			
+			Local	: Field	: Medium Prompt						: Info	: "All Capital" 
+			Local	: Field	: TSPL Smp CaseConvert Expression	: Set as: $$CaseConvert:AllCapital:@@TSPLSmpCasConvertExpression 
+
+		[Line: TSPL Smp CaseConvert AllLower]
+			
+			Fields	: Medium Prompt, TSPL Smp CaseConvert Expression
+			
+			Local	: Field	: Medium Prompt						: Info	: "All Lower" 
+			Local	: Field	: TSPL Smp CaseConvert Expression	: Set as: $$CaseConvert:AllLower:@@TSPLSmpCasConvertExpression 
+
+		[Line: TSPL Smp CaseConvert FirstUpperCase]
+			
+			Fields	: Medium Prompt, TSPL Smp CaseConvert Expression
+			
+			Local	: Field	: Medium Prompt						: Info	: "First Upper Case" 
+			Local	: Field	: TSPL Smp CaseConvert Expression	: Set as: $$CaseConvert:FirstUpperCase:@@TSPLSmpCasConvertExpression 
+
+		[Line: TSPL Smp CaseConvert LowerCase]
+			
+			Fields	: Medium Prompt, TSPL Smp CaseConvert Expression
+			
+			Local	: Field	: Medium Prompt						: Info	: "Lower Case" 
+			Local	: Field	: TSPL Smp CaseConvert Expression	: Set as: $$CaseConvert:LowerCase:@@TSPLSmpCasConvertExpression 
+			Local	: Field	: TSPL Smp CaseConvert Expression 	: Lines : 0
+
+		[Line: TSPL Smp CaseConvert Normal]
+			
+			Fields	: Medium Prompt, TSPL Smp CaseConvert Expression
+			
+			Local	: Field	: Medium Prompt						: Info	: "Normal" 
+			Local	: Field	: TSPL Smp CaseConvert Expression	: Set as: $$CaseConvert:Normal:@@TSPLSmpCasConvertExpression 
+
+		[Line: TSPL Smp CaseConvert ProperCase]
+			
+			Fields	: Medium Prompt, TSPL Smp CaseConvert Expression
+			
+			Local	: Field	: Medium Prompt						: Info	: "Proper Case" 
+			Local	: Field	: TSPL Smp CaseConvert Expression	: Set as: $$CaseConvert:ProperCase:@@TSPLSmpCasConvertExpression 
+			Local	: Field	: TSPL Smp CaseConvert Expression 	: Lines : 0
+
+		[Line: TSPL Smp CaseConvert SmallCase]
+			
+			Fields	: Medium Prompt, TSPL Smp CaseConvert Expression
+			
+			Local	: Field	: Medium Prompt						: Info	: "Small Case" 
+			Local	: Field	: TSPL Smp CaseConvert Expression	: Set as: $$CaseConvert:LowerCase:@@TSPLSmpCasConvertExpression 
+
+		[Line: TSPL Smp CaseConvert TitleCase]
+			
+			Fields	: Medium Prompt, TSPL Smp CaseConvert Expression
+			
+			Local	: Field	: Medium Prompt						: Info	: "Title Case"
+			Local	: Field	: TSPL Smp CaseConvert Expression	: Set as: $$CaseConvert:TitleCase:@@TSPLSmpCasConvertExpression
+
+		[Line: TSPL Smp CaseConvert UpperCase]
+
+			Fields	: Medium Prompt, TSPL Smp CaseConvert Expression
+			
+			Local	: Field	: Medium Prompt						: Info	: "Upper Case"
+			Local	: Field	: TSPL Smp CaseConvert Expression	: Set as: $$CaseConvert:UpperCase:@@TSPLSmpCasConvertExpression
+
+		[Line: TSPL Smp CaseConvert TitleCaseExact]
+			
+			Fields	: Medium Prompt, TSPL Smp CaseConvert Expression
+			
+			Local	: Field	: Medium Prompt						: Info	: "Title Case Exact" 
+			Local	: Field	: TSPL Smp CaseConvert Expression	: Set as: $$CaseConvert:TitleCaseExact:@@TSPLSmpCasConvertExpression 
+
+			[Field: TSPL Smp CaseConvert Expression]
+				
+				Width	: 70
+
+;; End-of-File

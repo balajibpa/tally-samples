@@ -1,0 +1,110 @@
+/*
+The objective of this code is to depict the usage of Query Report
+*/
+
+[Report	: TSPL Report for Query]
+	
+	Form	: TSPL Report for Query
+	
+[Form	: TSPL Report for Query]
+	
+	Use				: TSPL SMP Illustration
+		
+	Height			: 100% Screen
+	Width			: 100% Screen
+	
+	Local	: Part	: TSPL SMP Syntax		: Invisible	: Yes
+	Local	: Field	: FormSubTitle			: Info		: $$LocaleString:"Illustration for action - Query Report"
+		
+	Local	: Field	: TSPL Smp Purpose		: Indent	: 2
+	Local	: Field	: TSPL Smp Purpose		: Info		: $$LocaleString:"A default query box is available which provides only a 'Quit? Yes or No' option." + +
+															$$LocaleString:"The below mentioned code describes an approach to design the Query box using Query Report."
+			
+	
+	Local	: Field	: TSPL SMP Example		: Info		: $$NewLine	+ "[Function: TSPL Query Report Func]" ++
+														  $$NewLine	+ "         |"  + $$NewLine + +
+															"01	: Query Report	: TSPL Query Report	: Continue? :'' " + $$NewLine   ++
+															"         |" ++
+															$$NewLine+ "[Report	: TSPL Query Report]" + $$NewLine + "         |" 
+	Local	: Field	: TSPL SMP ExampleNote	: Info		: "The Query Report is called from a function through the field" 	
+
+
+	Part		: TSPL Report for Query
+	No Confirm	: Yes
+	
+[Part	: TSPL Report for Query]
+	
+	Line		: TSPL Report for Query
+	Border		: Thin Top
+	Space Top	: 1
+	
+	[Line	: TSPL Report for Query]
+		
+		Field	: Long Prompt, TSPL Report for Query
+		
+		Local	: Field	: Long prompt	: Info	: "Press Alt + D to invoke the query box"
+		
+		[Field	: TSPL Report for Query]
+			
+			Use		: Name Field
+			Key		: TSPL Key for Query
+			
+[Key	: TSPL Key for Query]
+	
+	Key		: Alt + D
+	Action	: Call		: TSPL Query Report Func
+	
+[Function	: TSPL Query Report Func]
+	
+	01	: Query Report	: TSPL Query Report	: "Continue?" : " "
+	02	: If			: $$LastResult
+	03	:		Display		: BalanceSheet
+	04	: End If
+	
+[Report	: TSPL Query Report]
+	
+	Form	: TSPL Query Report
+
+[Form: TSPL Query Report]
+	
+	Use				: Query Common Visuals
+	Part			: TSPL Form Query Text Part
+	Bottom	Part 	: TSPL YesNo Query Part
+	Key			 	: YesKey, NoKey
+
+	Full Height		: No
+	Full Width		: No	
+	MinWidth		: @@UserQueryMinWidth PTS
+	MinHeight		: @@UserQueryMinHeight PTS
+	Sound Alert		: Alarm
+	Grey Back		: Yes
+	
+	Local			: Field	: TSPL Form Query Text Part	: Style		: Small
+ 
+[Part: TSPL Form Query Text Part]
+
+	Space Top			: 0.75
+	Space Bottom		: 0.75
+	Line   				: TSPL Form Query Text Part
+	Horizontal Align	: Center
+	Vertical Align		: Center
+	
+	[Line: TSPL Form Query Text Part]
+
+		Field		: TSPL Form Query Text Part
+		Space Top	: 2
+
+[Field: TSPL Form Query Text Part]
+
+	Info		: "Pressing Enter shall open \n Balance Sheet"
+	Align   	: Center
+
+[Part: TSPL YesNo Query Part]
+	
+	Line				: TSPL YesNo Query Line
+	Space Bottom		: 0.2
+	Horizontal Align	: Center
+
+	[Line: TSPL YesNo Query Line]
+	
+		Field	: Choices YesField, Choices OrField, Choices NoField

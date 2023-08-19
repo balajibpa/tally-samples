@@ -1,0 +1,85 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Report: TSPL Smp Rule Set]
+		
+	Form		: TSPL Smp Rule Set
+	Title		: "Rule Set Syntax"
+
+[Form: TSPL Smp Rule Set]
+
+	Use			: TSPL SMP Illustration
+	Local		: Field	: FormSubTitle		: Info		: "Syntax for Rule Set"
+	Local		: Field	: TSPL Smp Purpose	: Info		: "           Rule Set is a capability provided by Platform which " +
+			+ "allows defining a set of rules which can be single / multi-dimensional and evaluate them efficiently "+
+			+ "(both from memory and performance perspective). This is supported via a concept of a new " +
+			+ "definition Rule Set which is used to define the set of Rules, their flow control, their logic "+
+			+ "expressions, and associated depth (dimensions). Apart from the definition, various primitive " +
+			+ "functions are provided which will allow evaluating these Rule sets. " +
+			+ "One of the results of a rule set is a data of type FlagSet datatype. " +
+			+ "Various primitive of flagset datatype allows accessing the flagset." +
+			+ " Each attribute is explained as and when used in the relevant samples"
+	Local	:Part	: TSPL Smp Purpose : Add: Lines: Short Prompt, TSPL SMP Note
+	Local	: Part: TSPL SMP Illustration:  Delete	: Parts	: TSPL SMP Syntax, TSPL SMP Example
+	Part		: RuleSet
+
+	[Line	: Short prompt]
+		
+		Field	: Short Prompt
+		Local	: Field	: Short Prompt		: Style	: Normal Bold
+		Local	: Field	: Short Prompt		: Info	: "Note"
+		
+	[Line	: TSPL SMP Note]
+		
+		Field	: TSPL Smp Purpose
+		Local	: Field	: TSPL Smp Purpose	: Info	: "-> The Result of Rule Set is always " +
+			+ "an Object Method of type FlagSet. Same is detailed in the appropriate section. " 
+			
+[Part	: RuleSet]
+	
+	Space Top	: 1.0
+	Line	: TSPL RuleSetDef , TSPL BreakOn, TSPL WalkOn, TSPL RuleName, TSPL RuleSet
+	Line	: TSPL Name Set, TSPL Name Map, TSPL Aggr Rule
+	Local	: Field	: Default	: Full Width	: Yes
+	
+	[Line	: TSPL RuleSetDef]
+		
+		Field	: Name Field
+		Local	: Field	: Name Field	: Info	: "[Rule Set : <RuleSetName>]"
+		
+	[Line	:  TSPL BreakOn]
+		
+		Field	: Simple Field
+		Local	: Field	: Simple Field	: Info	: "           Break On      : <LogicalValue>"
+		
+	[Line	:  TSPL WalkOn]
+		
+		Field	: Simple Field
+		Local	: Field	: Simple Field	: Info	: "           Walk On       : <LogicalValue>"
+		
+	[Line	:  TSPL RuleName]
+		
+		Field	: Simple Field
+		Local	: Field	: Simple Field	: Info	: "           Rule         : <RuleName>	: <LogicalExpression> [:<LogicalValue>]"
+		
+	[Line	:  TSPL RuleSet]
+		
+		Field	: Simple Field
+		Local	: Field	: Simple Field	: Info	: "           RuleSet        : <RuleSetName>	[: <ListOfRulesInCurrentDefinition> : <ListOfRulesInSubDefinition>]"
+		
+	[Line	:  TSPL NameSet]
+		
+		Field	: Simple Field
+		Local	: Field	: Simple Field	: Info	: "           NameSet        : <NameSetName> "
+		
+	[Line	:  TSPL Name Map]
+		
+		Field	: Simple Field
+		Local	: Field	: Simple Field	: Info	: "           NameMap        : <RuleName>  : <NameIdentifier> [:<NameSetName>]"
+		
+	[Line	:  TSPL Aggr Rule]
+		
+		Field	: Simple Field
+		Local	: Field	: Simple Field	: Info	: "           AggrRule       : <Identifier>  : <TypeOfAggregation> [:<LevelIndicator>]"
+		
+	
+;; End Of file

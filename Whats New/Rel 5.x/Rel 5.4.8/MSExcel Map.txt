@@ -1,0 +1,77 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+/*
+Objective(s) – 
+- 	The objective of this program is to demonstrate the enhancement
+	for Resource Type : MS Excel and Alias MAP for attribute XML Map
+
+Syntax -
+	[Form:<FormName>]
+	
+		MAP		: <MAPName>	: <Expression>
+		
+	[Resource: <ResourceName>]
+
+		RESOURCE TYPE  : MSExcel  
+
+Last modification – 
+-	Created on 18/10/2016
+*/
+
+[Report: TSPL Smp MSExcel]
+
+	Title		: "Productivity Suite"
+	Form		: TSPL Smp MSExcel
+	
+[Form: TSPL Smp MSExcel]
+	
+	Use			: TSPL SMP Illustration
+	Part		: Form SubTitle, TSPL SMP Purpose, TSPL SMP Syntax
+	Option		: Small Size Form
+	
+	Local		: Field	: FormSubTitle					: Set as	: "Illustration for Resource Type : MSExcel"
+	Local		: Part	: TSPL SMP Purpose	: Local		: Line	: TSPL SMP Purpose : Local	: Field	: Info Field	: Info		: "A new resource type MSExcel has been " +
+																																						  +"introduced at Resource Definition type "+
+																																						  +". This allows you ot use .xls or xlsx files"
+	Local		: Part	: TSPL SMP Syntax	: Local		: Line	: TSPL SMP Syntax : Local	: Field	: Info Field			: Info		: "Resource Type	: MSExcel"
+	Local		: Part	: TSPL SMP Syntax	: Add		: Line	: TSPL SMP Syntax Title
+	Local		: Field	: FormSubTitle	: Delete	: Border
+
+	Resource	: TSPL Smp MSExcel
+	MAP			: CmpName	: "Ledgers for Company : " + ##SVCurrentCompany
+	MAP			: PartyName	: $Name						: TSPL SDLedger
+	MAP			: Parent	: $Parent
+	MAP			: LineNum	: $$TplLine
+	
+	Part	: TSPL Smp MSExcel
+	Button	: Export Button
+	
+[Part	: TSPL Smp MSExcel]
+	
+	Space Top	: 1
+	Line		: TSPL Smp MSExcel1, TSPL Smp MSExcel2
+	Local		: Field		: Default	: Full Width	: Yes
+	
+	[Line	: TSPL Smp MSExcel1]
+		
+		Field	: Name Field
+		Local	: Field	: Name Field	: Set as		: "Click on Export Button for output in Excel"
+		
+	[Line	: TSPL Smp MSExcel2]
+		
+		Field	: Name Field
+		Local	: Field	: Name Field	: Set as		: "Note: Export format should be Excel"
+		Local	: Field	: Name Field	: Color			: Blue
+		Local	: Field	: Name Field	: Style			: Small Italic
+	
+[Resource: TSPL Smp MSExcel]
+
+	Source			: '.\LedgerList.xlsx'
+	Resource Type	: MSExcel
+	
+
+[Collection: TSPL SDLedger]
+	
+	Type		: Ledger
+	Child Of	: $$GroupSundryDebtors
+
+;; End of file

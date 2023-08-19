@@ -1,0 +1,95 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+-	This is a sample code to print sales item invoice form any voucher using the template file. 
+- 	with this tdl the default sales invoice print will be overwritten with the new PXMLInvoice report
+
+Prerequisites-
+- 	place the invoiceword.xml file from the supporting folder to the tally installed folder.
+- 	include this tdl in the tally.ini
+
+Last modification – 
+-	Altered on 28/01/2015
+
+*/
+
+;; Print Invoice
+[#Form: Sales Color]
+	
+	Delete	: Print
+	Add		: Print		: PXMLInvoice
+ 
+[Report: PXMLInvoice]
+		
+	Use		: STDInvoice
+	
+[Form: PXMLInvoice]
+	
+	Resource : InvoiceWordXML
+
+	XML Map : line				: $$TplLine	
+	XML Map : companyname		: ##SVCurrentCompany
+		
+	XML Map	: CmpAddr			: $Address			: PXMLCompanyAddress
+	XML Map	: PartyAddr			: $Address			: PXMLPartyAddress
+	
+	XML Map	: BasicOrderDate	: @@PXMLBasicOrderDate
+	XML Map	: BasicShippingDate	: @@PXMLBasicShippingDate
+
+	XML Map : stockitemname		: $StockItemName	: Inventory Entries
+	XML Map : billedqty			: $BilledQty
+	XML Map : rate				: $Rate
+	XML Map	: rateunit			: ""	
+	XML Map : amount			: $Amount
+		
+	XML Map	: BatchName			: $BatchName		: BatchAllocations
+	XML Map	: MfgDate			: $MfdOn			
+	XML Map	: ExpDt				: $ExpiryPeriod 	
+			
+	XML Map	: INVTOTAL			: @@PXMLINVTOTAL	
+			
+	XML Map	: LedgerName		: $LedgerName		: PXMLLedEntries
+	XML Map	: LedRate			: @@PXMLTaxRate
+	XML Map	: LedAmount			: $Amount
+	
+	XML Map : finamount			: $Amount	
+	XML Map : FinalAmountInWords: @@PXMLAmtinWords
+
+;; collection to gather company address
+[Collection: PXMLCompany Address]
+
+    Type        : Address   : Company
+    Child of    : ##SVCurrentCompany
+
+;; collection to gather Party address	
+[Collection: PXMLParty Address]
+
+	Type        : Address   : Ledger
+	Child of    : ##PartyLedgerName  
+	Parm Var	: PartyLedgerName	: String : $PartyLedgerName
+	
+;; collection to gather Ledger Entries and eliminate party ledger entry
+[Collection: PXMLLedEntries]
+	
+	Type		: Ledger Entries	: Voucher
+	Filter		: PXMLpartyled
+	Fetch		: *.*
+	
+;; resource to the document file formated in word
+[Resource: InvoiceWordXML]
+	
+	Source			: invoiceword.xml
+	Resource Type	: WORD XML
+
+[System: Formula]
+	
+	PXMLBasicOrderDate		: if $$IsEmpty:$BasicOrderDate then "" else $BasicOrderDate
+	PXMLBasicShippingDate	: if $$IsEmpty:$BasicShippingDate then "" else $BasicShippingDate
+	
+	PXMLINVTOTAL			: $$CollAmtTotal:inventoryEntries:$Amount	
+	PXMLpartyled			: NOT $IsPartyAccount:Ledger:$LedgerName
+	PXMLAmtinWords			: $$InWords:$Amount + " Only"
+	PXMLTaxRate 			: if $$IsEmpty:$RateofInvoiceTax OR $RateofInvoiceTax = 0 then "" else $RateofInvoiceTax
+
+;; End-of-File

@@ -1,0 +1,15 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Menu: Whats New in Rel 4.8]
+
+	Key Item	: "Import Enhancements"		: I	: Menu	: TSPL Smp Import Enhancements	: NOT $$IsEmpty:$$SelectedCmps
+	Key Item	: "Event Enhancements"		: E : Menu	: TSPL Smp Event Enhancements	: NOT $$IsEmpty:$$SelectedCmps
+	Key Item	: "Action Enhancements"		: A : Menu	: TSPL Smp Action Enhancements	: NOT $$IsEmpty:$$SelectedCmps
+
+;; Include Files
+
+[Include: Import Enhancements\Import Enhancements.txt]
+[Include: Event Enhancements\Event Enhancements.txt]
+[Include: Action Enhancements\Action Enhancements.txt]
+
+;; End-of-File

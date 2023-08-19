@@ -1,0 +1,37 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s):-
+	- To display the appropriate MessageBox when the desired report is loaded
+	- To understand the event 'Load' at the report level
+
+Capabilities Used:-
+	- Event 'On load'
+
+Syntax -
+	- On : <Event>	: <Logical Condition> : <Action>	: <Action Parameters>
+	- On : Load		: <Logical Condition> : <Action>	: <Action Parameters>
+
+Updaion History:-
+	- Created on 14-02-2014
+*/
+
+[Report: TSPL Smp Evnt Report Load]
+
+	Use		: Profit and Loss
+	Form	: Profit and Loss
+
+;; Calling a function on the loading of the report using the event 'On Load'
+	On		: Load			: Yes		:	Call : TSPL Smp Evnt In Loss
+		
+[Function: TSPL Smp Evnt In Loss]
+
+;;Local Formula to check the closing balance of Profit & Loss ledger
+	Local Formula: ClosingProfitandLoss		: $ClosingBalance:Ledger:$$LedgerProfit
+;;Local Formula to check if the company is in profit or loss
+	Local formula: IsProfit					: if $$IsDebit:@ClosingProfitandLoss then "Loss" else "Profit"
+	Local Formula: StrClosingProfitandLoss	: $$String:@ClosingProfitandLoss
+;;Displaying the appropriate profit or loss message according to the closing balance 
+	00: Msg Box	: "Alert!"	: "We have incurred a " + @IsProfit + " to the tune of " + ($CurrencyName:Company:##SVCurrentCompany) + " " + @StrClosingProfitandLoss
+
+;; End-of-File

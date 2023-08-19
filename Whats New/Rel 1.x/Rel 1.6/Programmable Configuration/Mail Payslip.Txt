@@ -1,0 +1,66 @@
+;; Function For E-mailing Report
+
+/*
+Objective(s) -
+-	This code demonstrates the advanced programmable configuration report
+-	Payslips of all the Employees are emailed to the respective Email IDs updated in the
+	Employee master.
+-	Configuration is asked only once to begin with.
+
+Syntax -
+-	There is an enhancement in syntax of Print, Export, Upload and Mail Actions
+-	They are changed to accept an additional logical parameter.
+	-	If set to Yes, then these actions get carried out silently.
+	-	If set to No, the behavior is similar to previous wherein the configuration screen
+		is displayed to accept various parameters
+-	<Action>	: <Report Name>	: <Logical Value>
+-	E.g., Mail	: Trial Balance	: Yes which means all the required configurations like
+	SMTP Details, From Address, etc. are set sequentially within the Function before requesting
+	for this action.
+
+Last Modification -
+-	Altered on 23-01-2010
+*/
+
+[Function: Smp Mail Payslip]
+
+	Variable	: CostCentreName	: String
+	Variable	: Counter			: Number
+
+	00	: ALTER	: Smp Email Configuration
+
+[Report: Smp Email Configuration]
+
+	Use		: Email Configuration
+	Form	: Email Configuration
+	Local	: Form	: Email Configuration	: On	: Form Accept	: Yes	: CALL	: Smp Start Mailing Payslip
+
+[Function: Smp Start Mailing Payslip]
+
+	00	: SET FILE LOG ON
+	01	: LOG	: "Process started at " + $$SysInfo:SystemTimeHMS
+	02	: SET   : SVFromDate    	: $$MonthStart:##SVCurrentDate
+	10	: SET   : SVToDate      	: $$MonthEnd:##SVCurrentDate
+
+	20	: WALK COLLECTION 	: Employees
+	30	: 	SET		: CostCentreName 	: $Name
+	40	: 	SET		: SVMailEmbedImage	: Yes
+	60	: 	SET		: SVPrintFileName	: $$MakeMailName:$EmailId:##SVMailServer:##SVMailFromAddress:"":"Your Payslip":"":"":FALSE
+
+;; Action	: SET	: Variable : Functionname:ToAddress:SMTP Sever name:From Address:CC Address:Subject:Username:Password:Use SSL
+;; Note Username and password is required only if Use SSL is set to True else ""
+
+	70	: 	MAIL 		: Payslip 			: TRUE ;; TRUE to suppress the configuration report
+	80	:	IF			: $$IsEmpty:$EmailID
+	90	:		MSGBOX	: "Error !!!"	: ("Email is not sent to " + $Name + " as EMailID is not available in Employee Master") : YES
+	95	:		LOG		: "Mail not sent to " + $Name
+	100	:	ELSE		: 
+	110	: 		INCREMENT	: Counter
+	200	:	ENDIF
+	210	: END WALK
+	220	: MSGBOX	: "Success !!!"	: ($$String:##Counter + " mails has been sent") : YES
+	230	: LOG		: "Process completed at " + $$SysInfo:SystemTimeHMS
+	240	: SET FILE LOG ON
+	250	: EXEC COMMAND	: "TDLFunc.LOG"
+
+;; End of File

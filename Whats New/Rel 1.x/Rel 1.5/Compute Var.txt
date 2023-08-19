@@ -1,0 +1,78 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This code demonstrates the Compute Var Enhancement
+-	With Compute Var, we can introduce a variable within Collection which
+	can access the Methods of the Objects within the current Collection 
+	irrespective of being a Source or Summary Collection
+-	These variables can be used for computation and filtering purposes 
+	within the Collection.  The scope of these variables are within the 
+	Collection only.
+-	This Report prints the Group Trial Balance. By using Compute Var, we 
+	are retaining the Group Name and while calculating the total balance 
+	of ledgers under this Group, we are using the same variable under 
+	Child Of Attribute of Ledger Collection.
+
+Last modification – 
+-	Altered on 09/11/2009
+*/
+
+[Report: Compute Var]
+
+	Form 	: Compute Var
+
+[Form: Compute Var]
+
+	Part 	: Compute Var
+	Width	: 100% Page
+
+[Part: Compute Var]
+
+	Lines			: Compute Var Title, Compute Var
+	Repeat 			: Compute Var	: Compute Var Coll
+	Scroll			: Vertical
+	Common Border	: Yes
+
+	[Line: Compute Var Title]
+
+		Use			: Compute Var
+		Local: Field: Default		: Style	: Normal Bold
+		Local: Field: Default		: Align	: Center
+		Local: Field: Default		: Type	: String
+
+		Local: Field: Compute Var1	: Set As: "Particulars"
+		Local: Field: Compute Var2	: Set As: "Amount"
+		Border		: Thin Top Bottom
+
+	[Line: Compute Var]
+
+		Fields		: Compute Var1
+		Right Fields: Compute Var2
+
+		[Field: Compute Var1]
+
+			Use 	: Name Field
+			Set as 	: $Name
+
+		[Field: Compute Var2]
+
+			Use 	: Amount Field
+			Set as 	: $MyAmt
+			Format	: "DrCr"
+			Border	: Thin Left
+
+[Collection: Compute Var Coll]
+
+	Type 		: Group
+	Fetch 		: Name
+	Compute 	: MyAmt 		: $$CollAmtTotal:ComputeVarSubColl:$OpeningBalance
+	Compute Var : MyNewVariable : String 	: $Name
+
+[Collection: Compute Var Sub Coll]
+
+	Type 		: Ledger
+	Child Of 	: ##MyNewVariable
+	Fetch 		: Name, OpeningBalance
+
+;; End-of-File

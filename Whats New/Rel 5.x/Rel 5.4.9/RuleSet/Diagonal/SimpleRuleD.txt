@@ -1,0 +1,98 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) - 
+-	The objective of this program is to demonstrate the usage of Rule Set in the simplest way
+
+Syntax -
+
+[Rule Set: <RuleSetName>]
+     
+    Rule	: <RuleName> 		: <LogicalExpression>[:<LogicalValue>]
+	RuleSet: <Rule Definition>	[:<List Of Rule Identifier from Current Rule Set>[:<List Of Rule Identifier from Next Rule Set>]]
+	
+where,
+	Rule name 			: This is developer defined
+	LogicalExpression	: Any expression to be evaluted in context of requestor / source / target object being passed
+	Logical Value 		: A constant value providing BreakOn condition. This is an optional parameter. 
+						 If this parameter is not specified it will inherit the BreakOn attribute value
+
+Last modification - 
+-	Created on 28/11/2016
+
+*/
+
+[Report: TSPL Smp SimpleRuleD]
+		
+	Form		: TSPL Smp SimpleRuleD
+	Title		: "Simple Rule Set"
+
+[Form: TSPL Smp SimpleRuleD]
+	
+	Use			: TSPL SMP Illustration
+	Part		: TSPL Smp SimpleRuleD
+
+	Local		: Field	: FormSubTitle		: Info		: "Illustration for attribute Rule & Function EvaluateRuleSet"
+	Local		: Field	: TSPL Smp Purpose	: Info		: "     Attribute Rule is a Triple List attribute at Rule Set definition"
+	Local		: Field	: TSPL Smp Syntax	: Info		: "[Rule Set : <RuleName>]" + 
+			+ $$NewLine + "         Rule      : <Rule Name> : <LogicalExpression> [: <LogicalValue>]" + 
+			+ $$NewLine + "         RuleSet : <Rule Set Definition> : <ListofRuleNameIdentifierCurrentLevel>:<ListOfRuleNameIdentifierNextLevel>" + 
+			+ $$NewLine + "where," + $$NewLine + "   Rule Name is a TDL identifier for the rule, which " +
+			+ "can be used for access the rule later" + $$NewLine + "   Logical Expression can be any expresion " + 
+			+ "that can be evaluated in the context of requestor / source / target object being passed "+
+			+ "from evaluation context." + $$NewLine + "   Logical Value is a constant value providing BreakOn " +
+			+ "condition. This is an optional parameter. If this parameter is not specified it will inherit " + 
+			+ "the BreakOn attribute value" + $$NewLine + "    Rule Set Definition triggers to another Rule definition to perform further evaluation" + 
+			+ $$NewLine + "$$EvaluateRuleSet:<RuleSetName>" + 
+			+ $$NewLine + "This function is required to return a Flagset constructed with flags and " +
+			+ "dimensions as per the Rule set definition provided and evaluated on the current contexts " +
+			+ "(Requestor, Object)"
+	
+[Part: TSPL Smp SimpleRuleD]
+	
+	Line			: TSPL Smp SimpleRuleT,TSPL Smp SimpleRuleDB
+	Repeat			: TSPL Smp SimpleRuleDB	: TSPL SimpleRulesD
+	Scroll			: Vertical
+	CommonBorders	: Yes
+	
+	[Line: TSPL Smp SimpleRuleDB]
+		
+		Field		: TSPL Smp SrNo, TSPL Smp SRName
+		RightField	: TSPL Smp SRCompute
+		Local: Field: TSPL Smp SRCompute	: Set as	: @@TSPLChildValues
+		
+[System: Formulae]
+	
+	TSPLChildValues	: IF ($$FlagsIsAllTrue:R1:$EvalRSValue:Yes) = Yes Then "This contains State as Karnataka and does not contain bill details" +
+					  Else "Validations failed"
+
+;; Collection
+
+[Collection: TSPL SimpleRulesD]
+ 
+    Source Collection   : Ledger
+    Fetch               : Name, Parent, IsBillWiseOn, OpeningBalance, LedgerContact, LedgerPhone
+;; The same code could be written with multiple Compute Var. With Rule set introduction
+;; we have written just one compute var and one compute for final result.
+    Compute Var         : cvEvalRSValue     : FlagSet    : $$EvaluateRuleSet:TSPLSimpleRulesD
+	Compute             : EvalRSValue       : ##cvEvalRSValue
+ 
+[Rule Set: TSPL SimpleRulesD]
+     
+	Rule        : R1    : @IsLedOfGrpDebtors        : Never
+    Rule        : R2    : $IsBillWiseOn
+ 
+    LocalFormula: IsLedOfGrpDebtors      : ($$IsLedOfGrp:$Name:$$GroupSundryDebtors)
+    LocalFormula: IsSubGroupofDebtors    : @IsLedOfGrpDebtors AND NOT ($Parent = $$GroupSundryDebtors)
+ 
+    Rule Set    : TSPL SimpleRuleWalk	: R1	: R3, R4
+	
+[Rule Set: TSPL SimpleRuleWalk]
+	
+	Rule        : R3                : @IsLedStateKA
+    Rule        : R4                : @IsLedBillsEmpty
+         
+    LocalFormula: IsLedStateKA      : $LedStateName = "Karnataka"
+    LocalFormula: IsLedBillsEmpty   : $$NumItems:BillAllocations = 0
+
+;; End-of-file

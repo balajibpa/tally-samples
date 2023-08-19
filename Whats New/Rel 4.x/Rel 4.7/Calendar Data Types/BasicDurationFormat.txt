@@ -1,0 +1,193 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This code demonstrates the output capabilities of Duration data type.
+- 	Duration gives output as 24 days,23 weeks,5 years,5 months and 29 days etc
+
+- Default Functionality
+
+	1) In Duration data type if nothing is specified then it is taken as days
+	2) Negative Duration is not supported
+	
+- Input Formats allowed i.e. for Attribute Format at Field
+
+	Year/Years/Yr/Yrs 			>> This displays duration in years
+	Month/Months				>> This displays duration in months
+	Day/Days/Dys				>> This displays duration in days
+	Week/Weeks/Weak/Wks			>> This displays duration in weeks
+	Hour/Hours/Hr/Hrs			>> This displays duration in Hours
+	Minutes/Mins/Min/Minute		>> This displays duration in Minutes
+	Second/Seconds/Sec/Secs		>> This displays duration in Seconds
+	YMD							>> This displays duration in years, months and days
+	HMS							>> This displays duration in hours, minutes and seconds
+
+-Supported Functions
+
+	$$Duration - This function is used to convert a time specified in 
+			     string format into the "Duration" data type.
+			 
+-Operational Functions
+
+	$$GetEndDateTime
+	$$GetStartDateTime
+	$$Get Duration
+	$$AddDuration
+	$$SubDuration
+
+Last modification -
+-	Altered on 18-09-2013
+*/
+
+[Report: TSPL Smp CDT Duration Format]
+	
+	Title	: "Duration Formats"
+	Form  	: TSPL Smp CDT Duration Format
+		
+[Form	: TSPL Smp CDT Duration Format]
+	
+	Part	: Form SubTitle, TSPL Smp CDT Duration Format
+	Local   : Field : Form Sub Title: Info 			: "This report displays various output capabilities of Duration Datatype."
+	Local	: Field : Form Subtitle	: Lines			: 0
+	Local	: Field : Form Subtitle	: Width			: 100% Page
+
+[Part : TSPL Smp CDT Duration Format]
+		
+	Line	: TSPL Smp CDT DurInput, TSPL Smp CDT DurOutInYrs, TSPL Smp CDT DurOutInMnths, TSPL Smp CDT DurOutInWks, TSPL Smp CDT DurOutInDys, + 
+			  TSPL Smp CDT DurOutInHrs, TSPL Smp CDT DurOutInDysHrs, TSPL Smp CDT DurOutInMins, TSPL Smp CDT DurOutInSecs, + 
+			  TSPL Smp CDT DurOutInYMD, TSPL Smp CDT DurOutInHMS, TSPL Smp CDT DurOutInYMDHMS
+	
+	Local	: Line		: Default					: Space Bottom	: 0.75	
+	Local	: Field		: Default					: Style			: Normal
+	Local	: Field		: Default					: Width			: 60% Page
+	Local	: Field		: Default					: Delete		: Tooltip
+	Local	: Field		: Default					: Skip			: Yes
+	Local	: Field		: Medium Prompt				: Width			: 40% Page
+	Local	: Field		: TSPL Smp CDT DurInputVal	: Tooltip		: "Enter the duration in Years, days, months, etc. Default unit is seconds."
+	Local	: Field		: TSPL Smp CDT DurInputVal	: Skip			: No
+	
+	[Line: TSPL Smp CDT DurInput]
+	
+		Fields  	: Medium Prompt, TSPL Smp CDT DurInputVal
+		Local		: Field		: Medium Prompt	: Info	: "Enter a Duration Value :"
+		Space Top	: 1
+		
+		[Field : TSPL Smp CDT DurInputVal]
+			
+			Use			: Name Field
+			Type   		: Duration
+			Format 		: "YMD, HMS"
+			Set Always  : Yes
+			Set as		: #TSPLSmpCDTDurInputVal
+		
+	[Line : TSPL Smp CDT DurOutInYrs]
+		
+		Fields 		: Medium Prompt, TSPL Smp CDT DurOutVal InYrs
+		Local		: Field		: Medium Prompt	: Info	: "Duration in Years :"
+		
+		[Field : TSPL Smp CDT DurOutVal InYrs]
+			
+			Use			: TSPL Smp CDT DurInputVal
+			Format 		: "Years"
+									
+	[Line : TSPL Smp CDT DurOutInMnths]
+		
+		Fields 		: Medium Prompt, TSPL Smp CDT DurOutVal InMnths
+		Local		: Field		: Medium Prompt	: Info	: "Duration in Months :"
+		
+		[Field : TSPL Smp CDT DurOutVal InMnths]
+			
+			Use			: TSPL Smp CDT DurInputVal
+			Format 		: "Months"
+
+	[Line : TSPL Smp CDT DurOutInWks]
+	
+		Fields 		: Medium Prompt, TSPL Smp CDT DurOutVal InWks
+		Local		: Field		: Medium Prompt	: Info	: "Duration in Weeks :"
+
+		[Field : TSPL Smp CDT DurOutVal InWks]
+			
+			Use			: TSPL Smp CDT DurInputVal
+			Format 		: "Weeks"
+			
+	[Line : TSPL Smp CDT DurOutInDys]
+		
+		Fields 		: Medium Prompt, TSPL Smp CDT DurOutVal InDys
+		Local		: Field		: Medium Prompt	: Info	: "Duration in Days :"
+		
+		[Field : TSPL Smp CDT DurOutVal InDys]
+			
+			Use			: TSPL Smp CDT DurInputVal
+			Format 		: "Days"
+	
+	[Line : TSPL Smp CDT DurOutInHrs]
+		
+		Fields 		: Medium Prompt, TSPL Smp CDT DurOutVal InHrs
+		Local		: Field		: Medium Prompt	: Info	: "Duration in Hours :"
+		
+		[Field : TSPL Smp CDT DurOutVal InHrs]
+			
+			Use			: TSPL Smp CDT DurInputVal
+			Format 		: "Hours"
+			
+	[Line : TSPL Smp CDT DurOutInDysHrs]
+		
+		Fields 		: Medium Prompt, TSPL Smp CDT DurOutVal InDysHrs
+		Local		: Field		: Medium Prompt	: Info	: "Duration in Days and Hours :"
+		
+		[Field : TSPL Smp CDT DurOutVal InDysHrs]
+			
+			Use			: TSPL Smp CDT DurInputVal
+			Format 		: "Days, Hours"
+
+	[Line : TSPL Smp CDT DurOutInMins]
+		
+		Fields 		: Medium Prompt, TSPL Smp CDT DurOutVal InMins
+		Local		: Field		: Medium Prompt	: Info	: "Duration in Minutes :"
+
+		[Field : TSPL Smp CDT DurOutVal InMins]
+			
+			Use			: TSPL Smp CDT DurInputVal
+			Format 		: "Minutes"
+			
+	[Line : TSPL Smp CDT DurOutInSecs]
+		
+		Fields 		: Medium Prompt, TSPL Smp CDT DurOutVal InSecs
+		Local		: Field		: Medium Prompt	: Info	: "Duration in Seconds :"
+		
+		[Field : TSPL Smp CDT DurOutVal InSecs]
+			
+			Use			: TSPL Smp CDT DurInputVal
+			Format 		: "Seconds"
+
+	[Line : TSPL Smp CDT DurOutInYMD]
+		
+		Fields 		: Medium Prompt,  TSPL Smp CDT DurOutVal InYMD
+		Local		: Field		: Medium Prompt	: Info	: "Duration in Years, Months and Days :"
+		
+		[Field : TSPL Smp CDT DurOutVal InYMD]
+			
+			Use			: TSPL Smp CDT DurInputVal
+			Format 		: "YMD"
+			
+	[Line : TSPL Smp CDT DurOutInHMS]
+		
+		Fields 		: Medium Prompt, TSPL Smp CDT DurOutVal InHMS
+		Local		: Field		: Medium Prompt	: Info	: "Duration in Hours, Minutes and Seconds"		
+		
+		[Field : TSPL Smp CDT DurOutVal InHMS]
+			
+			Use			: TSPL Smp CDT DurInputVal
+			Format 		: "HMS"
+
+	[Line : TSPL Smp CDT DurOutInYMDHMS]
+		
+		Fields 		: Medium Prompt, TSPL Smp CDT DurOutVal InYMDHMS
+		Local		: Field		: Medium Prompt	: Info	: "Duration in Years, Months, Days, Hours, Minutes and Seconds"
+	
+		[Field : TSPL Smp CDT DurOutVal InYMDHMS]
+			
+			Use			: TSPL Smp CDT DurInputVal
+			Format 		: "YMD,HMS"
+
+;; End-of-File

@@ -1,0 +1,15 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Menu: Whats New in Rel 5.5.2]
+
+	Indent		: "Collection Enhancements"
+	Item		: Blank
+	Key Item	: "Data Source - FlagSet" 			: F : Display Collection	: FlagSetDataSource	: NOT $$IsEmpty:$$SelectedCmps
+	Key Item	: "Data Source - NumSet" 			: N : Display Collection	: NumSetDataSource		: NOT $$IsEmpty:$$SelectedCmps	
+	Key Item	: "Data Source - Rule Set"			: R : Display Collection	: RuleSetDataSource	: NOT $$IsEmpty:$$SelectedCmps
+
+[Include: .\FlagSetAsDataSource.txt]
+[Include: .\NumSetAsDataSource.txt]
+[Include: .\RuleSetAsDataSource.txt]
+
+;; End-of-File

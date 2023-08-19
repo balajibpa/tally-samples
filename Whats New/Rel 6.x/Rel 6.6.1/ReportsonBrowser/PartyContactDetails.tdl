@@ -1,0 +1,262 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+
+Objective(s) 
+- 	This code demonstrates how to make a customized report on the browser. A TDL Object helps to make this
+-	report available on browser. Once the object is defined, use the object in a predefined collection called
+-	List of Custom Browser Reports. By using the predefined methods in the object you can bring each customised
+-	report that you need to display on the browser. similarly this code demonstrates the usage of the new 
+-	functions $$InBrowserExport and $$InMobileBrowserExport
+
+Syntax
+$$InBrowserExport
+
+-	Use the function $$InBrowserExport to check if the report is being displayed in the browser or not. 
+-	This function will return True when the report is being accessed in the browser. Based on this you may 
+-	have to do some specific changes in the report when it is being displayed in the browser.
+
+$$InMobileBrowserExport
+
+-	Use the function $$InMobileBrowserExport to check if the report is being displayed in a mobile browser.
+-	It returns true if the report is being accessed in the mobile browser.
+
+Last modification 
+-	Altered on 27/04/2020
+
+*/
+
+[Report: TSPL Smp Party Details]
+	
+	Option			: TSPL Smp Party Details Illustration	: not $$InBrowserExport and not $$InMobileBrowserExport
+	Option			: TSPL Smp Party Contact Details		: $$InBrowserExport and $$InMobileBrowserExport
+	
+[!Report: TSPL Smp Party Details Illustration]
+	
+	Title			: $$LocaleString:"View Your Report on Browser"
+	Form			: TSPL Smp Party Details Illustration
+	
+[Form: TSPL Smp Party Details Illustration]
+	
+	Use				: TSPL SMP Illustration
+		
+	Height			: 100% Screen
+	Width			: 100% Screen
+	
+	Buttons	: TSPL Smp Party Contact Details
+	
+	
+	Local	: Part	: TSPL Smp ExampleExecution	: Delete: Line:	Empty
+	Local   : Part	: TSPL SMP Illustration 	: Add: Part			: TSPL SMP ExampleExecution
+	Local	: Part	: TSPL SMP ExampleExecution : Add: Line: At End	: TSPL Smp Function InBrowserExport
+	Local	: Part	: TSPL SMP ExampleExecution : Add: Line: At End	: TSPL Smp Function InMobileBrowserExport
+	Local	: Part	: TSPL SMP ExampleExecution : Add: Line: At End	: TSPL Smp Function InBrowserPeriodChange
+	Local	: Part	: TSPL SMP ExampleExecution : Add: Line: At End	: TSPL Smp Attribute DatePickerType
+
+	Local	: Field	: FormSubTitle		: Info		: $$LocaleString:"Illustration for Viewing Your Customization On Browser"
+	
+	Local	: Field	: TSPL Smp Purpose	: Indent	: 2
+	Local	: Field	: TSPL Smp Purpose	: Info		: $$LocaleString:"To create a report to display the contact details report of all the party ledgers and make this report available on the browser."+
+													+ $$LocaleString:"This can be achieved by an inbuilt Collection which is created to hold a set of default reports in Tally.ERP 9 which displays it in the browser."
+				
+	Local	: Field	: TSPL Smp Syntax	: Indent	: 2
+	Local	: Field	: TSPL Smp Syntax	: Info		: $$LocaleString:"[Object : <Object Name>]"+
+														+$$NewLine+"		Name 			             : <Display Element Name> " + 
+														+$$NewLine+"		IsCollection          : <Logical Value>"   +
+														+$$NewLine+"		Definition Name    : <Report Name or Collection Name>"  +
+														+$$NewLine+"		IsAccessAvailable : <Conditional Expression>" +  
+														+$$NewLine+"		IsFeatureEnabled  : <Conditional Expression>" 													
+	Local	: Field	: TSPL SMP Example	: Indent	: 2
+			
+	Local	: Field	: TSPL SMP Example	: Info		: $$LocaleString:"[Object: TSPL Party Contact Details]"+
+														+$$NewLine+"    	Name                    : 'Party Contact Details'"+
+														+$$NewLine+"    	IsCollection            : False "    +
+														+$$NewLine+"    	DefinitioName        : 'TSPL Party Contact Details' "    +
+														+$$NewLine+"    	IsAccessAvailable  : $$Allow:Display:AccountsMasters"    +
+														+$$NewLine+"    	IsFeatureEnabled   : $$IsAccountingOn or $$IsInventoryOn" +  
+														+$$NewLine+$$LocaleString:"When you access this report on browser the value of the Name will be displayed with the report list."+
+														+$$LocaleString:"Once you try to access that the report TSPL Party Contact Details will be called from Tally.ERP 9 and displayed on the browser."
+
+			
+	Local	: Line 	: TSPL SMP Example			: Space Bottom	: 1
+	
+	Local	: Field	: TSPL SMP ExampleNote		: Info	: $$LocaleString:"(The sample data 'ABC Company Ltd' is available in Samples folder within Tally.Developer 9."++
+																		"To know more about this enhancement visit www.help.tallysolutions.com\DeveloperReference"
+	
+	Local	: Field: TSPL SMP ExampleExecTitle	: Info: "TDL Enhacements in Release 6.6.1"
+	
+	[Line: TSPL Smp Function InBrowserExport]
+
+			Field     : Medium Prompt, Simple Field
+            Local     : Field    : Medium Prompt    : Set as  : $$LocaleString:"$$InBrowserExport"
+			Local     : Field    : Medium Prompt    : Width   : 15% Screen
+			Local     : Field    : Simple Field     : Line    : 0
+			Local     : Field    : Simple Field     : Width   : 85% Screen
+			Local     : Field    : Simple Field     : Set as  : "Use the function $$InBrowserExport to check if the report is being displayed in the browser or not. This function will return True when the report is being accessed in the browser." ++
+                                                                "Based on this you may have to do some specific changes in the report when it is being displayed in the browser." 
+																
+	[Line: TSPL Smp Function InMobileBrowserExport]
+
+			Field     : Medium Prompt, Simple Field
+            Local     : Field    : Medium Prompt    : Set as  : $$LocaleString:"$$InMobileBrowserExport"
+			Local     : Field    : Medium Prompt    : Width   : 15% Screen
+			Local     : Field    : Simple Field     : Line    : 0
+			Local     : Field    : Simple Field     : Width   : 85% Screen
+			Local     : Field    : Simple Field     : Set as  : "Use the function $$InMobileBrowserExport to check if the report is being displayed in a mobile browser. It returns true if the report is being accessed in the mobile browser."											
+			
+	[Line: TSPL Smp Function InBrowserPeriodChange]
+
+			Field     : Medium Prompt, Simple Field
+            Local     : Field    : Medium Prompt    : Set as  : $$LocaleString:"$$InBrowserPeriodChange"
+			Local     : Field    : Medium Prompt    : Width   : 15% Screen
+			Local     : Field    : Simple Field     : Line    : 0
+			Local     : Field    : Simple Field     : Width   : 85% Screen
+			Local     : Field    : Simple Field     : Set as  : "Use the function $$InBrowserPeriodChange You can use the function $$InBrowserPeriodChange to check if the report is being displayed in the browser after changing the period of the report."
+			
+	[Line: TSPL Smp Attribute DatePickerType]
+
+			Field     : Medium Prompt, Simple Field
+            Local     : Field    : Medium Prompt    : Set as  : $$LocaleString:"Date Picker Type"
+			Local     : Field    : Medium Prompt    : Width   : 15% Screen
+			Local     : Field    : Simple Field     : Line    : 0
+			Local     : Field    : Simple Field     : Width   : 85% Screen
+			Local     : Field    : Simple Field     : Set as  : "You can use the new attribute Date Picker Type under Report "++
+																"definition to specify the type of date picker required in the report "++
+																"that is being displayed in the browser. This attribute accepts the values Range,Day or None."
+																
+	
+			
+[Button: TSPL Smp Party Contact Details]
+	
+	Title			: $$LocaleString:"Party Details"
+	
+;;The button Alt+P has been used in default code of TallyPrime
+	Key				: Alt + R
+	Action: Display	: TSPL Smp Party Contact Details	
+	
+[!Report: TSPL Smp Party Contact Details]
+
+	Title			: $$LocaleString:"Party Contact Details"
+	Form			: TSPL Smp Party Contact Details
+	
+	/*You can use the new attribute Date Picker Type under Report definition to specify the type of date picker
+	required in the report that is being displayed in the browser. This attribute accepts the values Range,
+	Day or None.*/
+	
+	Date Picker Type: None
+	
+[Form: TSPL Smp Party Contact Details]
+	
+	Add		: Part	: TSPL Smp Party Contact Details
+	Button			: Print Button
+	Full Height 	: Yes
+	Full Width		: Yes
+	
+[Part: TSPL Smp PartyContactDetails]
+	
+	Lines			: TSPLPartyContactDetailsTitle, TSPLPartyContactDetails
+	Repeat			: TSPLPartyContactDetails	: TSPLPartyContactDetailsColl
+	Common Border	: Yes
+	Scroll			: Vertical
+	Border			: Thin Bottom
+	
+	[Line: TSPLPartyContactDetailsTitle]
+		
+		Use				: TSPLPartyContactDetails
+		Local 	: Field	: TSPLPartyContactDetSlNo		: Set as	: "Sl. No."
+		Local 	: Field	: TSPLPartyContactDetCmp		: Set as	: "Name of the Party"
+		Local	: Field	: TSPLPartyContactDetName		: Set as	: "Contact Person"
+		Local	: Field	: TSPLPartyContactDetEmail		: Set as	: "E-mail ID"	
+		Local	: Field	: TSPLPartyContactDetPhone		: Set as	: "Phone Number"		
+		Local	: Field	: TSPLPartyContactDetAddress	: Set as	: "Address"
+		Local	: Field	: Default						: Style		: Normal Bold
+		Local	: Field	: Default						: Delete	: Border
+		Border			: Thin Top Bottom
+		
+	[Line: TSPLPartyContactDetails]
+		
+		Fields			: TSPLPartyContactDetSlNo, TSPLPartyContactDetCmp, TSPLPartyContactDetName, TSPLPartyContactDetEmail, TSPLPartyContactDetPhone, TSPLPartyContactDetAddress 
+	
+						
+		[Field: TSPLPartyContactDetSlNo]
+			
+			Set as		: $$Line
+			Align		: Centre
+			Width		: 7
+									
+		[Field: TSPLPartyContactDetCmp]
+			
+			Set as		: $MailingName
+			Border		: Thin Left
+			Style		: Normal
+			Align		: Left
+			Width		: 30
+				
+		[Field: TSPLPartyContactDetName]
+			
+			Set as		: $LedgerContact
+			Border		: Thin Left
+			Width		: 20
+			Align		: Left
+					
+		[Field: TSPLPartyContactDetEmail]
+			
+			Set as		: $Email
+			Border		: Thin Left
+			Width		: 20
+			Align		: Left
+						
+		[Field: TSPLPartyContactDetPhone]
+			
+			Set as		: $LedgerPhone
+			Border		: Thin Left	
+			Width		: 15
+			Align		: Left
+			
+		[Field: TSPLPartyContactDetAddress]
+			
+			Set as		: $$FullList:Address:$Address
+			Border		: Thin Left
+			;;Width		: 80
+			Full Width	: Yes
+			Align		: Left
+			                                           
+	
+[Collection: TSPLPartyContactDetailsColl]
+	
+	Type				: Ledger
+	Child Of			: $$GroupSundryDebtors
+	
+;;Any objects under this collection will be listed in the browser reports
+
+
+[#Collection: List of Custom Browser Reports]
+     
+   Add	: Object		: TSPL Party Contact Details
+    
+[Object: TSPL Party Contact Details]
+    
+;;The method name accepts the name of the report to be displayed in the browser report list
+	
+    Name            	: "Customized Report - Party Contact Details" 
+	
+;; The value of this method can be True or False. If the value is True, the report will get displayed via a collection 
+;; otherwise the report will open directly
+
+    IsCollection    	: False
+	
+;; If the value of the method IsCollection is true then it accetps collection name and if the value of the method 
+;; IsCollection is false then it accepts report name.
+
+    Definition Name     : "TSPL Smp Party Contact Details" 
+	
+;; It specifies the condition to make the report available on the browser based on the security settings.
+
+    IsAccessAvailable 	: $$Allow:Display:AccountsMasters
+	
+;; It specifies the condition to make the report available based on the F11 features.	
+
+    IsFeatureEnabled   	: $$IsAccountingOn or $$IsInventoryOn
+	
+                                        
+;; End-of-File

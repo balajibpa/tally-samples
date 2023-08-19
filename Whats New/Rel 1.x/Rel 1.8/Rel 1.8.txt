@@ -1,0 +1,25 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Menu for Whats New in Rel 1.8
+*/
+
+[Menu: Whats New in Rel 1.8]
+
+	Key Item: "Event Framework"				: E : Menu	: Event Framework for 1.8
+	Key Item: "Collection Enhancements"		: C : Menu	: Collection Enhancements for 1.8
+	Key Item: "DLL Support in Tally"		: D	: Menu	: DLL Samples
+	Key Item: "Context Changing Functions" 	: O : Menu	: Context Changing Functions
+	Key Item: "Variable Framework"		 	: V : Menu	: List Variables
+	Key Item: "Licensing Binding Mechanism"	: L : Menu	: Licensing Binding Mechanism
+
+;; Include Files
+
+[Include: Event Framework\Event Framework.txt]
+[Include: Collection Enhancements\Collection Enhancements.txt]
+[Include: DLL Support in Tally\DLL Support in Tally.txt]
+[Include: Context Changing Functions\Context Changing Functions.txt]
+[Include: Variable Framework\List Variables.txt]
+[Include: Licensing Binding Mechanism\Licensing Binding Mechanism.txt]
+
+;; End-of-File

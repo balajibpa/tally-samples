@@ -1,0 +1,62 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	The objective of this program is to demonstrate the usage of Columnar Repeat in Productivity Suite
+-	Form Attribute Repeat is used to repeat as columns, the Token over the Objects within the Collection
+- 	Function TPLColumnObject is used to evaluate the parameter in the context of Column Objects repeated using
+Form Attribute Repeat, used only in Productivity Suite
+
+Syntax -
+$$TPLColumnObject:<Expression>
+
+Last modification – 
+-	Created on 10/01/2016
+*/
+
+[Report: TSPL Smp ColRepSupinSuite]
+	
+	Title	: "Columnar Repeat in Productivity Suite"
+
+	PrintSet: ReportTitle	: "Columnar Repeat in Productivity Suite"
+
+[Form: TSPL Smp ColRepSupinSuite]
+	
+	Resource: TSPL Smp ColRepResource
+	XML Map	: CompanyName	: ##SVCurrentCompany
+
+	XML Map	: LedName		: @@TSPLSmpColRepLedName
+	
+;; Repeat the XML Token over the Objects of the Collection TSPL Smp ColRepLedSDrs
+	Repeat	: LedName		: TSPL Smp ColRepLedSDrs
+
+	XML Map	: OpBal			: @@TSPLSmpColRepOpBal
+	Repeat	: OpBal			: TSPL Smp ColRepLedSDrs
+
+	XML Map	: ClBal			: @@TSPLSmpColRepClBal
+	Repeat	: ClBal			: TSPL Smp ColRepLedSDrs
+	
+[System: Formulae]
+	
+;; Function TPLColumnObject evaluates the parameter Name in the context of the Columnar Object being repeated
+	TSPL Smp ColRepLedName	: $$TPLColumnObject:$Name
+	TSPL Smp ColRepOpBal	: $$TPLColumnObject:$OpeningBalance
+	TSPL Smp ColRepClBal	: $$TPLColumnObject:$ClosingBalance
+
+[Resource: TSPL Smp ColRepResource]
+
+	Source			: "ColLedSDrsRepeat.xml"
+	Resource Type	: WordXML
+
+[Collection: TSPL Smp ColRepLedSDrs]
+	
+	Source Collection	: TSPL Smp ColRepLedSrc
+	Fetch				: Name, OpeningBalance, ClosingBalance
+
+[Collection: TSPL Smp ColRepLedSrc]
+	
+	Type	: Ledger
+	Fetch	: Name, OpeningBalance, ClosingBalance
+	Child Of: $$GroupSundryDebtors
+	
+;; End-of-File

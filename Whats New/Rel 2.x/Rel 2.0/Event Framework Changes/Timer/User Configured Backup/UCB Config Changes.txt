@@ -1,0 +1,194 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+;;This has been removed in default code of TallyPrime
+;[#Menu: Configuration] 	;; Adding a Menu Item to Configure User Configured Backup - F12 -> User Configured Backup
+;
+;	Add	: Key Item	: After	: @@locEMailing	: User Configured Backup : K : Execute 	: TSPL FFE UCB Config
+
+[Report: TSPL FFE UCB Config]
+
+    Title		: $$LocaleString:"Configure Backup"
+    Object  	: BackCmpList
+
+[Form: TSPL FFE UCB Config]
+
+	Use			: System Configuration
+	Delete		: Parts
+	Add			: Parts	: Form SubTitle, TSPL FFE Enable UCB
+	Local: Field: Form SubTitle	: Info	: "Configure Backup"
+
+;; On saving the Form, calling a function to update the selected companies to the persistent List Variables
+	On			: Form Accept	: #TSPLFFEUCBData = "Selected Companies"	: CALL	: TSPL FFE Update List Variables
+
+[Part: TSPL FFE Enable UCB]
+
+	Lines	: TSPL FFE Enable UCB, TSPL FFE UCB Path, TSPL FFE UCB Path Info
+	Lines	: TSPL FFE UCB On, TSPL FFE UCB Data, TSPL FFE UCB Prompt
+
+	[Line: TSPL FFE Enable UCB]
+
+		Field: Long Prompt, TSPL FFE Enable UCB
+		Local: Field: Long Prompt : Info 	: $$LocaleString:"Enable User Configured Backup Feature?"
+
+		[Field: TSPL FFE Enable UCB]
+
+			Use         : Logical Field
+			Modifies    : TSPL FFE EnableUCB	: Yes
+
+	[Line: TSPL FFE UCB Path]
+
+		Field: Long Prompt, TSPL FFE UCB Path
+		Local: Field: Default		: Inactive	: NOT #TSPLFFEEnableUCB
+		Local: Field: Long Prompt 	: Info 		: $$LocaleString:"Destination Path?"
+
+		[Field: TSPL FFE UCB Path]
+
+			Use         : Name Field
+			Modifies    : TSPL FFE DestinationPath
+			Set As		: If $$IsEmpty:##TSPLFFEDestinationPath Then "C:\TallyDataBackup" else ##TSPLFFEDestinationPath
+
+	[Line: TSPL FFE UCB Path Info]
+
+		Fields		: Simple Field
+		Local: Field: Default		: Inactive	: NOT #TSPLFFEEnableUCB
+		Local: Field: Simple Field 	: Info 	 	: $$LocaleString:"(Subfolders for System Date and Time will be created within)"
+		Local: Field: Simple Field 	: Style   	: Small Italic
+		Indent		: 1
+
+	[Line: TSPL FFE UCB On]
+
+		Field: Long Prompt, TSPL FFE UCB On
+		Local: Field: Default		: Inactive	: NOT #TSPLFFEEnableUCB
+		Local: Field: Long Prompt 	: Info 		: $$LocaleString:"Backup On Event?"
+
+		[Field: TSPL FFE UCB On]
+
+			Use         : Name Field
+			Modifies    : TSPL FFE BackupOn
+			Table		: TSPL FFE BackupOn
+			Show Table	: Always 
+
+	[Line: TSPL FFE UCB Data]
+
+		Field: Long Prompt, TSPL FFE UCB Data
+		Local: Field: Default		: Inactive	: NOT #TSPLFFEEnableUCB
+		Local: Field: Long Prompt 	: Info 		: $$LocaleString:"Backup Data ?"
+
+		[Field: TSPL FFE UCB Data]
+
+			Use         : Name Field
+			Modifies    : TSPL FFE BackupData
+			Table		: TSPL FFE BackupData	: #TSPLFFEUCBOn CONTAINS "Company"
+			Table		: TSPL FFE BackupDataAC	: #TSPLFFEUCBOn CONTAINS "Tally Application"
+			Set As		: If $$IsEmpty:##TSPLFFEBackupData Then "All Companies" else ##TSPLFFEBackupData
+			Show Table	: Always
+
+;; Invoke a Sub Form to display list of companies for selection
+			Sub Form	: TSPL FFE SV Backup	: $$Value = "Selected Companies"
+
+	[Line: TSPL FFE UCB Prompt]
+
+		Field: Long Prompt, TSPL FFE UCB Prompt
+		Local: Field: Default		: Inactive	: NOT #TSPLFFEEnableUCB
+		Local: Field: Long Prompt 	: Info 		: $$LocaleString:"Confirmation from user?"
+
+		[Field: TSPL FFE UCB Prompt]
+
+			Use         : Logical Field
+			Modifies    : TSPL FFE UCBPrompt
+			Set As		: If #TSPLFFEUCBOn = "Tally Application End" then No Else If $$IsEmpty:##TSPLFFEUCBPrompt Then Yes else ##TSPLFFEUCBPrompt
+			Set Always	: Yes
+			Skip On		: #TSPLFFEUCBOn = "Tally Application End"
+
+;; Sub Form for List of Companies
+
+[Report: TSPL FFE SV Backup]
+
+	Use		: SV Backup
+	Local	: Form	: SV Backup		: Delete	: On
+	Local	: Part	: Backup Title	: Delete	: Lines		: Backup Destination
+	Local	: Part	: SV Backup		: Set as	: $$ListCount:TSPLFFEBackupCompanies
+	Local	: Field	: Backup Name	: Delete	: Table
+	Local	: Field	: Backup Name	: Add		: Table		: List of All Backup Companies				: $$Line = 1
+	Local	: Field	: Backup Name	: Add		: Table		: List of All Backup Companies, End of List : $$Line > 1
+	Local	: Field	: Backup Name	: Set As	: ##TSPLFFEBackupCompanies[$$Line].Name
+	Local	: Field	: Backup Dest	: Set As	: ##TSPLFFEBackupCompanies[$$Line].Dest
+	Local	: Field	: Backup Src	: Set As	: ##TSPLFFEBackupCompanies[$$Line].Src
+
+;; Function to update List Variables for Backing up Selected Companies
+
+[Function: TSPL FFE Update List Variables]
+
+	00	: LIST DELETE	: TSPL FFE Backup Companies
+	10	: WALKCOLLECTION: BackupCmp
+	20	: 	LIST ADD EX	: TSPL FFE Backup Companies
+	30	: 	SET			: TSPL FFE Backup Companies[$$LoopIndex].Name			: $Name
+	40	: 	SET			: TSPL FFE Backup Companies[$$LoopIndex].CompanyNumber	: $CompanyNumber
+	50	: 	SET			: TSPL FFE Backup Companies[$$LoopIndex].Dest			: $Dest
+	60	: 	SET			: TSPL FFE Backup Companies[$$LoopIndex].Src			: $Src
+	70	: END WALK
+
+;; Table Definition
+
+[Table: TSPL FFE BackupOn]
+
+	List Name	: "Tally Application Start", "Load Company", "Close Company", "Tally Application End"
+	Title		: "Backup On Event"
+
+[Table: TSPL FFE BackupData]
+
+	List Name	: "All Companies", "Current Company", "Selected Companies"
+	Title		: "Backup"
+
+[Table: TSPL FFE BackupDataAC]
+
+	List Name	: "All Companies", "Selected Companies"
+	Title		: "Backup"
+
+;; Variable Definition
+
+[Variable: TSPL FFE EnableUCB]
+
+	Type		: Logical
+	Persistent	: Yes
+
+[Variable: TSPL FFE DestinationPath]
+
+	Type		: String
+	Persistent	: Yes
+
+[Variable: TSPL FFE BackupOn]
+
+	Type		: String
+	Persistent	: Yes
+
+[Variable: TSPL FFE BackupData]
+
+	Type		: String
+	Persistent	: Yes
+
+[Variable: TSPL FFE UCBPrompt]
+
+	Type		: Logical
+	Persistent	: Yes
+
+[Variable: TSPL FFE Backup Companies]
+
+	Variable	: Name			: String
+	Variable	: CompanyNumber	: String
+	Variable	: Dest			: String
+	Variable	: Src			: String
+	Persistent	: Yes
+
+[System: Variable]
+
+	TSPL FFE EnableUCB			: No
+	TSPL FFE DestinationPath	: "C:\TallyDataBackup"
+
+	TSPL FFE BackupOn			: "Tally Application End"
+	TSPL FFE BackupData			: "All Companies"
+	TSPL FFE UCBPrompt			: No
+
+	List Variable				: TSPL FFE Backup Companies
+
+;; End-of-File

@@ -1,0 +1,85 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This code demonstrates the usage of Source Collection as Default.
+
+-	In Edit Mode, we may require the entered data from an Object within
+	the current primary Object as a Source Collection.  Source Collection
+	Default makes the current Object as Source.
+
+-	In a new field above Narration, a Table containing all the Stock Items
+	entered in the List of Stock Items sold is being populated.
+
+Specific TDL feature(s) used –
+-	Current Object as Source
+
+Last modification – 
+-	Altered on 26/10/2009
+
+Dependencies – 
+-	NA
+*/
+
+[Variable: SC Default]
+
+	Type		: Logical
+
+[System: Variable]
+
+	SC Default	: No
+
+[Function: Source Collection Default]
+
+	10	: SET	: SC Default		: Yes
+	20	: SET	: SVVoucherType		: "Sales"
+	30	: SET	: InvoicingModeFlag	: Yes
+	40	: CREATE: Voucher
+	50	: SET	: SC Default		: No
+
+[#Form: VCHBASIC Form]
+
+	Add	: Parts : Before: VCH Title	: Vch User Coll Info
+
+	[Part: Vch User Coll Info]
+	
+		Lines		: Vch User Coll Info
+		Invisible	: NOT ##SCDefault
+	
+		[Line: Vch User Coll Info]
+	
+			Fields	: Simple Field
+			Local	: Field	: Simple Field: Set As		: "On entering Multiple Items, Source Collection Default pops up the same in the Field above Narration"
+			Local	: Field	: Simple Field: Set Always	: Yes
+			Local	: Field	: Simple Field: Skip		: Yes
+			Local	: Field	: Simple Field: Width		: 100% Page
+			Local	: Field	: Simple Field: Style		: Normal Italic
+			Local	: Field	: Simple Field: Align		: Centre
+
+[#Part: DBLLINE Narration]
+
+	Add	: Lines		: Before	: VCH NarrPrompt: SC Default
+
+	[Line: SC Default]
+
+		Left Fields : Simple Prompt, SC Default
+		Local       : Field : Simple Prompt	 : Info   : "Item populated from the above :"
+		Invisible	: NOT ##SCDefault
+
+		[Field: SC Default]
+
+			Use			: Name Field
+			Table		: SCD List of Items
+			Show Table	: Always
+			Dynamic		: ""
+
+[Collection: SCD List of Items]
+
+	Source Collection	: Default	;; Current Primary Object is defaulted to Source
+	Walk				: Inventory Entries
+	By					: SIN		: $StockItemName
+	Format				: $SIN
+	Client Only			: Yes
+	Title				: "List of Items Billed"
+
+;; End-of-File

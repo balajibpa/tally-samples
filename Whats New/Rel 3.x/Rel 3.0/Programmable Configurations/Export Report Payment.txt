@@ -1,0 +1,71 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+-  	To use Report Specific Action 'Export Report' without bringing up the configuration
+screen
+-	Global Actions Print, Export, Upload, Mail were already supported in Rel 1.6.  The 
+same is now extended to report specific actions 'Print Report', 'Mail Report', 'Export 
+Report' and 'Upload Report'
+-	This report exports Payment Voucher on acceptance of the current form.
+
+Capabilities Used -
+- 	Action 'Export Report' with 2 parameters viz., the Report Name and Logical Value
+
+Syntax -
+- 	EXPORT REPORT 	: <Report Name> : <Logical Formula>
+- 	PRINT REPORT 	: <Report Name> : <Logical Formula>
+- 	MAIL REPORT 	: <Report Name> : <Logical Formula>
+- 	UPLOAD REPORT 	: <Report Name> : <Logical Formula>
+
+where Report Name can be any other report or . for current report
+
+For e.g., PRINT REPORT	: . : True
+
+In the above example, the Report Name specified in the Print Attribute of the current 
+Form gets printed and if print attribute is not specified in the current Form, then the 
+current report gets printed.
+
+Updation History -
+- 	Created on 03/02/2011
+*/
+
+[System: Variable]
+	
+	Variable: ProgConfigExport	: Logical
+
+[Report: TSPL Smp List of Pymt Vchs]
+
+	Use		: Daybook
+	Set		: ProgConfigExport	: Yes	;; Differentiates this Report with Default Voucher Entry
+	Local	: Form		: Default		: Add		: Parts	: At Beginning	: TSPL Smp Info
+	Local	: Collection: Default		: Filter	: TSPL Smp Pymt Vchs
+	Local	: Part		: TSPL Smp Info	: Local		: Line	: Info	: Local	: Field	: Info Field	: Info	: "Select a Payment Voucher, re-accept/save it and observe a File getting exported automatically in PDF Format using Action 'Export Report'"
+	Title	: "Enhanced Suppress Configuration - Export Payment Voucher"
+
+[System: Formula]
+	
+	TSPL Smp Pymt Vchs	: $$IsPayment:$VoucherTypeName
+
+[#Form: Payment Color]
+	
+	On	: Form Accept	: ##ProgConfigExport : CALL		: TSPL Smp SC Export Report
+
+;; Function Definition begins
+
+[Function: TSPL Smp SC Export Report]
+
+	Local Formula		: SysDate			: $$SysInfo:SystemDate
+
+	Variable			: FileName			: String
+	
+	00	: SET			: SVExportLocation	: $(AppINIConfig, "AppINIConfig").ExportPath
+	10	: SET			: SVExportFormat	: $$SysName:PDF
+	20	: SET			: FileName			: "Pymt-" + $VoucherNumber + "-" + $$String:@SysDate + ".PDF"
+	30	: SET			: SVPrintFileName	: $$TSPLSmpLastCharExists:##SVExportLocation:##FileName
+	40	: SET			: SVPrintFileName	: $$MakeExportName:##SVPrintFileName:##SVExportFormat
+	50	: EXPORT REPORT	: .					: TRUE
+	60	: MSGBOX		: "Status"			: "Exported the File - " + ##FileName + " at the location - " + ##SVExportLocation
+	70	: SET			: ProgConfigExport	: No
+
+;; End-of-File

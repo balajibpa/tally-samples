@@ -1,0 +1,61 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[#Menu: Gateway of Tally]
+
+Add	: Key Item	: Before : @@locQuit	: Req Object : R : Display	: ReqObject
+
+[Report: ReqObject]
+	Form: My Form
+[Form: My Form]
+	Part: My Part
+[Part: My Part]
+	Line: Led Details
+	Repeat: Led Details: Ledger
+	Scroll	: Vertical
+
+	[Line: Led Details]
+		Field: Led Narr, Led Details
+
+	[Field: Led Narr]
+		Use	: Name Field
+		Set : $Name
+	[Field: Led Details]
+		Use	: Name Field
+		Set as: $LedStockVal
+		
+[#Object: Ledger]
+	LedStockVal: $$FilterQtyTotal:StockItem:NarrFilter:$StkGrpClBal
+
+[System: Formula]
+	NarrFilter  : $$ReqObject:@@ClBal = $Name
+	ClBal		: $Narration + "Kumar"
+;;$Narration
+[#Object: Stock Item]
+	StkGrpClBal:$ClosingBalance:StockGroup:$Parent
+
+;[#Menu: Gateway of Tally]
+;
+;	Item	: Req Object Test	: Display	: Req Object Test
+;
+;[Report: Req Object Test]
+;
+;	Form	: Req Object Test
+;
+;[Form: Req Object Test]
+;
+;	Parts	: Req Object Test
+;
+;[Part: Req Object Test]
+;
+;	Lines	: Req Object Test
+;	Repeat	: Req Object Test	: Ledger
+;	Scroll	: Vertical
+;	ObjectEx: (StockItem, "Assembled PIV").
+;
+;	[Line: Req Object Test]
+;
+;		Fields	: Name Field, Simple Field
+;		Local	: Field	: Name Field	: Set As	: $$FilterValue:$Parent:
+;		Local	: Field	: Name Field	: Border	: Thin Right
+;
+;; End-of-File

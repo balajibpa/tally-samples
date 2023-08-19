@@ -1,0 +1,78 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s):-
+	- To display a Welcome Message on Application Start
+	- To display Negative Cash Balance Message if any on loading the Company
+	- To take Backup while shutting the Company
+	- To understand the System Events 'System Start', 'Load Company',
+	  'Close Company' and 'System End'
+
+Capabilities Used:-
+	- System Events, 'System Start', 'Load Company', 'Close Company' and 'System End'
+
+Syntax -
+	- [System: Event]	
+			Event Name	: <Event>	: <Logical Condition> : <Action>	: <Action Parameters>
+
+Updaion History:-
+	- Created on 20-4-2010
+*/
+
+[System: Events]
+
+;; System Start Event
+
+	TSPL Smp AppStartEvent	: System Start 	: NOT $$IsRemoteCompany 			: CALL 		: AppStartFunc
+
+;; Load Company Event
+
+	TSPL Smp CmpLoadEvent2	: Load Company 	: NOT $$IsRemoteCompany 			: Call 	 	: LoadCmpFunc
+	TSPL Smp CmpLoadEvent3	: Load Company 	: NOT $$IsRemoteCompany 			: Action 	: Display	: If $$IsCmpOwner then "Balance Sheet" else "Ratio Analysis"
+
+;; Close Company Event
+
+	TSPL Smp CmpCloseEvent 	: Close Company	: $$IsCmpOwner AND NOT ($IsAggregate:Company:##SVCurrentCompany) AND NOT $$IsRemoteCompany	: Display 	: Profit And Loss
+	TSPL Smp CmpBackUp		: Close Company	: NOT ($IsAggregate:Company:##SVCurrentCompany) AND NOT $$IsRemoteCompany					: CALL		: BackupFunction
+
+;; System End Event
+
+	TSPL Smp AppEndEvent	: System End	: NOT $$IsRemoteCompany				: CALL 		: AppEndFunc
+
+[Function: AppStartFunc]
+
+	00	: MSGBOX 	: "System Start"	: "Welcome to Tally !" : No
+
+[Function: LoadCmpFunc]
+
+	Local Formula	: CashAmt	: $$FilterValue:$ClosingBalance:Ledger:1:LCFIsCash
+	Variable		: CashAmtNeg: String
+
+	00	: LOG		: "Company " + ##SVCurrentCompany + " \nloaded successfully"
+	10	: IF		: NOT $$IsDr:@CashAmt
+	20	:	SET		: CashAmtNeg: $$String:@CashAmt
+	30	: 	MSGBOX	: "Attention"	: "Negative Cash Balance \n " + ##CashAmtNeg
+	40	: END IF
+	50	: RETURN
+
+[Function: AppEndFunc]
+	
+	00	: SET FILE LOG ON
+	10	: LOG			: "During exit"
+	20	: Exec Command	: "TDLFunc.LOG"
+
+[System: Formula]
+
+	LCFIsCash	: $Name = "Cash"
+
+;; Message Box to display in a Menu
+
+[Function: System Event Message]
+
+	00	: MSGBOX	: "System Events"	: "Please refer to samples on System Events"
+
+;; Include Files
+
+[Include: Auto Backup.TDL]
+
+;; End-of-File

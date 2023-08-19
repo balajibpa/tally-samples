@@ -1,0 +1,36 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Report: TSPL Smp Excel Info]
+	
+	Form 	: TSPL Smp Excel Info
+	Title	: "Usage of Function Excel Info"
+	
+[Form: TSPL Smp Excel Info]
+		
+	Parts 	: Form SubTitle, TSPL Smp Excel Info
+	Width	: 30% Page
+	Local	: Field	: Form SubTitle	: Info		: "Excel Supporting Functions"
+	
+[Part: TSPL Smp Excel Info]
+	
+	Lines	: TSPL Smp Excel Info Version, TSPL Smp Excel Info XLSX
+
+	[Line:  TSPL Smp Excel Info Version]
+		
+		Field: Long Prompt, TSPL Smp Excel Info Version
+		Local: Field: Long Prompt 	: Set as	: "The Current Excel Version is : "
+		
+		[Field: TSPL Smp Excel Info Version]
+			
+			Use	       : Name Field
+			Set as	   : $$ExcelInfo:Version
+			Skip	   : Yes
+			
+	[Line: TSPL Smp Excel Info XLSX]
+		
+		Field: Long Prompt, Name Field
+		Local: Field: Long Prompt	: Info  	: "Check on XLSX Support with Excel :"
+		Local: Field: Name Field	: Set as	: $$ExcelInfo:IsXLSXSupported
+		Local: Field: Name Field 	: Skip  	: Yes 
+
+;; End-of-File

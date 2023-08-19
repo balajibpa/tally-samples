@@ -1,0 +1,157 @@
+/*
+Objective : To showcase a Table in a Hierarchy format. This will allow to view Ledgers under Groups. 
+On selecting Table Object Group - Group Summary and selecting Table Object Ledger - Leger Vouchers
+
+Elements applied
+
+1) Collection level 	: Explode, Indent
+2) Object Attributes	: Action, Behaves As
+4) Field Attributes		: Act on Table Element
+5) Field Action			: Execute Obj Actions
+6) Functions			: $$CurrentTableObj, $$TableExplodeOwner, $$TableExplodeLevel
+
+*/
+
+[Report	: TSPL Hierarchy Table]
+	
+	Title	: $$LocaleString:"Master Vouchers"
+;; Variables 
+	Variable	: GroupName, LedgerName, TSPL ShowMoreLess
+;; To provide complete width to Table, hence no width specified at Format
+;; Object : Group
+	Local	: Object		: Group		: Full Width	: Yes
+	
+[Form	: TSPL Hierarchy Table]
+	
+	Use				: TSPL SMP Illustration
+		
+	Height			: 100% Screen
+	Width			: 100% Screen
+	
+	Local	: Part	: TSPL SMP Syntax		: Invisible	: Yes
+	Local	: Field	: FormSubTitle			: Info		: $$LocaleString:"Illustration for Hierarchy in a Table"
+		
+	Local	: Field	: TSPL Smp Purpose		: Indent		: 2
+	Local	: Field	: TSPL Smp Purpose		: Info		: $$LocaleString:"The attribute Explode has been introduced at Table definition." + 
+															+ "To support the functionality new functions $$TableExplodeLevel, $$TableExplodeOwner and $$CurrentTableObj." + $$NewLine + +
+															$$LocaleString:"The below mentioned code describes an approach to use attributes for Hierarchy"
+			
+	
+	Local	: Field	: TSPL SMP Example		: Info		: $$NewLine	+ "[Collection	: TSPL AcctMasterTable]" + $$NewLine + +
+														"         |"  + $$NewLine + +
+															"Explode	: SubAcctMaster		: @@IsGroup	: ##TSPLShowMoreLess" + $$NewLine + +
+															"Indent		: 2 * $$TableExplodeLevel"
+	Local	: Field	: TSPL SMP ExampleNote	: Info		: "List of groups which can be exploded to sub groups and ledgers"
+
+	Vertical Align		: Top
+	Horizontal Align	: Center
+	Part				: TSPL Hierarchy Table
+	No Confirm			: Yes
+	Output				: TSPL Hierarchy Table
+	
+[Part	: TSPL Hierarchy Table]
+	
+	Line		: TSPL Hierarchy Table
+	Space Left	: .5
+	
+	[Line	: TSPL Hierarchy Table]
+		
+		Field	: Medium Prompt, TSPL Hierarchy Table
+		Local	: Field		: Medium Prompt	: Info	: "Selection for Accounting Report"
+		
+		[Field	: TSPL Hierarchy Table]
+			
+			Use					: Name Field
+			Table				: TSPL ExpandCollapse, TSPL AcctMasterTable
+;; This attribute value will not allow to hide Table with Alt + T			
+			Show Table			: Always and Never Hide
+			Act On Table Element: @TSPLIsActionObj			: Execute Obj Actions	: TSPL ShowMoreLess
+			Process Change Table: Yes
+;; While the Object Group is selected we shall call in a new Table i.e. Ledgers of the Group					
+			Act On Table Element: @TSPLIsCurrentObjGroup	: Execute Obj Actions	: TSPLGroupSummary	
+			Act On Table Element: @TSPLIsCurrentObjLedger	: Execute Obj Actions	: TSPLLedgerSummary
+
+			TSPLIsCurrentObjGroup	: $$CurrentTableObj:$$Type	= "Group"
+			TSPLIsCurrentObjLedger	: $$CurrentTableObj:$$Type	= "Ledger"
+			TSPL IsActionObj		: $$CurrentTableObj:$$IsActionObject
+
+			
+[Table	: TSPL AcctMasterTable]
+	
+	Title	: $$LocaleString:"List of Accounting Master"
+	Type	: Group
+	Format	: $Name
+	Format	: $Parent
+	Align	: Center
+	Style	: Normal Bold		: @@IsGroup
+	Explode	: SubAcctMaster		: @@IsGroup	: ##TSPLShowMoreLess
+;;Explode	: <CollectionName> 	: <ConditionOnBasis which explosion shall work>	: <Whether to explode Table while entering report>
+	Indent		: 2 * $$TableExplodeLevel
+	Table Sort	: $Parent
+
+[Collection: SubAcctMaster]
+
+	Title	: $$LocaleString:"List of Accounting Master"
+
+    Collection  : SubAcctGroups, SubAcctLedgers
+	Explode		: SubAcctMaster		: @@IsGroup	: ##TSPLShowMoreLess
+	Indent		: 2 * $$TableExplodeLevel
+	
+	Style		: Normal Bold	: @@IsGroup
+	Style		: Normal Italic	: @@IsLedger
+	Align		: Center
+
+[Collection: SubAcctGroups]
+
+	Title		: "List of Group"
+    Type        : Group
+    Child Of    : $$TableExplodeOwner:$Name
+	Align		: Center
+    
+[Collection: SubAcctLedgers]
+
+	Title		: "List of Ledger"
+    Type        : Ledger
+    Child Of    : $$TableExplodeOwner:$Name
+	Align		: Center
+	
+[System	: Formulae]	
+
+	IsGroup		: $$Type	= Group
+	IsLedger	: $$Type	= Ledger
+	
+[#Object	: Group]
+	
+	Action		: TSPLGroupSummary	: Set			: GroupName		: $$CurrentTableObj:$Name
+	Action		: TSPLGroupSummary	: Display		: GroupSummary
+	Action		: TSPLGroupSummary	: Ignore Field	: Yes
+	
+[#Object	: Ledger]
+	
+	Action		: TSPLLedgerSummary	: Set			: LedgerName		: $$CurrentTableObj:$Name
+	Action		: TSPLLedgerSummary	: Display		: Ledger Vouchers
+	Action		: TSPLLedgerSummary	: Ignore Field	: Yes
+
+[Collection: TSPL ExpandCollapse]
+	
+	Object	: TSPL ExpandCollapse
+	Format	: $Name
+	Align	: Center
+	
+[Object: TSPL ExpandCollapse]
+	
+	Use			: Action Object
+	Name		: If ##TSPLShowMoreLess Then $$SysName:ShowLess Else $$SysName:ShowMore
+	IsActive	: ##ShowMoreApplicable
+	
+	Action		: TSPLShowMoreLess		: Set			: TSPLShowMoreLess		: NOT ##TSPLShowMoreLess
+
+[Variable	: TSPL ShowMoreLess]
+	
+	Type	: Logical
+	
+[System	: Variable]
+	
+	TSPL ShowMoreLess	: No
+
+;; End of file

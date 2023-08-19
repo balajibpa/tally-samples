@@ -1,0 +1,161 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This code demonstrates a real time scenario in which a log of the Date & Time value 
+	of Voucher Editing is displayed to the user.
+*/
+
+[System: Variable]
+	
+	Variable		: TSPLSmpIsFromVchAltReport	: Logical
+
+[Function: TSPL Smp CDT VchAlterationMsg]
+	
+	00	: Msg Box	: "Note"					: "Alter a Payment voucher \n from Daybook to see the Date & Time \n of the Voucher entry\edit "
+	05	: Set		: TSPLSmpIsFromVchAltReport : Yes
+	10	: Display	: TSPL Smp CDT Pymt Daybook
+	20	: Set		: TSPLSmpIsFromVchAltReport : No
+	
+[Report: TSPL Smp CDT Pymt Daybook]
+	
+	Use		: Daybook
+
+;; Filter to display only payment vouchers in the DayBook;;
+	Local	: Collection	: Default		: Add		: Filter	: TSPL Smp CDT Pymt Vouchers
+
+[System: Formula]
+	
+	TSPL Smp CDT Pymt Vouchers	: $$IsPayment:$VoucherTypeName
+	
+;;Code to enter the Voucher Date & Time in the Voucher Entry Screen;;
+
+[#Part: VCHTitle2Right]
+
+	Add: Line: After: VCH WeekDay : TSPL Smp CDT VCH DateTime
+			
+	[Line: TSPL Smp CDT VCH DateTime]
+		
+		Fields	: Name Field,TSPL Smp CDT VCH DateTime
+		Local	: Field	: Name Field		: Info		: "Date & Time of Voucher Entry/Edit: "  
+		Local	: Field	: Name Field		: Color		: "Red"
+		Invisible		: NOT ##TSPLSmpIsFromVchAltReport
+		
+		[Field: TSPL Smp CDT VCH DateTime]
+
+;; Field of Type DateTime to display the Date & Time of Voucher Alteration;;		
+			Type		: Date Time
+			Width		: 20
+			Max			: 20
+			Set as		: Now
+			Set Always	: Yes
+			Format		: "24 hour,Short Date" 
+			Color		: "Red"
+			Align		: Right
+			Skip		: Yes
+			
+[#Form: Payment Color]
+	
+	Add		: On		: Form Accept	: Yes	: Call	: TSPL Smp CDT AddVchDateTime:#TSPLSmpCDTVCHDateTime
+	
+;; Function to add the DateTime Values to the aggregate UDF
+
+[Function: TSPL Smp CDT AddVchDateTime]
+	
+	Parameter	: pDateTime	: Date Time
+	
+	00	: Set Target
+	10	: 	Insert Collection Object	: TSPL Smp CDT VchDateTimeAggr
+	20	: 		Set Value	: TSPL Smp CDT VchDateTime	: ##pDateTime
+	30	: 	Accept Alter
+	40	: Set Target	: ..
+	
+[System: UDF]
+	
+	TSPL Smp CDT VchDateTimeAggr	: Aggregate	: 21589
+	TSPL Smp CDT VchDateTime		: Date Time	: 21790
+	
+;; Display the log of the Entry/Edit Time of the Voucher in another Report
+
+[Function: TSPL Smp CDT VchEntryAltrationLog]
+		
+	00: Msg Box	: "Note" 	: "The Log of Payment Voucher Alteration can be seen here"
+	01: Display	: TSPL Smp CDT Log Report
+
+[Report: TSPL Smp CDT Log Report]
+
+	Title	: "Voucher Edit Log"
+
+[Form: TSPL Smp CDT Log Report]
+	
+	Part	: TSPL Smp CDT DateTimeEntryEditVoucher
+	Button	: Change Period, Print Button
+	Height	: 100% Page
+	Width	: 100% Page
+
+[Part: TSPL Smp CDT DateTimeEntryEditVoucher]
+	
+	Line	: TSPL Smp CDT DateTimeEntryEditLog Title, TSPL Smp CDT DateTimeEntryEditLog
+	Repeat	: TSPL Smp CDT DateTimeEntryEditLog	: TSPL Smp CDT VchLogCollect
+	Scroll	: Vertical
+
+	[Line: TSPL Smp CDT DateTimeEntryEditLog Title]
+		
+		Use		: TSPL Smp CDT DateTimeEntryEditLog
+		Delete	: Explode
+		
+		Local	: Field			: Default		: Type		: String
+		Local	: Field			: Default		: Align		: Center
+		Local	: Field			: Default		: Style		: Normal Bold
+		
+		Local	: Field			: DSP VchDate	: Info		: "Date"
+		Local	: Field			: DSP VchType	: Info		: "Voucher Type Name"
+		Local	: Field			: DSP VchNumber	: Info		: "Voucher Number"
+
+		Border	: Thin Top Bottom
+		
+	[Line: TSPL Smp CDT DateTimeEntryEditLog]
+		
+		Fields			: DSP VchDate, DSP VchMasterID
+		Right Fields	: DSP VchType, DSP VchNumber
+		Local	: Field	: DSP VchMasterID	: Variable	: VoucherID
+		Local	: Field	: Default			: Width		: 25% page
+		Local	: Field	: Default			: Align		: Center
+;;Explode the line for the vouchers that have been altered;;
+		Explode			: TSPL Smp CDT DateTimeLog	: NOT $$IsEmpty:$TSPLSmpCDTVchDateTimeAggr[1].TSPLSmpCDTVchDateTime
+		Space Top		: 1
+
+		[Part: TSPL Smp CDT DateTimeLog]
+			
+			Lines	: TSPL Smp CDT DateTimeLog, TSPL Smp CDT DateTimeLogVal
+			Repeat	: TSPL Smp CDT DateTimeLogVal : TSPL Smp CDT VchDateTimeAggr
+			Scroll	: Vertical
+			Local	: Field	: Default			: Style		: Normal Italic
+
+			[Line: TSPL Smp CDT DateTimeLog]
+				
+				Field	: Medium Prompt
+				Local	: Field	: Medium Prompt : Set as 	: "Alteration History :"
+				Local	: Field	: Medium Prompt : Align  	: Center
+				Space Top		: 0.5
+				
+			[Line: TSPL Smp CDT DateTimeLogVal]
+
+				Field	: Medium Prompt
+				Local	: Field	: Medium Prompt	: Set as 	: $TSPLSmpCDTVchDateTime
+				Local	: Field	: Medium Prompt : Align  	: Center  
+				
+;; Collection to fetch the DateTime value of Voucher Alteration from aggregrate UDF
+
+[Collection: TSPL Smp CDT VchLogCollect]
+	
+	Type	: Vouchers	: VoucherType
+	Child Of: $$VchTypePayment
+	Fetch	: TSPLSmpCDTVchDateTimeAggr.*
+	Filter	: TSPL Smp Altered Vch
+	
+[System: Formula]
+	
+	TSPL Smp Altered Vch	: NOT $$IsEmpty:$TSPLSmpCDTVchDateTimeAggr[1].TSPLSmpCDTVchDateTime
+
+;; End-of-File

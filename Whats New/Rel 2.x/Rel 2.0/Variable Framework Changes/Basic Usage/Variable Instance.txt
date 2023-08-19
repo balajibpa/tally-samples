@@ -1,0 +1,113 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s):-
+- 	To create a variable instance using the definition of another variable
+
+Capabilities Used:-
+- 	Attributes Variable & List Variable
+
+Syntax -
+- 	Variable: <Instance Names>:[<Variable Name>]  
+		Or
+- 	List Variable : <Instance Names>:[<Variable Name>]  
+
+Updation History:-
+- 	Created on 12-8-2010
+*/
+
+[Report: TSPL Smp Instance Var Report]
+	
+	Form	: TSPL Smp Instance Var Form
+	
+[Form: TSPL Smp Instance Var Form]
+	
+	Part 	: Form SubTitle, TSPL Smp Instance Var Part
+	Button 	: TSPL Smp Instance Button
+	Width	: 50% Page
+	Local	: Field : Form SubTitle	: Info	: "Instance of a Variable"
+	Local	: Field : Form SubTitle	: Width	: 50% Page
+
+[Part: TSPL Smp Instance Var Part]
+	
+	Line : TSPL Smp Instance Var Line,TSPL Smp Instance Var Line1
+	
+	[Line: TSPL Smp Instance Var Line]
+		
+		Field	: TSPL Smp Instance Var Field
+		
+		[Field: TSPL Smp Instance Var Field]
+			
+			Use		: Name Field
+			Set as 	: "Instance Name and Definition name can now be different"
+			Style	: Normal
+			Width	: 70
+			Max		: 70
+			Align	: Center
+	
+	[Line: TSPL Smp Instance Var Line1] 
+		
+		Field: TSPL Smp Instance Var Field1
+		
+		[Field: TSPL Smp Instance Var Field1]
+			
+			Use		: Name Field
+			Set as  : "Employee Data must be available within the Company. Click on the Button 'Instantiate' to see the impact"
+			Lines	: 0
+			Width	: 70
+			Max		: 70
+			Align	: Center
+			
+[Button: TSPL Smp Instance Button]
+	
+	Key		: Alt+I
+	Action	: CALL 	: ListVarInstanceFunction
+	Title	: "Instantiate"
+
+[Function: ListVarInstanceFunction]
+
+	Variable  		: TSPLSMP IV SimpleVar  
+	Variable  		: TSPL Smp Emp
+
+;; An instance TSPLSMP InstVar is declared with the name "TSPLSMP InstVar" and definition 
+;; name as "TSPLSMP IV SimpleVar"
+	Variable  		: TSPLSMP InstVar 	: TSPLSMP IV SimpleVar
+
+;; An instance is declared with the name as "Prem" and definition name as "TSPL Smp Emp"
+	Variable 		: TSPL Smp Emp1 	: TSPL Smp Emp
+
+;; A List Variable instance is declared with the name “TSPL Smp EmpList” and the 
+;; definition name as "TSPL Smp Emp"
+	LIST VARIABLE 	: TSPL Smp EmpList 	: TSPL Smp Emp
+
+	10	: LOG 		: "Value of the Simple Variable-TSPLSMP IV - SimpleVar:"+ ##TSPLSMPIVSimpleVar
+	20	: LOG 		: "Value of the Simple Variable-TSPLSMP InstVar (Instance Variable):"+ ##TSPLSMPInstVar  
+	30	: LOG 		: "Value of the Compound Variable- TSPL Smp Emp - Employee Name:"+##TSPLSMPEmp.EmpName
+	40	: LOG 		: "Value of the Compound Varible - TSPL Smp Emp - Designation:"+##TSPLSMPEmp.Designation
+	50	: LOG 		: "Value of the Compound Variable- TSPL Smp Emp1(Instance Variable) - Employee Name:"+##TSPLSMPEmp1.EmpName
+	60	: LOG 		: "Value of the Compound Varible - TSPL Smp Emp1(Instance Variable) - Designation:"+##TSPLSMPEmp1.Designation
+
+	70  : LIST FILL : TSPL Smp EmpList  : Employees : $Name : $Name
+	80  : LIST FILL : TSPL Smp EmpList  : Employees : $Name : $Designation:Designation
+	90  : LOG 		: "Values of the List Variable -TSPL Smp EmpList (Instance Variable)"
+
+	100  : FOR IN	: KEY VAR : TSPL Smp EmpList 
+	110  : 	LOG 	: "Employee Name:" + $$LISTVALUE:TSPLSMPEmpList:##KEYVAR:EmpName 
+	120  : 	LOG 	: "Designation:" + $$LISTVALUE:TSPLSMPEmpList:##KEYVAR:Designation 
+	130  : END FOR
+
+	140  : EXEC COMMAND : "TDLFunc.Log"
+
+;;Variable Definitions
+
+[Variable: TSPL Smp Emp]
+	
+	Variable : EmpName  	: String : "Prem"
+	Variable : Designation	: String : "Manager"
+		
+[Variable: TSPLSMP IV SimpleVar]
+	
+	Type	: String
+	Default : "SimpleVar"
+
+;; End-of-File

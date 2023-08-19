@@ -1,0 +1,36 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+-	This program demonstrates the capability of DLL XML Collection to retrieve 
+	required XML fragment of the data from DLL.
+-	The XML data thus fetched from the DLL is displayed in a Report.
+
+Syntax -
+-	Collection Attribute 'Data Source' Syntax
+		Data Source	: AxPlugin XML : <Class Name in DLL>
+-	XML Path specification using 'XML Object Path'
+		XML Object Path	: <start node>:<path to start node> where 
+		<start node> = <node name>:<position> and
+		<path to start node> = <root node>:<child node>:<start position>:<child node>:<start position>:....
+
+Last modification – 
+-	Altered on 19/04/2010
+
+Dependencies -
+- 	.NET Framework 3.5 envoirnment is required 
+-  	Sample1Installer1 needs to installed
+*/
+
+[Report: DLL XML Get Required CollObjPath]
+
+	Form 	: DLL XML Get CollObjPath
+	Title 	: "Fetching required XML data from DLL Collection"
+	Local	: Part	:  DLL XML Get CollObjPath	: Repeat : DLL XML Get CollObjPath : DLL XML Get Required CollObjPath
+
+[Collection: DLL XML Get Required CollObjPath]
+
+	Data Source 	: AxPlugin XML : Sample1.Class1
+	XML Object Path	: Item:2:ItemList
+
+;; End-of-File

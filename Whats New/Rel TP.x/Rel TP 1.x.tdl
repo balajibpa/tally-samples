@@ -1,0 +1,7 @@
+;;Files for TallyPrime Release 1.0
+
+
+;[Include: Rel TP 1.0\TP rel 1.0.tdl]
+[Include: ChangesInTallyPrime.TDL]
+
+;; End of file

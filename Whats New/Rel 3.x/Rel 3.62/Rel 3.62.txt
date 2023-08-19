@@ -1,0 +1,11 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Menu: Whats New in Rel 3.62]
+
+	Key Item	: "Print Orientation Extended"	: O : Print : TSPL Smp VarSVPrintOrientation Extended	: NOT $$IsEmpty:$$SelectedCmps
+
+;; Include Files
+
+[Include: Print Orientation.txt]
+
+;; End-of-File

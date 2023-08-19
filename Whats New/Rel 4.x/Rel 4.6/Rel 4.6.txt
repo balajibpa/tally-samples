@@ -1,0 +1,16 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Menu: Whats New in Rel 4.6]
+
+	Key Item	: "Developer Mode"		: D : Menu		: Developer Mode Features		: $$InDeveloperMode AND $$ProdInfo:ProdReleaseAsStr CONTAINS "4.6"
+	Key Item	: "COM Interface" 		: C : Menu		: COM Interface					: NOT $$IsEmpty:$$SelectedCmps
+
+	Control     : "Developer Mode"      : $$InDeveloperMode
+;; Function InDeveloperMode returns True if the Application is invoked in Developer Mode i.e., with /DevMode as Command Line Parameter
+	
+;; Include Files
+	
+[Include: COM Interface\COM Interface.txt]
+[Include: DEV Mode\DevMode.txt]
+
+;; End-of-File

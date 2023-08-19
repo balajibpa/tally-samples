@@ -1,0 +1,30 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Menu: TSPL Smp Event Enhancements]
+
+	Indent		: "System Events"
+	Item		: Blank
+
+	Key Item	: "Delete/ Cancel Object"	: E : Display	: TSPL Smp Event Daybook 	: NOT $$IsEmpty:$$SelectedCmps
+	
+	Item		: Blank
+
+	Indent		: "Object Specific Events"
+	Item		: Blank
+
+	Key Item	: "On Report Load"			: L : Display	: TSPL Smp Evnt Report Load	: NOT $$IsEmpty:$$SelectedCmps
+	Key Item	: "On Form Reject"			: R : Alter		: TSPL Smp Evnt Form Reject	: NOT $$IsEmpty:$$SelectedCmps
+	Key Item	: "On Field Accept"			: A : Alter		: TSPL Smp Evnt Field Accept: NOT $$IsEmpty:$$SelectedCmps
+	Item		: Blank
+
+	Title		: "Event Enhancements"
+
+;; Include Files
+
+[Include: SystemEvents\SystemDelCanEvent.txt]
+
+[Include: ObjectSpecificEvents\OnReportLoad.txt]
+[Include: ObjectSpecificEvents\OnFormReject.txt]
+[Include: ObjectSpecificEvents\OnFieldAccept.txt]
+
+;; End-of-File

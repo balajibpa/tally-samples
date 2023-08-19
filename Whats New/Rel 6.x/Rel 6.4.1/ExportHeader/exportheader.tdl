@@ -1,0 +1,202 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+/*
+Objective(s) 
+- This code demonstrates sending HTTP Request Headers for a GET request and get leave summary of selected employee and selected leave type in the selected format
+- To allow sending HTTP request headers for GET requests, Export Header attribute is introduced at collection level.
+- Until now HTTP headers could be sent only for POST requests where they would be specified as a part of the request report.
+- With this enhancement, HTTP request headers can be mentioned in collection for both GET and POST requests.
+- This Code Demonstrates an example where server has employee details like list of employees and their attendance details. "+
+- The server can send information in both XML and JSON formats. The server expects the format of response required, as HTTP header.
+- A GET request with the header having information of selected format is sent to get the list of employees. Then a POST request is 
+- sent to the server with the headers having format and employeed id and payload having Leave Type tag for which the leave summary has to be fetched. "
+
+Last modification 
+-	Altered on 01/04/2018
+*/
+
+
+[Report: TSPL Export Header]
+
+	Title	: $$LocaleString:"Export Header"
+	Form	: TSPL Export Header
+
+[Form: TSPL Export Header]
+
+	Use		: TSPL SMP Illustration
+	
+	Height	: 90% Screen
+	Width	: 85% Screen
+	
+	Local   : Part	: TSPL SMP Illustration : Add	: Part: TSPL SMP ExampleExecution
+	
+	Local	: Field	: FormSubTitle		: Info		: $$LocaleString:"Illustration for sending HTTP Request Headers for a GET request"
+	
+	Local	: Field	: TSPL Smp Purpose	: Indent	: 2
+	Local	: Field	: TSPL Smp Purpose	: Info		: $$LocaleString:"To allow sending HTTP request headers for GET requests, Export Header attribute is introduced at collection level. " +
+	                  + $$LocaleString:"Until now HTTP headers could be sent only for POST requests where they would be specified as a part of the request report. " +
+	                  + $$LocaleString:"With this enhancement, HTTP request headers can be mentioned in collection for both GET and POST requests." 			 
+				
+	Local	: Field	: TSPL Smp Syntax	: Indent	: 2
+	Local	: Field	: TSPL Smp Syntax	: Info		: "[Collection: <Collection Name>]"+
+			+$$NewLine+ "       Export Header : <String expression>"+
+			+$$NewLine+ "<String expression> : Expression that evaluates to a header string. "
+				
+	Local	: Field	: TSPL SMP Example	: Indent: 2
+	Local	: Field	: TSPL SMP Example	: Info: $$LocaleString:"[Collection: TSPLLeaveSummaryJSON]"+
+			+$$NewLine+"    Data Source 	: HTTP JSON: 'http://localhost/ExportHeader/getempdetails.php'"+
+			+$$NewLine+"    Export Header	: 'Accept:application/json' "    +
+			+$$NewLine+"    Export Header	: 'Accept-Charset:utf-8' "    +
+			+$$NewLine+$$LocaleString:"Here a GET request is sent to the server which can send responses in various formats and encodings. The format and encoding " +
+			+$$LocaleString:"of the required response is specified as HTTP headers."+
+				
+	Local	: Field	: TSPL SMP ExampleExec: Info: $$LocaleString:"Demonstrates an example where server has employee details like list of employees and their attendance details. "+
+	+"The server can send data in both XML and JSON formats and expects the format of response required, as HTTP header. Click on the 'Leave Summary' button to get the leave summary of selected employee and selected leave type in the selected format." + $$NewLine +
+			+$$LocaleString:"In order to fetch and populate the list of employees in the table, a GET request with the header having information of selected format is sent to the server. Further to show the leave summary for the employee, a POST request is "+
+			+$$LocaleString:"sent to the server with the headers having format and employee id and request body having 'Leave Type' tag for which the leave summary has to be fetched. "
+	Local	: Field	: TSPL SMP ExampleNote: Info:"(Set up a local HTTP server like WAMP server. Copy the folder 'ExportHeader' available in the path 'Samples\Supporting Files', "+
+			+ "to your server's www folder or equivalent. In the case of WAMP server copy to www folder present within WAMP installation directory. " +
+			+ "Default path in case of WAMP is C:\wamp\www or C:\wamp64\www)"
+	Buttons	: TSPLGetLeaveSummary
+	
+
+[Button: TSPLGetLeaveSummary]
+	
+	Title: $$LocaleString:"Leave Summary"
+	Key: Alt + L
+	Action: Alter: TSPL Select Emp Leave
+	
+;; ---------- Report to select the employee, Leave type and the format for fetching leave summary information from server-----;;
+;;----------- Based on the format selected, the server will send response in that format --------------------;;
+[Report: TSPL Select Emp Leave]
+	
+	Title	: $$LocaleString:"Employee Leave Summary"
+	Use		: Modify Variables
+	
+	Local	: Part	: Modify Variables : Add	: Lines: TSPL Select Format, TSPL Select Employee, TSPL Select Leave Type
+	Local	: Field	: MV Title 		   : Info	: $$LocaleString:"Employee Leave Summary"
+	Local	: Form	: Modify Variables : Option: SmallSizeForm 
+	Local	: Form	: Modify Variables : Add	: On: Form Accept: Yes: Display : TSPL Emp Leave Summary
+
+[Line: TSPL Select Format]
+	
+	Field		: Medium Prompt, TSPL Select Format
+	Local		: Field: Medium Prompt : Info: $$LocaleString:"Format of Exchange"
+	Border		: Thin Bottom
+	Space Bottom: .2
+	
+[Line: TSPL Select Employee]
+	
+	Field		: Medium Prompt, TSPL Select Employee
+	Local		: Field: Medium Prompt : Info: $$LocaleString:"Employee"
+	Space Top	: 1
+	
+[Line: TSPL Select Leave Type]
+	
+	Field: Medium Prompt, TSPL Select Leave Type
+	Local: Field: Medium Prompt : Info: $$LocaleString:"Leave Type"
+	
+[Field: TSPL Select Format]
+	
+	Use			: Name Field 
+	Table		: TSPL Formats
+	Show Table  : Always
+	Modifies	: TSPLFormat : Yes
+	
+[Field: TSPL Select Employee]
+	
+	Use			: Name Field 
+	
+;; Based on the format selected, response of employee list is recieved in xml or json format and shown in the table
+	Table		: TSPL Get Employees Json : #TSPLSelectFormat = "JSON"
+	Table		: TSPL Get Employees XML  : #TSPLSelectFormat = "XML"
+	Show Table  : Always
+	
+	Modifies    : TSPLEmpName : Yes
+	
+	on: Accept: Yes: Set: TSPLEmpId   	: $$Table:TSPLSelectEmployee:$EmpId
+	on: Accept: Yes: Set: TSPLEmpGender : $$Table:TSPLSelectEmployee:$Gender
+	on: Accept: Yes: Set: TSPLEmpDept	: $$Table:TSPLSelectEmployee:$Department
+	on: Accept: Yes: Field Accept
+	
+[Field: TSPL Select Leave Type]
+	
+	Use			: Name Field 
+	Table		: TSPLLeaveTypes
+	Show Table	: Always
+	Modifies	: TSPLLeaveType : Yes
+
+;; List of formats	
+[Collection: TSPL Formats]
+	
+	Title	 : $$LocaleString:"Formats"
+	
+	List Name: $$LocaleString:"XML"
+	List Name: $$LocaleString:"JSON"
+	
+;; List of Leave types
+[Collection: TSPL Leave Types]
+	
+	Title	 : $$LocaleString:"Leave Types"
+	
+	List Name: $$LocaleString:"Earned Leave"
+	List Name: $$LocaleString:"Relocation Leave"
+	List Name: $$LocaleString:"Sick Leave"
+	List Name: If ##TSPLEmpGender = "Male" then $$LocaleString:"Paternity Leave" else $$LocaleString:"Maternity Leave"
+	List Name: $$LocaleString:"All Leaves"
+	Align	 : Right
+
+;; Gets the list of employees from server in JSON format. The http header "Accept:application/json" is sent to the server, in order to recieve
+;; the response in JSON format 	
+[Collection: TSPL Get Employees Json]
+	
+	Title			: $$LocaleString:"Employees"
+	Sub Title		: "Name", "Emp Id", "Department"
+	
+	Export Header	: "Accept:application/json"
+	Export Header	: "Accept-Charset:utf-8"
+	
+	Data Source 	: HTTP JSON: "http://localhost/ExportHeader/getempdetails.php" :UTF8 
+	JSON Object Path: "employee:1:employees:1"
+	
+	Fetch			: Gender
+	Format			: $Name , 18
+	Format			: $EmpId , 7
+	Format			: $Department , 15
+	
+
+;; Gets the list of employees from server in XML format. The http header "Accept:application/json" is sent to the server, in order to recieve
+;; the response in XML format 	
+[Collection: TSPL Get Employees XML]
+	
+	Title			: $$LocaleString:"Employees"
+	Sub Title		: "Name", "Emp Id", "Department"
+	
+	Export Header	: "Accept:application/xml"
+	Export Header	: "Accept-Charset:utf-8"
+	
+	Data Source 	: HTTP XML: "http://localhost/ExportHeader/getempdetails.php" :UTF8
+	JSON Object Path: "employee:1:employees"
+	
+	Fetch			: Gender
+	Format			: $Name , 18
+	Format			: $EmpId , 7
+	Format			: $Department , 15
+	
+	
+[System: Variables]
+	
+	Variable : TSPLEmpName 	 : String
+	Variable : TSPLEmpId 	 : String
+	Variable : TSPLEmpGender : String
+	Variable : TSPLEmpDept	 : String
+	Variable : TSPLLeaveType : String
+	Variable : TSPLFormat    : String
+	
+
+	
+
+
+[Include: exportheader_response.tdl]
+
+
+;;;End Of File

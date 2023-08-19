@@ -1,0 +1,106 @@
+/*	
+	How to use Object Map in TallyPrime
+	
+	Objective : 	Import Ledger from Excel to Tally using Object Map.
+
+
+ Follow the steps for source Object
+
+	1. Write data source collection and compute the excel value. (Sample Excel file is available in sample/supporting Files. Excel data File 'OmLedImport.xlsx' must be available at local Tally Folder)
+	2. Call a function using the button
+	3. Under the function walk through the required collection to execute the Object Map
+	4. Under the Object Map set the methods for the Ledger Name, Opening Balance, Parent Name, Address, etc.
+	5. Create another Object Map to set the address
+
+*/	
+
+[Report: TSPL Object Map Ledger Import]
+	
+	Title			: $$LocaleString:"Import Ledger from Excel to Tally using Object Map capabilities"
+	Form			: TSPL Object Map Ledger Import
+	
+[Form: TSPL Object Map Ledger Import]
+	
+	
+	Use				: TSPL SMP Illustration
+	
+	Add 			: Button : Object Map Ledger Import									;; Add Button for Ledger Creation
+	
+	Height			: 100% Screen
+	Width			: 100% Screen
+	
+	Local	: Part	: TSPL SMP Syntax		: Invisible	: Yes
+	Local	: Field	: FormSubTitle			: Info		: $$LocaleString:"Illustration for Object Map"
+		
+	Local	: Field	: TSPL Smp Purpose		: Indent	: 2
+	Local	: Field	: TSPL Smp Purpose		: Info		: $$NewLine + $$LocaleString:"Import Ledger from Excel to Tally using Object Map"
+														
+	Local	: Field	: TSPL SMP Example		: Info		: $$NewLine	+ "[ObjectMap: TSPL Object Map LedgerImport]" + $$NewLine + $$NewLine + +
+																		'Set as: Name 	        : ($$String:$LedName): Yes' + $$NewLine + +
+																		'Set as: Parent	        : $Parent			 : Yes' + $$NewLine + +
+																		'Set as: OpeningBalance	: $OpeningBal 		 : Yes' + $$NewLine + $$NewLine + +
+																		'To set the address, write the code snippet as given below:' + $$NewLine + $$NewLine + + 
+																		"[Object Map: TSPL Object Map Address]"		  + $$NewLine + $$Newline + +
+																		'Target Object Ex : LedMailingDetails : 1 : ($ApplicableFrom=$LedMailingApplicableFrom)' + $$NewLine + $$NewLine + +
+																		'Set as : Mailing Name 	: $LedName			   : Yes' + $$NewLine + +
+																		'Set as : ApplicableFrom: ##Svcurrentdate	   : Yes' + $$NewLine + +
+																		'Set as : State   		: $State			   : Yes' + $$NewLine + +
+																		'Set as : Country 		: $Country			   : Yes' + $$NewLine + +
+																		'Set as : Address 		: $City				   : Yes' 
+					
+	Local	: Field	: TSPL SMP ExampleNote	: Info		: $$NewLine + " NOTE: Import Ledger from Excel to Tally using Object Map. Ensure the excel file 'OmLedImport.xlsx' is available at the local Tally folder." + $$newline + +
+																	          "To experience this capability click the Button 'Ledger Import'"
+
+	Local	: Field	: TSPL SMP ExampleNote : Color: Black
+		
+
+[Button: Object Map Ledger Import]
+	
+	Title    : $$LocaleString:"Ledger Import"
+	Key	     : F7
+	Action   : Call	: Object Map Ledger Import
+
+[Collection	:	LedgerImport]
+	
+	ODBC	 : @@DriverInfo + ".\OmLedImport.xlsx;"
+	SQL   	 : "Select * From [Sheet1$]"
+	
+[Collection: Ledger Summary Coll]
+	
+	Source Collection	:LedgerImport
+
+	Compute	 	: LedName	: $_1
+	Compute		: Parent	: $_2
+	Compute 	: City		: $_3
+	Compute		: State		: $_4
+	Compute		: Country	: $_5
+	Compute		: OpeningBal: $$Number:$_6
+	
+[Function: Object Map Ledger Import]
+	
+	01: Walk Collection		    : Ledger Summary Coll
+	02: New Object     		    : Ledger
+	03: Execute object Map      : TSPL Object Map LedgerImport
+	04: Create Target 
+	05: End Walk
+	06: Do If: $$LastResult = "No" 		: Msg Box: "Success" : "Ledger Imported successfully"
+		
+[Object Map : TSPL Object Map LedgerImport]
+	
+	Set as: Name 			    : ($$String:$LedName)	: Yes
+	Set as: Parent			    : $Parent 			    : Yes
+	Set as: OpeningBalance	    : $OpeningBal			: Yes
+
+	Object Map: TSPL Object Map Address 
+	
+[Object Map: TSPL Object Map Address]
+
+    Target Object Ex : LedMailingDetails : 1 : ($ApplicableFrom=$LedMailingApplicableFrom)
+
+    Set as : Mailing Name 		: $LedName			    : Yes
+    Set as : ApplicableFrom 	: ##Svcurrentdate	    : Yes
+    Set as : State   			: $State			    : Yes
+    Set as : Country 			: $Country			    : Yes
+    Set as : Address 			: $City				    : Yes
+
+;; End of File

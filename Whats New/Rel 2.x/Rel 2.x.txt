@@ -1,0 +1,17 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Menu for Release 2
+*/
+
+[Menu: Release 2.x]
+
+	Indent		: "Release 2.x"
+	Item		: Blank	
+	
+	Key Item	: "Rel 2.0"		: 2 : Menu	: Whats New in Rel 2.0	: NOT $$IsEmpty:$$SelectedCmps
+	Item		: Blank
+	
+[Include: Rel 2.0\Rel 2.0.txt]
+
+;; End-of-File

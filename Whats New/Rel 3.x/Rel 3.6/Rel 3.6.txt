@@ -1,0 +1,33 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Menu: Whats New in Rel 3.6]
+
+	Indent	: "Collection Enhancements"
+	Item	: Blank
+	Key Item: "Last Modified Date & Time of file"	: L : Alter		: TSPL Smp Last Modified Date Time	: NOT $$IsEmpty:$$SelectedCmps
+
+	Item	: Blank
+	Indent	: "Action Enhancements"
+	Item	: Blank
+	Key Item: "Action Execute TDL"					: E : CALL		: TSPL Smp Execute TDL				: NOT $$IsEmpty:$$SelectedCmps
+
+	Item	: Blank
+	Indent	: "Functions and Variables Introduced"
+	Item	: Blank
+	Key Item: "Function CaseConvert"				: C : DISPLAY	: TSPL Smp CaseConvert				: NOT $$IsEmpty:$$SelectedCmps 
+	Key Item: "Function RandomNumber"				: R : DISPLAY	: TSPL Smp Random Number			: NOT $$IsEmpty:$$SelectedCmps 
+	Key Item: "Function PrinterInfo"				: P : DISPLAY	: TSPL Smp Printer Info				: NOT $$IsEmpty:$$SelectedCmps
+	Key Item: "Function IsInternetActive"			: I : CALL		: TSPL Smp IsInternetActive			: NOT $$IsEmpty:$$SelectedCmps
+	Key Item: "Variable SVPrintOrientation"			: S : DISPLAY	: TSPL Smp VarSVPrintOrientation	: NOT $$IsEmpty:$$SelectedCmps
+
+;; Include Files
+
+[Include: LastModifiedDateTime.txt]
+[Include: Execute TDL.txt]
+[Include: CaseConvert.txt]
+[Include: PrinterInfo.txt]
+[Include: IsInternetActive.txt]
+[Include: VarSVPrintOrientation.txt]
+[Include: RandomNumber.txt]
+
+;; End-of-File

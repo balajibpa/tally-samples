@@ -1,0 +1,48 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Menu for Whats New in Rel 1.52
+*/
+
+[Menu: Whats New in Rel 1.52]
+
+	Indent		: "Dynamic Evaluation in Functions"
+	Item		: Blank
+	Key Item	: "Dynamic Action" 				: D : CALL		: Dynamic Action within Function
+	Key Item	: "Walk Collection Ex. 1" 		: 1	: Alter		: Walk Collection1
+	Key Item	: "Walk Collection Ex. 2" 		: 2	: CALL		: Walk Collection2
+	Key Item	: "Walk Collection Ex. 3" 		: 3	: CALL		: Walk Collection3
+	Item		: Blank
+
+	Indent		: "Looping Constructs"
+	Item		: Blank
+	Key Item	: "for Collection"				: C	: CALL		: for Collection within Function
+	Key Item	: "for Each"					: E : CALL		: for Each within Function
+	Key Item	: "for Token"					: T	: CALL		: for Token within Function
+	Item		: Blank
+
+	Indent		: "General"
+	Item		: Blank
+	Key	Item	: "Object Context Functions"	: O : CALL		: Object Context Functions
+	Key Item	: "AccessObj"					: A : Display	: AccessObj
+	Key Item	: "Data Source Parent Report"	: P : Display	: Data Source Parent Report Unselected
+	Key Item	: "Data Source Report"			: R : Display	: Data Source Report Selected
+	Item		: Blank
+	Title		: "Rel 1.52 Enhancements"
+
+[Include: Dynamic Actions.txt]
+[Include: Walk Collection 1.txt]
+[Include: Walk Collection 2.txt]
+[Include: Walk Collection 3.txt]
+
+[Include: for Collection.txt]
+[Include: for Each.txt]
+[Include: for Token.txt]
+
+[Include: Object Context Functions.txt]
+[Include: AccessObj.txt]
+
+[Include: Collection Data Source Parent Report.txt]
+[Include: Collection Data Source Report.txt]
+
+;; End-of-File

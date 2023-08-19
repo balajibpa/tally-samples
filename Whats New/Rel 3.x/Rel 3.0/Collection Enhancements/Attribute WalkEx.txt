@@ -1,0 +1,160 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+-	This program demonstrates the new attribute WalkEx at Collection Definiton.
+	This advantage of using WalkEx is that, all walk paths specified in the collection 
+	list are traversed in a single pass for each object in the source collection. 
+	
+-	WalkEx attribute results in improvements in performance drastically.
+
+Syntax -
+-	Attribute 'WalkEx' Syntax
+		WalkEx : <Collection Name 1>, <Collection Name 1>,....
+
+Last modification – 
+-	Altered on 31/1/2011
+*/
+
+[Report: TSPL Smp UnionAV]
+	
+	Use		: TSPL Smp WalkExAV
+	Local	: Part	: TSPL Smp WalkExAV	: Delete: Repeat		
+	Local	: Part	: TSPL Smp WalkExAV	: Add	: Repeat 	: TSPL Smp AVWalkEx : TSPL Smp UnionLedStkVouchers
+	Local	: Part	: TSPL Smp Info		: Local	: Line		: Info	: Local		: Field	: Info Field: Info	: "Union Collection walks over the sub object paths of the source object twice once for Ledgers and again for Stock Items"
+	Title	: "Using Union Collection"
+	
+[Report: TSPL Smp WalkExAV]
+	
+	Use		: DSP Template
+	Form	: TSPL Smp WalkExAV
+	Title	: "Using Attribute Walk Ex"
+		
+[Form: TSPL Smp WalkExAV]
+
+	Use		: DSP Template
+	Parts	: TSPL Smp Info, TSPL Smp WalkExAV
+	Height	: 100% Screen
+	Width	: 100% Screen
+
+[Part: TSPL Smp Info]
+	
+	Lines	: Info
+	Local	: Line	: Info	: Local		: Field	: Info Field: Info	: "The Walkex Attribute walks all sub object paths of the source object within a single pass, hence all Ledgers and Stock Items of the same voucher appear together"
+
+[Part: TSPL Smp WalkExAV]
+	
+	Lines			: TSPL Smp AVWalkExTitle, TSPL Smp AVWalkEx
+	Repeat			: TSPL Smp AVWalkEx		: TSPL Smp WalkExLedStkVouchers
+	Scroll			: Vertical
+	Common Border	: Yes
+	
+	[Line: TSPL Smp AVWalkExTitle]
+		
+		Use		: TSPL Smp AVWalkEx
+		Local 	: Field : Default			: Type		: String
+		Local 	: Field : Default			: Style		: Normal Bold
+		Local 	: Field : Default			: Align		: Centre
+		Local 	: Field : Number Field 		: Set as 	: "Sl.No."
+		Local 	: Field : Simple Field 		: Set as 	: "Particulars"
+		Local 	: Field : Short Name Field	: Set as 	: "Nature of Object"
+		Local 	: Field : Amount Field		: Set as 	: "Amount"
+		Border	: Thin Top Bottom
+	
+	[Line: TSPL Smp AVWalkEx]
+		
+		Fields			: Number Field, Simple Field
+		Right Fields	: Short Name Field, Amount Field
+		Local 	: Field : Default			: Style		: Normal
+		Local 	: Field : Default			: Border	: Thin Left
+		Local 	: Field : Number Field 		: Set as 	: $$Line
+		Local 	: Field : Number Field 		: Width		: 5
+		Local 	: Field : Simple Field 		: Set as 	: $VchStockItem
+		Local 	: Field : Simple Field 		: FullWidth	: Yes
+		Local 	: Field : Short Name Field 	: Set as	: $ObjectType
+		Local 	: Field : Short Name Field 	: Border	: Thin Left
+		Local 	: Field : Amount Field		: Set as 	: $VchLedAmount
+		Local 	: Field : Amount Field		: Border	: Thin Left Right
+		Border	: Thin Bottom	: $$IsLastObj AND $$InPrintMode
+
+		Option	: TSPL Smp AVWalkEx Item	: $ObjectType = "Stock Item"
+		
+		[!Line: TSPL Smp AVWalkEx Item]
+
+			Local	: Field	: Default		: Style		: Normal Bold
+
+;; The source collection “TSPL Smp Voucher Source” is a Collection of Vouchers 
+
+[Collection: TSPL Smp VoucherSource]
+	
+	Type	: Voucher
+	
+;; Using WalkEx Approach
+	
+/* The collection “TSPL Smp WalkExLedStkVouchers” is the resultant collection 
+which will contain all the Objects obtained out of walks and multiple walks 
+over the same Source Collection. The Report finally uses this Collection. The 
+attribute WalkEx is specified which has values as collection names “ TSPL Smp 
+WalkExLedger Details” and “TSPL Smp WalkExStockItem Details” */
+   
+[Collection: TSPL Smp WalkExLedStkVouchers]
+
+	Source Collection   : TSPL Smp VoucherSource
+	WalkEx  			: TSPL Smp WalkExLedgerDetails, TSPL Smp WalkExStockItemDetails
+	Keep Source			: ().
+		
+/* The Collection ”WalkExLedger Details” is walked over “TSPL Smp AllLedgerEntries” 
+SubObjects and aggregates the amount by grouping over Ledger Name. */
+
+    [Collection: TSPL Smp WalkExLedgerDetails]
+
+        Walk            : AllLedgerEntries
+        By              : VchStockItem   	: $LedgerName
+        Aggr Compute    : VchLedAmount      : Sum   : $Amount
+		Compute			: Object Type		: "Ledger"
+		
+/* The Collection ”StockItem Details” is walked over “TSPL Smp AllInventoryEntries” SubObjects
+ and aggregates the amount by grouping over Stock Item Name. */
+
+    [Collection: TSPL Smp WalkExStockItemDetails]
+
+        Walk         	: AllInventoryEntries
+        By              : VchStockItem      : $StockItemName
+        Aggr Compute    : VchLedAmount      : Sum  : $Amount
+		Compute			: Object Type		: "Stock Item"
+		
+;; Using Union Approach
+
+/* The Resultant Collection which is a union of objects from the above two 
+collections “TSPL Smp Union Ledger Details” and “TSPL Smp Union StockItemDetails” */
+   
+[Collection: TSPL Smp UnionLedStkVouchers]
+
+	Collection	: TSPL Smp Union Ledger Details, TSPL Smp Union StockItemDetails
+	Keep Source	: ().
+
+/* The collection using “TSPL Smp VoucherSource” as a source collection and 
+walking over All Ledger Entries Sub Object aggregating Amount by grouping 
+over Ledger Name */
+
+	[Collection: TSPL Smp Union Ledger Details]	
+
+		Source Collection 	: TSPL Smp VoucherSource
+		Walk				: AllLedgerEntries 
+		By					: VchStockItem		: $LedgerName
+		Aggr Compute		: VchLedAmount		: Sum	: $Amount
+		Compute				: Object Type		: "Ledger"
+
+/* The collection using TSPL Smp VoucherSource as a source collection and walking 
+over All Inventory Entries Sub Object aggregating Amount by grouping over Stock 
+Item Name */
+	
+	[Collection: TSPL Smp Union StockItemDetails]		
+			
+		Source Collection	: TSPL Smp VoucherSource
+		Walk 				: AllInventoryEntries 
+		By					: VchStockItem		: $StockItemName
+		Aggr Compute		: VchLedAmount		: Sum	: $Amount
+		Compute				: Object Type		: "Stock Item"
+	
+;; End-Of-File	

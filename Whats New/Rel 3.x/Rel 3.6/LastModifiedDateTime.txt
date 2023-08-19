@@ -1,0 +1,22 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+-	This Sample TDL demonstrates the File Method LastModifiedDate and LastModifiedTime
+
+Last Modification -
+-	Updated on 01-06-2012
+*/
+
+[Report: TSPL Smp Last Modified Date Time]
+
+	Use		: TSPL Smp Directory Data Source
+	
+;; LastModifieDate Method returns the date on which the file was modified last
+	Local	: Collection	: TSPL Smp Directory Collection	: Add	: Format	: $LastModifiedDate, 15
+;; LastModifiedTime Method returns the time at which the file was updated last
+	Local	: Collection	: TSPL Smp Directory Collection	: Add	: Format	: $LastModifiedTime, 15
+
+	Local	: Collection	: TSPL Smp Directory Collection	: Add	: SubTitle	: "Last Modified Date", "Last Modified Time"
+
+;; End-of-File

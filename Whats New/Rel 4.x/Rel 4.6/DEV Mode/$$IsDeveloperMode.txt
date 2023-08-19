@@ -1,0 +1,40 @@
+[Report: IsDeveloperMode]
+	
+	Form		: IsDeveloperMode
+	Full Screen	: No
+	
+[Form	: IsDeveloperMode]
+	
+	Part			: IsDeveloperMode
+	
+[Part	: IsDeveloperMode]
+	
+	Line	: IsDeveloperMode
+	
+	[Line: IsDeveloperMode]
+		
+		Field	: Sub Title Field
+		Local	: Field		: Sub Title Field	: Info	: "Click here to check status of Developer Mode"
+		Local	: Field		: Sub Title Field	: Key	: IsDeveloperMode
+		Local	: Field		: Sub Title Field	: Color	: Blue
+		Border	: Thin Bottom Blue
+		
+[Border	: Thin Bottom Blue]
+	
+	Use		: Thin Bottom
+	Color	: Blue
+		
+[Key	: IsDeveloperMode]
+	
+	Title	: "Is Dev. Mode"
+	Key		: Left Click
+	Action	: Call		: DeveloperMode
+	
+[Function: DeveloperMode]
+	
+	Variable	: Mode		: String
+
+	00	: Set	: MODE		: If $$IsDeveloperMode Then "ON" Else "OFF"
+	01	: Log	: "The Developer Mode is " + ##MODE
+	
+;; End of file

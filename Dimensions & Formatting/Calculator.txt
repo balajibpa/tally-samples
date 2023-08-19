@@ -1,0 +1,159 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This program displays Calculator Layout using Dimensions
+
+Last modification – 
+-	Altered on 07/11/2009
+*/
+
+[Report: Calculator]
+
+	Form		: Calculator
+	Auto		: Yes
+	Title		: "Calculator Layout"
+
+[Form: Calculator]
+
+	Parts		: Calculator
+	Height		: 35% Screen
+	Width		: 25% Screen
+	Space Left	: 0.5
+	Space Right	: 0.5
+	Background	: Grey
+
+[Part: Calculator]
+
+	Lines	: Dim Calc Info Line, Dim Calc, Dim Calc Button Line0, Dim Calc Button Line1, Dim Calc Button Line2, Dim Calc Button Line3
+	Lines	: Dim Calc Button Line4
+	Local	: Field	: Simple Field		: Skip		: Yes
+	Local	: Field	: Simple Field2		: Skip		: Yes
+	Local	: Field	: Simple Field3		: Skip		: Yes
+	Local	: Field	: Simple Field4		: Skip		: Yes
+
+	[Line: Dim Calc Info Line]
+
+		Fields	: Info Field
+		Local	: Field	: Info Field	: Info		: "Calculator"
+		Local	: Field	: Info Field	: FullWidth	: Yes
+		Local	: Field	: Info Field	: Align		: Center
+		Local	: Field	: Info Field	: Border	: Thin Bottom
+		Local	: Field	: Info Field	: Style		: Normal Bold
+		Space Bottom	: 1
+
+	[Line: Dim Calc]
+
+		Fields		: Number Field
+		Local: Field: Number Field		: FullWidth	: Yes
+		Local: Field: Number Field		: Align		: Right
+		Local: Field: Number Field		: Set as	: 0
+		Local: Field: Number Field		: Border	: Thin Box
+		Local: Field: Number Field		: Background: White
+
+	[Line: Dim Calc Button Line0]
+
+		Use			: Dim Calc Button Line1
+		Delete		: Right Fields
+		Add			: Right Fields		: Dim Calc Button No7, Simple Field, Dim Calc Button No8, Dim Simple Field2, Dim Calc Button No9
+
+		Local: Field: Calc Button MC	: Set As	: ""
+		Local: Field: Calc Button No7	: Set As	: "BackSpace"
+		Local: Field: Calc Button No8	: Set As	: "CE"
+		Local: Field: Calc Button No9	: Set As	: "C"
+
+		Local: Field: Calc Button No7	: Width		: 10
+		Local: Field: Calc Button No8	: Width		: 6
+		Local: Field: Calc Button No9	: Width		: 3
+
+		Local: Field: Calc Button MC	: Skip		: Yes
+
+	[Line: Dim Calc Button Line1]
+
+		Fields		: Dim Calc Button MC
+		Right Fields: Dim Calc Button No7, Simple Field, Dim Calc Button No8, Dim Simple Field2, Dim Calc Button No9
+		Right Fields: Dim Simple Field3, Dim Calc Button Div, Dim Simple Field4, Dim Calc Button Sqrt
+		Space Top	: 1
+
+		Local: Field: Simple Field		: Width		: 0.8
+		Local: Field: Dim Simple Field2	: Width		: 0.8
+		Local: Field: Dim Simple Field3	: Width		: 0.8
+		Local: Field: Dim Simple Field4	: Width		: 0.8
+
+		[Field: Dim Calc Button MC]
+
+			Use			: Dim Calc Button No7
+			Set As		: "MC"
+
+		[Field: Dim Calc Button No7]
+
+			Use			: Name Field
+			Width		: 3
+			Align		: Centre
+			Set As		: "7"
+			Border		: Thin Box
+			Background	: Grey
+
+		[Field: Dim Calc Button No8]
+
+			Use			: Dim Calc Button No7
+			Set As		: "8"
+
+		[Field: Dim Simple Field2]
+
+			Use			: Simple Field
+
+		[Field: Dim Calc Button No9]
+
+			Use			: Dim Calc Button No7
+			Set As		: "9"
+
+		[Field: Dim Simple Field3]
+
+			Use			: Simple Field
+
+		[Field: Dim Calc Button Div]
+
+			Use			: Dim Calc Button No7
+			Set As		: "/"
+
+		[Field: Dim Simple Field4]
+
+			Use			: Simple Field
+
+		[Field: Dim Calc Button Sqrt]
+
+			Use			: Dim Calc Button No7
+			Set As		: "Sqrt"
+
+	[Line: Dim Calc Button Line2]
+
+		Use			: Dim Calc Button Line1
+		Local: Field: Dim Calc Button MC	: Set As: "MR"
+		Local: Field: Dim Calc Button No7	: Set As: "4"
+		Local: Field: Dim Calc Button No8	: Set As: "5"
+		Local: Field: Dim Calc Button No9	: Set As: "6"
+		Local: Field: Dim Calc Button Div	: Set As: "*"
+		Local: Field: Dim Calc Button Sqrt	: Set As: "%"
+
+	[Line: Dim Calc Button Line3]
+
+		Use			: Dim Calc Button Line1
+		Local: Field: Dim Calc Button MC	: Set As: "MS"
+		Local: Field: Dim Calc Button No7	: Set As: "1"
+		Local: Field: Dim Calc Button No8	: Set As: "2"
+		Local: Field: Dim Calc Button No9	: Set As: "3"
+		Local: Field: Dim Calc Button Div	: Set As: "-"
+		Local: Field: Dim Calc Button Sqrt	: Set As: "1/x"
+
+	[Line: Dim Calc Button Line4]
+
+		Use			: Dim Calc Button Line1
+		Local: Field: Dim Calc Button MC	: Set As: "M+"
+		Local: Field: Dim Calc Button No7	: Set As: "0"
+		Local: Field: Dim Calc Button No8	: Set As: "+/-"
+		Local: Field: Dim Calc Button No9	: Set As: "."
+		Local: Field: Dim Calc Button Div	: Set As: "+"
+		Local: Field: Dim Calc Button Sqrt	: Set As: "="
+
+;; End-of-File

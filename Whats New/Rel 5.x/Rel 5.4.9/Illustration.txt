@@ -1,0 +1,128 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Form: TSPL SMP Illustration]
+	
+	Part	: Form SubTitle, TSPL SMP Illustration
+
+	Option	: Small Size Form
+	Height	: 100% Screen
+	Width	: 100% Screen
+	
+[Part: TSPL Smp ReportPeriod]
+	
+	Lines	: TSPL Smp ReportPeriod
+
+	[Line: TSPL Smp ReportPeriod]
+		
+		Right Fields: Name Field
+		
+		Local: Field: Name Field: Set as	: $$String:##SVFromDate + " to " + $$String:##SVToDate
+		Local: Field: Name Field: Width		: 25
+		Local: Field: Name Field: Align		: Right
+		Space Bottom: 0.25
+
+[Part: TSPL SMP Illustration]
+	
+	Parts	: TSPL SMP Purpose, TSPL SMP Syntax, TSPL SMP Example
+	Vertical: Yes
+	Local	: Field	: Default	: Skip		: Yes
+
+[Part: TSPL SMP Purpose]
+	
+	Lines	: TSPL SMP PurposeTitle, TSPL SMP Purpose, Empty
+	
+	[Line: TSPL SMP PurposeTitle]
+		
+		Fields	: TSPL SMP PurposeTitle
+
+		[Field: TSPL SMP PurposeTitle]
+			
+			Use		: Short Prompt
+			Width	: 0
+			Info	: "Purpose"
+			Style	: Normal Bold
+			Border	: Thin Bottom
+
+	[Line: TSPL SMP Purpose]
+		
+		Fields	: TSPL SMP Purpose
+		
+		[Field: TSPL SMP Purpose]
+			
+			Use		: Info Field
+			Width	: 100% Page
+			Lines	: 0
+			Info	: ""
+
+[Part: TSPL SMP Syntax]
+	
+	Lines	: TSPL SMP SyntaxTitle, TSPL SMP Syntax, Empty
+	
+	[Line: TSPL SMP SyntaxTitle]
+		
+		Fields	: TSPL SMP SyntaxTitle
+
+		[Field: TSPL SMP SyntaxTitle]
+			
+			Use		: TSPL SMP PurposeTitle
+			Info	: "Syntax"
+
+	[Line: TSPL SMP Syntax]
+		
+		Fields	: TSPL SMP Syntax
+		
+		[Field: TSPL SMP Syntax]
+			
+			Use		: TSPL SMP Purpose
+			Info	: ""
+
+[Part: TSPL SMP Example]
+	
+	Lines	: TSPL SMP ExampleTitle, TSPL SMP Example, TSPL SMP ExampleNote, Empty
+	
+	[Line: TSPL SMP ExampleTitle]
+		
+		Fields	: TSPL SMP ExampleTitle
+
+		[Field: TSPL SMP ExampleTitle]
+			
+			Use		: TSPL SMP PurposeTitle
+			Info	: "Example"
+
+	[Line: TSPL SMP Example]
+		
+		Fields	: TSPL SMP Example
+		
+		[Field: TSPL SMP Example]
+
+			Use		: TSPL SMP Purpose
+			Info	: ""
+
+	[Line: TSPL SMP ExampleNote]
+		
+		Fields	: TSPL SMP ExampleNote
+		
+		[Field: TSPL SMP ExampleNote]
+			
+			Use		: TSPL SMP Purpose
+			Info	: "(The sample data 'ABC Company Ltd' is available in Samples folder within Tally.Developer 9)"
+			Style	: Tiny Italic
+			Color	: Deep Grey
+
+	[Line: TSPL Smp OutputTitle]
+		
+		Fields		: TSPL Smp OutputTitle
+		Space Top	: 1
+		
+		[Field: TSPL Smp OutputTitle]
+			
+			Use			: TSPL Smp PurposeTitle
+			Info		: "Output"
+
+[Collection: TSPL SMP Vch Sales]
+	
+	Type		: Vouchers		: VoucherType
+	Child Of	: $$VchTypeSales
+	Belongs To	: Yes
+
+;; End-of-File

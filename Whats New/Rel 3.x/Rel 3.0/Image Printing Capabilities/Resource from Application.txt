@@ -1,0 +1,42 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This program demonstrates the Image rendering capability with a Newly
+introduced Resource Definition
+-	The following report prints/exports a Tally Logo
+
+Syntax -
+-	Part Attribute 'Image' introduced to accept Resource Name
+
+	[Part: <Part Name>]
+		Image	: <Resource Name>
+
+- 	Resource Definition introduced to declare Sources/Resources of Image
+
+	[Resource: <Resource Name>]
+		Source	: <Path of the Image File>  ;; Can also accept HTTP/FTP
+		Resource: <Resource Object Name> [: Application Path]
+		Resource Type : <Type of the Image> ;; BMP/JPEG/Cursor/Icon
+
+Updation History – 
+-	Created on 04/02/2011
+*/ 
+
+[Report: TSPL Smp Resource from Application]
+
+	Form	: TSPL Smp Resource Type
+	Local	: Part	: TSPL Smp Resource Type	: Delete: Image
+	Local	: Part	: TSPL Smp Resource Type	: Add	: Image	: TSPL Smp Resource from Application
+	
+	Local	: Form	: TSPL Smp Resource Type	: Local	: Part	: TSPL Smp Info	: Local	: Line	: Info	: Local	: Field : Info Field	: Info	: "Image 'WaitClock' of Type 'Icon' rendered from Current Application using Part Attribute 'Image' and corresponding definition 'Resource'"
+	Title	: "Resource Type - Icon from current application"
+
+[Resource: TSPL Smp Resource from Application]
+	
+;; Resource Name 'WaitClock' is entered as Resource which is available in the 
+;; running Application i.e., Tally Application and Resource Type is declared as 'Icon'
+	Resource		: "Form VAT 100.xml" ;;"WaitClock"
+	Resource Type	: Word XML ;;Icon
+	
+;; End-of-File

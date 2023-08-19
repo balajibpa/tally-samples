@@ -1,0 +1,115 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) - 
+-	The objective of this program is to demonstrate the usage of Rule Set in the simplest way
+
+Syntax -
+
+[Rule Set: <RuleSetName>]
+     
+    Rule	: <RuleName> : <LogicalExpression>[:<LogicalValue>]
+	
+where,
+	Rule name 			: This is developer defined
+	LogicalExpression	: Any expression to be evaluted in context of requestor / source / target object being passed
+	Logical Value 		: A constant value providing BreakOn condition. This is an optional parameter. 
+						 If this parameter is not specified it will inherit the BreakOn attribute value
+
+Last modification - 
+-	Created on 28/11/2016
+
+*/
+
+[Report: TSPL Smp SimpleRule]
+		
+	Form		: TSPL Smp SimpleRule
+	Title		: "Simple Rule Set"
+
+[Form: TSPL Smp SimpleRule]
+	
+	Use			: TSPL SMP Illustration
+	Local		: Field	: FormSubTitle		: Info		: "Illustration for attribute Rule & Function EvaluateRuleSet"
+	Local		: Field	: TSPL Smp Purpose	: Info		: "     Attribute Rule is a Triple List attribute at Rule Set definition"
+	Local		: Field	: TSPL Smp Syntax	: Info		: "[Rule Set : <RuleName>]" + 
+			+ $$NewLine + "         Rule : <Rule Name> : <LogicalExpression> [: <LogicalValue>]" + 
+			+ $$NewLine + "where," + $$NewLine + "   Rule Name is a TDL identifier for the rule, which " +
+			+ "can be used for access the rule later" + $$NewLine + "   Logical Expression can be any expresion " + 
+			+ "that can be evaluated in the context of requestor / source / target object being passed "+
+			+ "from evaluation context." + $$NewLine + "   Logical Value is a constant value providing BreakOn " +
+			+ "condition. This is an optional parameter. If this parameter is not specified it will inherit " + 
+			+ "the BreakOn attribute value" + $$NewLine + "$$EvaluateRuleSet:<RuleSetName>" + 
+			+ $$NewLine + "This function is required to return a Flagset constructed with flags and " +
+			+ "dimensions as per the Rule set definition provided and evaluated on the current contexts " +
+			+ "(Requestor, Object)"
+	Part		: TSPL Smp SimpleRule
+	
+[Part: TSPL Smp SimpleRule]
+	
+	Line	: TSPL Smp SimpleRuleT, TSPL Smp SimpleRuleB
+	Repeat	: TSPL Smp SimpleRuleB	: TSPL SimpleRules
+	Scroll	: Vertical
+	Common Borders	: Yes
+	
+	[Line: TSPL Smp SimpleRuleT]
+		
+		Use		: TSPL Smp SimpleRuleB
+		Local	: Field	: Default	: Type	: String
+		Local	: Field	: Default	: Style	: Normal Bold
+		Local	: Field	: Default	: Line	: 2
+		
+		Local	: Field	: TSPL Smp SrNo			: Info	: "Sr.No."
+		Local	: Field	: TSPL Smp SRName		: Info	: "Particulars"
+		Local	: Field	: TSPL Smp SRCompute	: Info	: "Validation"
+		
+		Border	: Thick Top Bottom
+			
+	[Line: TSPL Smp SimpleRuleB]
+		
+		Field		: TSPL Smp SrNo, TSPL Smp SRName
+		Right Field	: TSPL Smp SRCompute
+		
+		[Field: TSPL Smp SrNo]
+			
+			Set as	: $$Line
+			Border	: Thin Right
+			Width	: 3
+		
+		[Field: TSPL Smp SRName]
+			
+			Set as	: $Name
+			
+		[Field: TSPL Smp SRCompute]
+			
+			Width	: 30
+			Set as	: @@FilterValues
+			Border	: Thin Left
+			Line	: 2
+
+;; Collection
+
+;; Select $Name, $EvalRSValue, $FIsAnyTrue, $FIsAllTrue from TSPLSimpleRules
+
+[Collection: TSPL SimpleRules]
+ 
+    Source Collection   : Ledger
+    Fetch               : Name, Parent, IsBillWiseOn, OpeningBalance, LedgerContact, LedgerPhone
+;; The same code could be written with multiple Compute Var. With Rule set introduction
+;; we have written just one compute var and one compute for final result.
+    Compute Var         : cvEvalRSValue     : FlagSet    : $$EvaluateRuleSet:TSPLSimpleRules
+	Compute             : EvalRSValue       : ##cvEvalRSValue
+
+[System: Formulae]
+	
+	FilterValues	: IF $$FlagGetValue:R1:$EvalRSValue = Yes Then "This ledger's Parent is Sundry Debtors." +
+					  Else IF $$FlagGetValue:R2:$EvalRSValue = Yes Then "This ledger is enabled for Billwise only." +
+					  Else "All evaluations failed"
+					  
+[Rule Set: TSPLSimpleRules]
+     
+	Rule        : R1    : @IsLedOfGrpDebtors
+    Rule        : R2    : $IsBillWiseOn
+
+    LocalFormula: IsLedOfGrpDebtors      : ($$IsLedOfGrp:$Name:$$GroupSundryDebtors)
+
+;; End of file

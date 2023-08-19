@@ -1,0 +1,86 @@
+/*
+Objective	: This sample code is to depict the behavior of Table Sort in a collection. 
+Use Case	: We would list TSPL All Batches of all the stock item based on their date of Mfg. / Expiry
+*/
+
+[Report	: TSPL Table Sort]
+	
+	Title	: "Table for Batches"
+	Form	: TSPL Table Sort
+	
+[Form	: TSPL Table Sort]
+	
+	
+	Use				: TSPL SMP Illustration
+		
+	Height			: 100% Screen
+	Width			: 100% Screen
+	
+	Local	: Part	: TSPL SMP Syntax		: Invisible	: Yes
+	Local	: Field	: FormSubTitle			: Info		: $$LocaleString:"Illustration for Sorting Table"
+		
+	Local	: Field	: TSPL Smp Purpose		: Indent	: 2
+	Local	: Field	: TSPL Smp Purpose		: Info		: $$LocaleString:"This attributes allows to sort on any columns of the Table retaining the data type of the value." + +
+														 $$NewLine + $$LocaleString:"The below mentioned code describes an approach sort a Table."
+			
+	
+	Local	: Field	: TSPL SMP Example		: Info		: $$NewLine	+ "[Collection	: TSPL All Batches of All Stock Items]" + $$NewLine + +
+														"         |"  + $$NewLine + +
+															"Table Sort	: $ExpiryPeriod, $MfdOn" 
+	Local	: Field	: TSPL SMP ExampleNote	: Info		: "List of All batches is listed in the Table sorted based on Expiry Date and Manufacturing Date" 	
+
+
+
+	Part				: TSPL Table Sort
+	Vertical Align		: Top
+	Horizontal Align	: Left
+	No Confirm			: Yes
+	
+[Part	: TSPL Table Sort]
+	
+	Line	: TSPL Table SortTitle, TSPL Table SortTable
+	Local	: Field		: Default	: Width		: 40
+	
+	[Line	: TSPL Table SortTitle]
+		
+		Field			: Name Field
+		Local			: Field		: Name Field	: Info	: "Listing of Batch"
+				
+	[Line	: TSPL Table SortTable]
+		
+		Field		: Medium prompt, Name Field
+		
+		Local		: Field		: Medium prompt	: Info			: $$LocaleString:"Table has been sorted based on Batch Expiry"
+		Local		: Field		: Medium prompt	: Line			: 1
+		Local		: Field		: Name Field	: Table			: TSPL All Batches of All Stock Items
+		Local		: Field		: Name Field	: Show Table	: Always
+		
+[Collection	: TSPL All Batches of All Stock Items]
+
+	Title		: "List Of Batch"
+	Collection	: TSPL All Batches	: TSPL All Stock Item
+	Sub Title	: $$LocaleString:"Batch Item", $$LocaleString:"Stock Name"
+	Sub Title	: $$LocaleString:"Mfg. Date", $$LocaleString:"Expiry Date"
+	Sub Title	: $$LocaleString:"Closing Balance"
+	Format		: $BatchName, 25
+	Format		: $StkName, 20	
+	Format		: $MfdOn, 15
+	Format		: $ExpiryPeriod, 15 : Universal Date
+	Format		: $ClosingBalance
+	Table Sort	: $ExpiryPeriod, $MfdOn
+	
+[Collection	: TSPL All Stock Item]
+	
+	Type	: Stock Item
+	Fetch	: Name
+		
+[Collection	: TSPL All Batches]
+	
+	Title		: "List Of Batch"
+	Type		: Batch
+	Child Of	: $Name
+	Compute		: StkName	: $$LoopCollObj:$Name
+	Fetch		: BatchName, MfdOn, ExpiryPeriod, ClosingBalance
+	Align		: Center
+	
+;; End of File

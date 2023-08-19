@@ -1,0 +1,85 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+-	This program demonstrates the capability of DLL XML Collection to retrieve 
+	entire XML fragment of the data from DLL.
+-	The XML data thus fetched from the DLL is displayed in a Report.
+
+Syntax -
+-	Collection Attribute 'Data Source' Syntax
+		Data Source	: AxPlugin XML : <Class Name in DLL>
+-	XML Path specification using 'XML Object Path'
+		XML Object Path	: <start node>:<path to start node> where 
+		<start node> = <node name>:<position> and
+		<path to start node> = <root node>:<child node>:<start position>:<child node>:<start position>:....
+
+Last modification – 
+-	Altered on 19/04/2010
+
+Dependencies -
+- 	.NET Framework 3.5 environment is required 
+- 	Sample1Installer needs to be installed
+*/
+
+;; Report Displaying XML Data
+
+[Report: DLL XML Get CollObjPath]
+
+	Form 	: DLL XML Get CollObjPath
+	Title 	: "Fetching XML data from DLL Collection"
+
+[Form: DLL XML Get CollObjPath]
+
+	Parts	: Form SubTitle, DLL XML Get CollObjPath, DLL XML Data
+	Height	: 100% Screen
+	Width	: 100% Screen
+	Local	: Field	: Form SubTitle		: Info	: "Fetching XML Data from DLL Collection"
+
+[Part: DLL XML Get CollObjPath]
+
+	Lines	: DLL XML Get CollObjPathTitle, DLL XML Get CollObjPath
+	Repeat	: DLL XML Get CollObjPath	: DLL XML Get CollObjPath
+	Scroll  : Vertical
+
+	[Line: DLL XML Get CollObjPathTitle]
+
+		Use		: DLL XML Get CollObjPath
+
+		Local	: Field	: Default				: Align	: Centre
+
+		Local	: Field	: DLL XML COP Line No	: Set As: "Serial No."
+		Local	: Field	: DLL XML COP Stk Name	: Set As: "Tag Name"
+		Local	: Field	: DLL XML COP Stk Qty	: Set As: "Tag Quantity"
+		Border	: Thin Top Bottom
+
+	[Line: DLL XML Get CollObjPath]
+
+		Fields		: DLL XML COP Line No, DLL XML COP Stk Name
+		Right Fields: DLL XML COP Stk Qty
+
+		[Field: DLL XML COP Line No]
+
+			Use		: Short Name Field
+			Set As 	: $$Line
+			Align	: Centre
+			Width	: 10
+
+		[Field: DLL XML COP Stk Name]
+
+			Use		: Name Field
+			Set As 	: $Name
+
+		[Field: DLL XML COP Stk Qty]
+
+			Use		: Qty Primary Field
+			Type	: String
+			Set As 	: $Quantity
+			Align	: Right
+					   			
+[Collection: DLL XML Get CollObjPath]
+
+	Data Source 	: AxPlugin XML : Sample1.Class1
+	XML Object Path	: Item:1:ItemList
+	
+;; End-of-File

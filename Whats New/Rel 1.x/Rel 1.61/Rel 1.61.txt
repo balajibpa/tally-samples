@@ -1,0 +1,15 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Menu for Whats New in Rel 1.6
+*/
+
+[Menu: Whats New in Rel 1.61]
+
+	Key Item	: Reducing Table Search	: R : Alter	: Reducing Table Search
+	
+;; Include Files
+
+[Include: Reducing Table Search.txt]
+	
+;; End-of-File

@@ -1,0 +1,65 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Menu for COM Interface Enhancement
+*/
+
+[Menu: COM Interface]
+
+	Indent		: "Basic Usage - Requires MathLib.DLL"
+	Item		: Blank
+	Key Item	: "In Parameter in Addition"			: I : Alter	: TSPL Smp InParminAddition			: $$IsCOMInterfaceInvokable:TSPLSmpAddition  ;; Function IsCOMInterfaceInvokable returns True if Project and Class of COM Interface are invokable
+	Key Item	: "Out Parameter in Division"			: O : Alter	: TSPL Smp OutParminDivision		: $$IsCOMInterfaceInvokable:TSPLSmpDivision
+	Key Item	: "InOut Parameter in Addition of Date"	: D : Alter	: TSPL Smp InOutParminDateAddition	: $$IsCOMInterfaceInvokable:TSPLSmpAddDate
+	Key Item	: "Executing all above using Function"	: E : Call	: TSPL Smp Execute COM Interfaces	: $$IsCOMInterfaceInvokable:TSPLSmpAddition AND $$IsCOMInterfaceInvokable:TSPLSmpDivision AND $$IsCOMInterfaceInvokable:TSPLSmpAddDate
+
+	Item		: Blank
+
+	Indent		: "Advanced Usage - Generic COM Server"
+	Item		: Blank
+	Key Item	: "Speak the Text"						: S : Alter : TSPL Smp Speak the Text
+
+;; COM Interface Definitions
+
+[COM Interface: TSPL Smp Addition]
+	
+	Project		: MathLib
+	Class		: MathClass
+	Interface	: Add
+	
+	Parameters	: Parm1		: Number	: In
+	Returns		: Number
+	
+[COM Interface: TSPL Smp Division]
+	
+	Project		: MathLib
+	Class		: MathClass
+	Interface	: Divide
+
+	Parameters	: Parm1		: Long	 	: In
+	Parameters	: Parm2		: Long 		: In
+	Parameters	: Parm3		: Long	 	: Out
+	Returns		: Long
+
+[COM Interface: TSPL Smp AddDate]
+	
+	Project		: MathLib
+	Class		: MathClass
+	Interface	: DateFunc
+
+	Parameters	: Parm1		: Date 		: InOut
+	Returns		: Date
+
+;; Include Files
+;; Basic Usage - Using MathLib.DLL
+
+[Include: InParminAddition.txt]
+[Include: OutParminDivision.txt]
+[Include: InOutParminDateAddition.txt]
+[Include: ExecCOMInterfaceusingFunction.txt]
+
+;; Advanced Usage - Generic COM Server
+
+[Include: SpeaktheText.txt]
+
+;; End-of-File

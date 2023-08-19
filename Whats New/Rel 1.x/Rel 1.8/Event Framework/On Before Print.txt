@@ -1,0 +1,49 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s):-
+	- To display Stock Summary before printing the Sales Invoice
+	- To understand the event 'On Before Print'
+
+Capabilities Used:-
+	- Event 'On Before Print'
+
+Syntax -
+	- On : <Event>		: <Logical Condition> : <Action>	: <Action Parameters>
+	- On : Before Print	: <Logical Condition> : <Action>	: <Action Parameters>
+
+Updaion History:-
+	- Created on 20-4-2010
+*/
+
+[Function: OnBeforePrint Sales Invoice]
+
+	Variable	: IsOnBeforePrintDemo	: Logical	: Yes
+	Variable	: Info Msg				: String	: "This code demonstrates the usage of Event 'On Before Print' at Report"
+
+	00	: Create: OnBeforePrint Sales Invoice
+
+[Report: OnBeforePrint Sales Invoice]
+
+	Use		: Voucher
+	Form	: Voucher
+	Set 	: SVVoucherType		: Sales
+	Set 	: InvoicingModeFlag : Yes
+	Local	: Form	: Default	: PrintAfterSave	: @@IsSales AND ##IsOnBeforePrintDemo
+
+;; To print the Info Message for user
+
+[#Form: VCHBASIC Form]
+
+	Option	: VCHBASIC Form On Before Print	: ##IsOnBeforePrintDemo
+
+	[!Form: VCHBASIC Form On Before Print]
+
+		Add		: Parts : Before		: VCH Title	: Form SubTitle
+		Local	: Field	: Form SubTitle	: Info		: ##InfoMsg
+
+[#Report: Printed Invoice]
+
+	On 	: Before Print 	: @@IsSales AND ##IsOnBeforePrintDemo	: Display 	: Stock Summary
+
+;; End-of-File

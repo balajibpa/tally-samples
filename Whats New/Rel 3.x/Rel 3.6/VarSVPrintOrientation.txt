@@ -1,0 +1,21 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+-	This Sample TDL demonstrates the usage of Variable SVPrintOrientation
+
+Last Modification -
+-	Updated on 01-06-2012
+*/
+
+[Report: TSPL Smp VarSVPrintOrientation]
+	
+	Use			: Balance Sheet
+	Form		: Balance Sheet
+	Title		: "Print Balance Sheet in Landscape"
+	Variable	: SV Print Orientation	: String
+	SET			: SV Print Orientation	: "Landscape"
+;; Since, the variable SVPrintOrientation is set to Landscape within this report, the report will print in
+;; landscape orientation irrespective of the printer settings.
+
+;; End-of-File

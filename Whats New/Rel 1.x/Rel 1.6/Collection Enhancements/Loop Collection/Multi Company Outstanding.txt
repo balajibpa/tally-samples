@@ -1,0 +1,211 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+-	This code demonstrates the usage of Loop Collection
+-	To view Outstanding Vouchers of all loaded companies
+
+Syntax -
+-	There is an enhancement in syntax of attribute 'Collection' at definition 'Collection'.
+-	[Collection : <CollectionName>
+		Collection : <Data Collection Name>[:<Loop Collection Name>[:<Condition for Loop Coll>]]
+
+Last Modification -
+-	Altered on 13-01-2010
+
+Specifications -
+- 	More than one company must be loaded
+*/
+
+[Report: MultiCmpOutstandingRep]
+
+	Title		: $$LocaleString:"Company Wise Outstanding Report For Ledgers"
+	Variables	: SV CurrentCompany, SV FromDate,SV ToDate
+    Form		: MultiCmpOutstandingForm
+	
+[Form: MultiCmpOutstandingForm]
+
+	Background  : @@SV_UNYELLOW
+    Parts       : LEDBILL Column, MULTICOMP LEDBILLBody
+
+[Part: MULTICOMP LEDBILL Body]
+
+	Line		: MULTICOMP CompanyName
+    Repeat		: MULTICOMP CompanyName	: Company Collection ;; For displaying company name
+    Scroll    	: Vertical
+
+	[Line: MULTICOMP CompanyName]
+
+		Left Field		: MULTICOMP CompanyName
+		Space Top		: 1% Screen
+		Space Bottom	: 1% Screen
+		
+;; Exploding Bill Details always
+		Explode			: MULTICOMP LEDBILL Details : Yes
+
+;; Bringing the Bill Details for as many company objects present
+		[Part: MULTICOMP LEDBILL Details]
+
+			Lines	: MULTICOMP LEDBILL Detail, MULTICOMP BILL Total
+			Repeat	: MULTICOMP LEDBILL Detail	: MULTICOMP CompwiseLedBills
+			Scroll  : Vertical
+			Total	: BillOp, BILLCl
+			
+			[Line: MULTICOMP LEDBILL Detail]
+
+				Left Fields	: MULTICOMP BillCompanyName,BILLFixed, BILLOp, BILLCl
+				Repeat      : BILLCl
+
+				Local		: Field	: BillParty	: Set As: $Parent
+						
+				Space Top   : If $$IsSiblingExploded Then @@ExplodedSpace Else 0
+				Next Page   : NOT $$DoExplosionsFit OR ($$LineNumber = $$LastLineNumber AND NOT $$IsNextSibling)
+				Option      : ExplodeOnEnter
+
+				Explode     : MULTICOMP BILL Vouchers	: $$InPixelMode AND ($$KeyExplode OR ##ExplodeFlag)
+			
+;; For bringing the Due Dates	
+				Option      : BILL WithDates    		: $$NumSets = 1 AND NOT ##ShowInterest AND NOT ##IsForexReport AND NOT ##ShowPDC
+				
+;; ------------------------------------------------------------------------------------
+
+;; Total Line - Bringing Companywise Total
+
+			[Line: MULTICOMP BILL Total]
+
+				Use			: MULTICOMP LEDBILL Detail
+
+				Local		: Field	: BILLRef	: Set As	: $$LocaleString:"Total"
+				Local		: Field	: BILLRef	: Style		: Normal Bold
+				Local		: Field	: BillOp	: Set As	: $$SubTotal:BillOp
+				Local		: Field	: BillOp	: Border	: SubTotals
+				Local		: Field	: BILLCl	: Set As	: $$SubTotal:BillCl
+				Local		: Field	: BILLCl	: Border	: SubTotals
+				Empty If 	: $$IsEmptyCollection:MULTICOMPCompwiseLedBills
+
+;; ------------------------------------------------------------------------------------
+
+;; To bring the Voucher Details
+
+[Part: MULTICOMP BILL Vouchers]
+
+	Line    : MultiCOMP BILL Vouchers
+	Repeat  : MultiCOMP BILL Vouchers		: Ledger Entries
+	Option  : Small Size Part
+	Local   : Style	: Default	: Bold    	: No
+	Local   : Style : Default 	: Italics	: Yes
+	Local   : Line  : Default 	: Keys    	: Form Insert Voucher, Form Append Voucher, Form Duplicate Voucher
+
+	[Line: MultiCOMP BILL Vouchers]
+
+		Fields      : MULTICOMP BillCompanyName, DSP VchMasterID, BILLVCH Date, BILLVCH Type, TSPL Smp BILL IsTDS, BILLVCH Number, BILLVCH Amount
+		Local		: Field	: BILLVCH Amount: Set As	: $MULTICOMPAllocBillsTotal ;; Method written at Voucher Level
+		Indent      : If ##IsBillWiseReport Then (@@ShortDateWidth + 2) Else (@@ShortDateWidth + 1)
+		Option    	: AlterOnEnter			: $$IsVoucher AND (NOT $$IsRemoteCompany)
+		Explode     : BILL InvDetails   	: $$InPixelMode AND (##BillWithQty OR @@Explodable) AND $HasInventory
+
+
+		[Field: TSPL Smp BILLIsTDS]
+
+            Use         : Simple Field
+            Set as      : If @IsBillTDSRef Then ("("+$$LocaleString:"TDS"+")") else ""
+            IsBillTDSRef: $$FilterValue:$IsBillTDSRef:AllLedgerEntries:First:BillParentLedger
+            BillLedName : $$Owner:$Parent
+            Style       : Small Italic
+            Width       : 7
+            Invisible   : NOT $$InPixelMode
+;; ------------------------------------------------------------------------------------
+;; Fields
+;; ------------------------------------------------------------------------------------
+
+;; Company Name Fields
+
+;; To bring the Company Name at the Main Line
+;; Used in Ledger Bills Collection for filtering the Bills related to a particular company
+ 
+[Field: MULTICOMP CompanyName]
+
+	Use			: ShortNameField
+	Set As		: $Name
+	Full Width	: No
+	Width		: 0
+	Border      : Thin Bottom
+	Skip		: Yes
+	Fixed		: Yes
+
+[Field: MULTICOMP BillCompanyName]
+
+	Use			: ShortNameField
+	Set As		: $$Owner:$BillCompanyName
+	Variable	: SVCurrentCompany
+	Modifies	: SVCurrentCompany
+    Invisible	: Yes
+
+;; ------------------------------------------------------------------------------------
+;; Collections
+;; ------------------------------------------------------------------------------------
+/* 
+ -	Company Collection to bring the Company Name
+ -	Collection for fetching LedgerwiseBill Detail
+ -  MULTICOMP Ledger Bills provides the Bill Details
+ -	Company Collection povides the loop-collection for each object of which MULTICOMP Ledger Bills is gathered
+*/
+[Collection: MULTICOMP CompwiseLedBills]
+
+	Collection	: MULTICOMP Ledger Bills	: Company Collection
+
+[Collection: MULTICOMP Ledger Bills]
+
+	Type		: Bills
+	Child Of	: ##LedgerName
+	Filter		: DueBillsFilter, AgeFilter, BillTypeFilter, EmptyBillsFilter
+
+	Fetch		: BillDate, Parent, OpeningBalance, ClosingBalance, BillCreditPeriod
+	Fetch		: LedgerEntries.MasterID, LedgerEntries.IsVCHOfStockJrnl
+	Fetch		: LedgerEntries.Date, LedgerEntries.CurLangVoucherTypeName
+	Fetch		: LedgerEntries.VoucherNumber, LedgerEntries.LedgerEntries.BillAllocations.Amount
+	Fetch		: LedgerEntries.MULTICOMPAllocBillsTotal ;; All methods need to be fetched at Bill Level
+	Fetch		: LedgerEntries.HasInventory, LedgerEntries.InventoryEntries.BilledQty, LedgerEntries.InventoryEntries.StockItemName
+	Fetch		: LedgerEntries.InventoryEntries.Rate
+	
+	Compute		: Name				: $$Name
+	Compute		: BillCompanyName	: $$LoopCollObj:$Name
+
+	Sort        : @@Default			: $BillDate 
+    Sort        : @@DateIncr		: $BillDate
+    Sort        : @@DateDecr		: -$Date
+    Sort        : @@RefNoIncr		: $$Name
+    Sort        : @@RefNoDecr		: -$$Name
+    Sort        : @@AmtIncr 		: $$Abs:$ClosingBalance
+    Sort        : @@AmtDecr			: -$$Abs:$ClosingBalance
+    Sort        : @@DueDateIncr		: @@CreditPeriod, $BillDate
+    Sort        : @@DueDateDecr		: -@@CreditPeriod, -$BillDate
+    Sort    	: @@CurrencyIncr	: $$Currency:$OpeningBalance
+    Sort    	: @@CurrencyDecr	: -$$Currency:$OpeningBalance
+
+;; To bring the Bill's Total Amount at Voucher Level
+
+[Collection: MULTICOMP BillAllocTotal]
+
+	Source Collection	: Default
+	Walk 				: Ledger Entries, Bill Allocations
+	By					: LedBillName	: $Name
+	Aggr Compute		: BillAmount	: SUM	: $Amount
+	Search Key			: $LedBillName
+
+[#Object: Voucher]
+
+	MULTICOMP AllocBillsTotal	: $$CollectionFieldByKey:$BillAmount:@@MULTICOMPBillName:MULTICOMPBillAllocTotal
+
+;; ------------------------------------------------------------------------------------
+;; System Formulas
+;; ------------------------------------------------------------------------------------
+
+[System: Formula]
+
+;; For emptying bills that do not belong to a particular company
+
+	EmptyBillsFilter	: $$LoopCollObj:$Name = #MULTICOMPCompanyName
+	MULTICOMP BillName	: $$Owner:$Name
+
+;; End of File

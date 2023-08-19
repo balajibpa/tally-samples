@@ -1,0 +1,14 @@
+;;Menu for TallyPrime Release 1.1
+
+[Menu: Release 1.1]
+	
+	Title		: "TallyPrime Release 1.1"
+	Item		: Blank
+	
+	Key Item	: QR Code Enhancements			: R : Display 	: TSPL Custom QR Code Illustration
+	Item		: Blank	
+
+
+[Include:QRCode.tdl]
+
+;;End of File

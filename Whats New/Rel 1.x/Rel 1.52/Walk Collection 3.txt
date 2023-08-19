@@ -1,0 +1,63 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This code demonstrates the Enhancement done on Walk Collection.
+- 	Collection Name is dynamically evaluated first and then the same
+	is walked over.
+-	Walk Collection also takes an additional parameter for the reverse
+	order.  By default, this is No.  If set to Yes, Collection will be
+	walked in reverse order.
+-	Based on Count value in a loop, Variable value is set and Collection
+	is being walked over the resultant variable value.
+
+Last modification – 
+-	Altered on 09/11/2009
+*/
+
+[System: Formula]
+
+	TSPL Smp Dynamic Collection Name	: "Group"
+
+[Function: Walk Collection 3]
+
+	Variable		: DCSortOrder				: Logical
+	Variable		: Dynamic Collection Name	: String
+	Variable		: Evaluated Collection Name	: String
+	Variable		: Count						: Number
+	Local Formula	: Dynamic Collection Name	: "Stock Group"
+
+	00	: SET LOG OFF
+	10	: SET FILE LOG ON
+	20	: SET		: Dynamic Collection Name	: "Stock Item"
+	21	: SET		: DC Sort Order				: No
+	30	: SET		: Count						: 1
+	40	: WHILE		: ##Count < 4
+	50	:	IF		: ##Count = 1
+	60	:		SET	: Evaluated Collection Name	: @DynamicCollectionName		;; Local Formula passed - Expression
+	70	: 	ELSE	: 
+	80	:		IF	: ##Count = 2
+	90	:			SET	: Evaluated Collection Name	: @@TSPLSmpDynamicCollectionName	;; Global Formula passed - Expression
+	100	:		ELSE: 
+	101	:			SET	: Evaluated Collection Name	: ##DynamicCollectionName	;; Variable value passed - Expression
+	120	:		ENDIF
+	130	:	ENDIF
+	140	: 	LOG			: "List of Object " + ##EvaluatedCollectionName
+	150	: 	LOG			: "---------------------------------------------------"
+	160	: 	CALL		: Walk Dynamic Collection Name 3
+	170	: 	LOG			: "---------------------------------------------------"
+	180	: 	INCREMENT	: Count
+	190	: END WHILE
+
+	200	: EXEC COMMAND	: "TDLFunc.Log"
+	210	: SET FILE LOG OFF
+	220	: SET LOG ON
+	230	: RETURN		: True
+
+[Function: Walk Dynamic Collection Name 3]
+
+	00	: WALK COLLECTION	: ##EvaluatedCollectionName : ##DCSortOrder
+	10	: 	LOG		: "Name : " + $Name
+	30	: END WALK
+
+;; End-of-File

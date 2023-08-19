@@ -1,0 +1,97 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+-  To persist the Report Scope Variables in a user specified file and reload the same.
+
+Capabilities Used -
+- 	Actions 'SAVE VARIABLE' & 'LOAD VARIABLE'
+	
+Syntax -
+- 	SAVE VARIABLE : <FileName> [:<Variable List>]
+- 	LOAD VARIABLE : <FileName> [:<Variable List>]
+
+Updation History -
+- 	Created on 12-8-2010
+-	Altered on 04-06-2013 by Kumar to incorporate changes due to Modifies behavior (4.61) and automate the variable saving instead of button
+*/
+
+[Report: TSPL Smp SLReport]
+	
+	Form 	: TSPL Smp SLForm
+	Variable: TSPL Smp SaveLoadVar1, TSPL Smp SaveLoadVar2
+	Title	: "Actions Save and Load Variable"
+
+[Form: TSPL Smp SLForm]
+	
+	Parts 	: Form SubTitle, TSPL Smp SL Part
+	Button	: TSPL Smp LoadVar
+	Width	: 30% Page
+	No Confirm		: Yes
+
+	Local	: Field : Form SubTitle	: Info			: "Save and Load Variable"
+	Local	: Field : Form SubTitle	: Width			: 30% Page
+	
+	On: Form Accept	: Yes			: Save Variables: SLReportCfg.pvf
+	
+;; Save Variable saves all the Report Variables which are persisten to the file. if the 
+;; Variables are not persistent and needed in the file, the same should be declared after
+;; the file name
+	
+[Part: TSPL Smp SL Part]
+	
+	Lines 	: TSPL Smp SL Info, TSPL Smp SL Title, TSPL Smp SL Line
+
+	[Line: TSPL Smp SL Info]
+
+		Fields	: Simple Field
+		Local	: Field : Simple Field			: Info	: "Please enter values and accept the Form. Then, execute this Report once again and click on Load Variable."
+		Local	: Field : Simple Field			: Lines	: 0	
+		Local	: Field : Simple Field			: Width	: 30% Page
+		Space Bottom	: 1
+	
+	[Line: TSPL Smp SL Title]
+		
+		Field : TSPL Smp SL Field1, TSPL Smp SL Field2
+		Local : Field 	: TSPL Smp SL Field1	: Info	: "Variable 1"
+		Local : Field 	: TSPL Smp SL Field2	: Info	: "Variable 2"
+		Border			: Thin Top Bottom
+
+	[Line: TSPL Smp SL Line]
+		
+		Field : TSPL Smp SL Field1, TSPL Smp SL Field2
+		
+		[Field: TSPL Smp SL Field1]
+			
+			Use			: Number Field
+			Set Always 	: Yes
+			Modifies 	: TSPL Smp SaveLoadVar1	: True
+			Width		: 15% Page
+			Align		: Center
+
+		[Field: TSPL Smp SL Field2]
+			
+			Use			: Number Field
+			Set Always 	: Yes
+			Modifies	: TSPL Smp SaveLoadVar2 : True
+			Width		: 15% Page
+			Align		: Center
+
+[Variable: TSPL Smp SaveLoadVar1]
+	
+	Type 		: Number
+	Persistent	: Yes
+		
+[Variable: TSPL Smp SaveLoadVar2]
+
+	Type 		: Number
+	Persistent	: Yes
+
+[Button: TSPL Smp LoadVar]
+	
+	Key		: Alt + L
+;; Load Variables loads the value of the values from the file saved earlier
+	Action  : LOAD VARIABLE : SLReportCfg.pvf
+	Title	: "Load Variable"
+	
+;; End-of-File

@@ -1,0 +1,26 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Menu for Developer Mode Features
+*/
+
+	
+[Menu: Developer Mode Features]
+	
+	
+	Title		: "Actions"
+	Key Item	: Macros			: M	: Menu		: Macros
+	Key Item	: Profiler			: P	: Menu		: Profiler
+	Key Item	: Debugger			: D	: Menu		: Debugger
+	
+;;; Functions
+
+[Include: $$IsDeveloperMode.txt]
+
+;;; Actions
+
+[Include: Macros.txt]
+[Include: Profiler.txt]
+[Include: Debugger.txt]
+
+;; End of file

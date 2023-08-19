@@ -1,0 +1,47 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Menu for Whats New in Rel 1.6
+*/
+
+[Menu: Whats New in Rel 1.6]
+
+	Indent		: "Programmable Configurations"
+	Item		: Blank
+	Key Item	: Print Trial Balance							: T	: Call					: Smp TB Print Config			: NOT $$IsEmpty:$$SelectedCmps AND $$IsSimpleCompany:##SVCurrentCompany AND NOT $$SelectedCmps < 1
+	Key Item	: Selected Ledgers - Print/Mail/Export			: P	: Display Collection	: Smp Group Summary				: NOT $$IsEmpty:$$SelectedCmps AND $$IsSimpleCompany:##SVCurrentCompany AND NOT $$SelectedCmps < 1
+	Key Item	: Mail Payslip									: Y	: Call					: Smp Mail Payslip				: NOT $$IsEmpty:$$SelectedCmps AND $$IsSimpleCompany:##SVCurrentCompany AND NOT $$SelectedCmps < 1
+	Item		: Blank
+
+	Indent		: "Enhancements in User Defined Functions"
+	Item		: Blank
+	Key Item	: For Range Loop with LoopIndex 				: R : Call					: Smp For Range and LoopIndex	: NOT $$IsEmpty:$$SelectedCmps AND $$IsSimpleCompany:##SVCurrentCompany AND NOT $$SelectedCmps < 1
+	Key Item	: New Object Action Enhanced					: N : Alter					: Smp Create or Alter Ledger	: NOT $$IsEmpty:$$SelectedCmps AND $$IsSimpleCompany:##SVCurrentCompany AND NOT $$SelectedCmps < 1
+	Item		: Blank
+
+	Indent		: "Collection Enhancements"
+	Item		: Blank
+	Key Item	: "Keep Source ()."								: K : Display				: Smp TB Report KeepSrc			: NOT $$IsEmpty:$$SelectedCmps AND $$IsSimpleCompany:##SVCurrentCompany AND NOT $$SelectedCmps < 1
+	Key Item	: "Loop Collection"								: L : Menu					: Smp Loop Collection 			: NOT $$IsEmpty:$$SelectedCmps AND NOT $$SelectedCmps < 1
+	Item		: Blank
+
+	Indent		: "System Information"
+	Item		: Blank
+	Key Item	: "System Information in Function"				: F : Call					: Smp System Functions			: NOT $$IsEmpty:$$SelectedCmps AND $$IsSimpleCompany:##SVCurrentCompany AND NOT $$SelectedCmps < 1
+	Key Item	: "System Information in Report"				: Y : Display				: Smp System Functions			: NOT $$IsEmpty:$$SelectedCmps AND $$IsSimpleCompany:##SVCurrentCompany AND NOT $$SelectedCmps < 1
+	Item		: Blank
+
+	Title		: "Recent Enhancements"
+
+	Control		: "Loop Collection"								: NOT $$IsRemoteCompany
+
+[Include: Programmable Configuration\Print TB.txt]
+[Include: Programmable Configuration\Selected Ledgers of Group.Txt]
+[Include: Programmable Configuration\Mail Payslip.Txt]
+[Include: Enhancements in User Defined Functions\For Range and LoopIndex.txt]
+[Include: Enhancements in User Defined Functions\New Object Enhanced.txt]
+[Include: Collection Enhancements\Keep Source - Primary Interface Object.txt]
+[Include: Collection Enhancements\Loop Collection\Loop Collection.txt]
+[Include: System Information\Function SysInfo.txt]
+
+;; End-of-File

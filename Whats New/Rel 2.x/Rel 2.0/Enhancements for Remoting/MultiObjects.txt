@@ -1,0 +1,91 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+-	This code demonstrates the usage of Report Attribute Multi Objects.
+-	This Sample code displays the list of vouchers and alters only the Narration
+	within the Vouchers.
+
+Syntax -
+-	Multi Objects	: <List of Collection Names>
+
+Updation History -
+-	Created on 31-08-2010
+*/
+
+[Report: TSPL Smp Multi Objects]
+	
+	Form			: TSPL Smp Multi Objects
+;; Attribute 'MultiObjects' is mandatory in order to store the values in any object
+	Multi Objects	: TSPL Smp MO Vch Collection
+	Title			: "Multi Objects Sample"
+	 
+[Form: TSPL Smp Multi Objects]
+	
+	Parts 			: Form SubTitle, TSPL Smp Multi Objects
+	Local: Field	: Form SubTitle	: Set As	: "List of Vouchers with their Narrations. Please modify Narrations, if required and accept the screen."
+
+[Part: TSPL Smp Multi Objects]
+	
+	Lines 			: TSPL Smp MO Vch Title, TSPL Smp MO Vch
+	Repeat 			: TSPL Smp MO Vch		: TSPL Smp MO Vch Collection
+	Scroll			: Vertical
+	Common Border	: Yes
+	
+	[Line: TSPL Smp MO Vch Title]
+		
+		Use		: TSPL Smp MO Vch
+		
+		Local	: Field	: Default					: Type		: String
+		Local	: Field	: Default					: Delete	: Storage
+		Local	: Field	: Default					: Line		: 0
+		Local	: Field	: Default					: Align		: Center
+		
+		Local	: Field	: TSPL Smp MO Vch No		: Info		: "Voucher Number"
+		Local	: Field	: TSPL Smp MO Vch Date		: Info		: "Voucher Date"
+		Local	: Field	: TSPL Smp MO Vch Type		: Info		: "Voucher Type Name"
+		Local	: Field	: TSPL Smp MO Vch Narration	: Info		: "Narration"
+		
+		Border	: Column Titles
+
+	[Line: TSPL Smp MO Vch]
+		
+		Fields		: TSPL Smp MO Vch Date, TSPL Smp MO Vch No, TSPL Smp MO Vch Type
+		Right Fields: TSPL Smp MO Vch Narration
+
+		[Field: TSPL Smp MO Vch Date]
+			
+			Use			: Uni Date Field
+			Set as		: $Date
+			Skip		: Yes
+			Width		: 10% Page
+
+		[Field: TSPL Smp MO Vch No]
+			
+			Use			: Short Name Field
+			Set as		: $VoucherNumber
+			Skip		: Yes
+			Border		: Thin Left Right
+			
+		[Field: TSPL Smp MO Vch Type]
+			
+			Use			: Name Field
+			Set as		: $VoucherTypeName
+			Skip		: Yes
+			
+		[Field: TSPL Smp MO Vch Narration]
+			
+			Use			: Name Field
+			Storage		: Narration
+			Width		: 100
+			Lines		: 2
+			Border		: Thin Left
+			Max			: 251
+
+[Collection: TSPL Smp MO Vch Collection]
+	
+	Type 	: Voucher
+;; Since this collection is gathered using MultiObjects Attribute at Report Level, 
+;; specifying Fetch is not required here.
+
+;; End-of-File

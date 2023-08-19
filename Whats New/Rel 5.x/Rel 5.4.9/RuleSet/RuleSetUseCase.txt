@@ -1,0 +1,229 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) - 
+-	The objective of this program is to demonstrate the usage of Rule Set with a use case wherein we would check 
+in the matrix we would capture ledger count based on pending amount and pending period.
+
+Syntax -
+
+[Rule Set: <RuleSetName>]
+     
+    Rule	: <RuleName> : <LogicalExpression>[:<LogicalValue>]
+	Rule Set	: <RuleDefinitionName>	[:<ListOfRuleNameIdentifierCurrentLevel>:<ListOfRuleNameIdentifierNextLevel>]
+	Break On	: <Logical Value>
+	Walk On		: <Logical Value>
+	Aggr Rule	: <Identifier>	: <AggrRuleParam> [:<RuleSetLevel>]
+
+Last modification - 
+-	Created on 02/12/2016
+
+*/
+
+[Report: TSPL Smp RuleSetUseCase]
+	
+	Title	: "Data Matrix"
+	Form	: TSPL Smp RuleSetUseCase
+	
+[Form: TSPL Smp RuleSetUseCase]
+	
+	Part		: Form SubTitle, TSPL SMP Purpose, TSPL Smp RuleSetUseCase
+	
+	Option		: Small Size Form
+	Height		: 100% Screen
+	Width		: 100% Screen
+	
+	Space Bottom: 0
+	Space Top	: 0
+	Background	: Light Lily Yellow	
+
+	Local: Field: FormSubTitle		: Info		: "Use case for using Rule Set Definition"
+	Local: Field: TSPL Smp Purpose	: Info		: "   In this use case we are displaying a matrix to show number of " +
+			+ "transactions for the quarter based on amount range."
+	
+[Part: TSPL Smp RuleSetUseCase]
+	
+	Line		: TSPL Smp UseCaseLn0, TSPL Smp UseCaseLn1, TSPL Smp UseCaseLn2, TSPL Smp UseCaseLn3, TSPL Smp UseCaseLn4, TSPL Smp UseCaseLn5
+	Space Top	: 0
+	Space Bottom: 0
+	
+	Border		: Thick Box
+	
+	[Line: TSPL Smp UseCaseLn0]
+		
+			Field 		: Name Field
+			Local		: Field	: Name Field 	: Set as: "Report for Period : "+ $$String:##SVFromDate + " to " + $$String:##SVToDate
+			Local		: Field	: Name Field 	: Background	: Light Lily Yellow	
+			Local		: Field	: Default	: Full Width	: Yes
+			Space Bottom:1
+			Border		: Thick Bottom
+	
+	[Line: TSPL Smp UseCaseLn1]
+		
+		Fields		: TSPL Smp UseCaseFld1, TSPL Smp UseCaseFld2, TSPL Smp UseCaseFld3, TSPL Smp UseCaseFld4, TSPL Smp UseCaseFld5
+		Border		: Thick Bottom
+		Local		: Field	: Default	: Align	: Center
+		Local		: Field	: Default	: Style	: Normal Bold
+		Local		: Field	: Default	: Format: "NoZero"
+		Local		: Field	: Default	: Width	: 22
+
+		Local		: Field		: TSPL Smp UseCaseFld1	: Background	: Light Lily Yellow		
+		Local		: Field		: TSPL Smp UseCaseFld2	: Background	: Light Lily Yellow
+		Local		: Field		: TSPL Smp UseCaseFld3	: Background	: Light Lily Yellow
+		Local		: Field		: TSPL Smp UseCaseFld4	: Background	: Light Lily Yellow
+		Local		: Field		: TSPL Smp UseCaseFld5	: Background	: Light Lily Yellow
+		
+		Height		: 2
+		Space Top	: 0
+		Space Bottom: 0
+
+	[Line: TSPL Smp UseCaseLn2]
+		
+		Use		: TSPL Smp UseCaseLn1
+		Local	: Field		: TSPL Smp UseCaseFld1	: Info		: " 30,000 > ..."
+		Local	: Field		: TSPL Smp UseCaseFld2	: Type		: Number
+		Local	: Field		: TSPL Smp UseCaseFld3	: Type		: Number
+		Local	: Field		: TSPL Smp UseCaseFld4	: Type		: Number
+		Local	: Field		: TSPL Smp UseCaseFld5	: Type		: Number
+		
+		Local	: Field		: TSPL Smp UseCaseFld2	: Set as	: $$CollNumTotal:TSPLSmpRuleSetVouchers:$JanToMar3
+		Local	: Field		: TSPL Smp UseCaseFld3	: Set as	: $$CollNumTotal:TSPLSmpRuleSetVouchers:$AprToJun3
+		Local	: Field		: TSPL Smp UseCaseFld4	: Set as	: $$CollNumTotal:TSPLSmpRuleSetVouchers:$JulToSep3
+		Local	: Field		: TSPL Smp UseCaseFld5	: Set as	: $$CollNumTotal:TSPLSmpRuleSetVouchers:$OctToDec3
+
+	[Line: TSPL Smp UseCaseLn3]
+		
+		Use		: TSPL Smp UseCaseLn1
+		Local	: Field		: TSPL Smp UseCaseFld1	: Info		: " 20,000 > 30,000"
+		Local	: Field		: TSPL Smp UseCaseFld2	: Type		: Number
+		Local	: Field		: TSPL Smp UseCaseFld3	: Type		: Number
+		Local	: Field		: TSPL Smp UseCaseFld4	: Type		: Number
+		Local	: Field		: TSPL Smp UseCaseFld5	: Type		: Number
+		
+		Local	: Field		: TSPL Smp UseCaseFld2	: Set as	: $$CollNumTotal:TSPLSmpRuleSetVouchers:$JanToMar2
+		Local	: Field		: TSPL Smp UseCaseFld3	: Set as	: $$CollNumTotal:TSPLSmpRuleSetVouchers:$AprToJun2
+		Local	: Field		: TSPL Smp UseCaseFld4	: Set as	: $$CollNumTotal:TSPLSmpRuleSetVouchers:$JulToSep2
+		Local	: Field		: TSPL Smp UseCaseFld5	: Set as	: $$CollNumTotal:TSPLSmpRuleSetVouchers:$OctToDec2
+		
+	
+	[Line	: TSPL Smp UseCaseLn4]
+		
+		Use		: 	TSPL Smp UseCaseLn1
+		Local	: Field		: TSPL Smp UseCaseFld1	: Info		: " 10,000 > 20,000"
+		Local	: Field		: TSPL Smp UseCaseFld2	: Type		: Number
+		Local	: Field		: TSPL Smp UseCaseFld3	: Type		: Number
+		Local	: Field		: TSPL Smp UseCaseFld4	: Type		: Number
+		Local	: Field		: TSPL Smp UseCaseFld5	: Type		: Number
+		
+		Local	: Field		: TSPL Smp UseCaseFld2	: Set as	: $$CollNumTotal:TSPLSmpRuleSetVouchers:$JanToMar1
+		Local	: Field		: TSPL Smp UseCaseFld3	: Set as	: $$CollNumTotal:TSPLSmpRuleSetVouchers:$AprToJun1
+		Local	: Field		: TSPL Smp UseCaseFld4	: Set as	: $$CollNumTotal:TSPLSmpRuleSetVouchers:$JulToSep1
+		Local	: Field		: TSPL Smp UseCaseFld5	: Set as	: $$CollNumTotal:TSPLSmpRuleSetVouchers:$OctToDec1
+			
+	[Line	: TSPL Smp UseCaseLn5]
+		
+		Use		: 	TSPL Smp UseCaseLn1
+		Local	: Field		: TSPL Smp UseCaseFld1	: Info		: " 0 > 10,000"
+		
+		Local	: Field		: TSPL Smp UseCaseFld2	: Type		: Number
+		Local	: Field		: TSPL Smp UseCaseFld3	: Type		: Number
+		Local	: Field		: TSPL Smp UseCaseFld4	: Type		: Number
+		Local	: Field		: TSPL Smp UseCaseFld5	: Type		: Number
+		
+		Local	: Field		: TSPL Smp UseCaseFld2	: Set as	: $$CollNumTotal:TSPLSmpRuleSetVouchers:$JanToMar0
+		Local	: Field		: TSPL Smp UseCaseFld3	: Set as	: $$CollNumTotal:TSPLSmpRuleSetVouchers:$AprToJun0
+		Local	: Field		: TSPL Smp UseCaseFld4	: Set as	: $$CollNumTotal:TSPLSmpRuleSetVouchers:$JulToSep0
+		Local	: Field		: TSPL Smp UseCaseFld5	: Set as	: $$CollNumTotal:TSPLSmpRuleSetVouchers:$OctToDec0
+		
+		[Field	: TSPL Smp UseCaseFld1]
+			
+			Border	: Thick Right
+			Info	: "Particulars"
+			
+		[Field	: TSPL Smp UseCaseFld2]
+			
+			Border	: Thick Right
+			Set as	: "January to March"
+	
+		[Field	: TSPL Smp UseCaseFld3]
+			
+			Border	: Thick Right
+			Set as	: "April to June"
+	
+		[Field	: TSPL Smp UseCaseFld4]
+			
+			Border	: Thick Right
+			Set as	: "July to September"
+			
+		[Field	: TSPL Smp UseCaseFld5]
+			
+			Set as	: "October to December"
+			
+[Collection	: TSPLVouchersSrc]
+	
+	Type	: Voucher
+
+[Collection	: TSPL Smp RuleSet Vouchers]
+	
+	Source Collection	: TSPLVouchersSrc
+	Fetch				: Amount, Date, VoucherTypeName, Voucher Number
+	
+	Compute Var			: vVchCount		: FlagSet	: $$EvaluateRuleSet:TSPLSMPVoucherCount
+
+	Compute				: VchCount		: ##vVchCount
+	Compute				: Amt			: $$Number:10
+;; For Jan to Dec for 0 to 10
+	Compute				: JanToMar0		: If ($$FlagGetValue:JanToMar.LessThanTenK:##vVchCount) Then 1 Else 0
+	Compute				: AprToJun0		: If ($$FlagGetValue:AprToJun.LessThanTenK:##vVchCount) Then 1 Else 0
+	Compute				: JulToSep0		: If ($$FlagGetValue:JulToSep.LessThanTenK:##vVchCount) Then 1 Else 0
+	Compute				: OctToDec0		: If ($$FlagGetValue:OctToDec.LessThanTenK:##vVchCount) Then 1 Else 0
+	
+	Compute				: JanToMar1		: If ($$FlagGetValue:JanToMar.LessThanTwentyK:##vVchCount) Then 1 Else 0
+	Compute				: AprToJun1		: If ($$FlagGetValue:AprToJun.LessThanTwentyK:##vVchCount) Then 1 Else 0
+	Compute				: JulToSep1		: If ($$FlagGetValue:JulToSep.LessThanTwentyK:##vVchCount) Then 1 Else 0
+	Compute				: OctToDec1		: If ($$FlagGetValue:OctToDec.LessThanTwentyK:##vVchCount) Then 1 Else 0
+
+	Compute				: JanToMar2		: If ($$FlagGetValue:JanToMar.Tw0Kto30K:##vVchCount) Then 1 Else 0
+	Compute				: AprToJun2		: If ($$FlagGetValue:AprToJun.Tw0Kto30K:##vVchCount) Then 1 Else 0
+	Compute				: JulToSep2		: If ($$FlagGetValue:JulToSep.Tw0Kto30K:##vVchCount) Then 1 Else 0
+	Compute				: OctToDec2		: If ($$FlagGetValue:OctToDec.Tw0Kto30K:##vVchCount) Then 1 Else 0
+	
+	Compute				: JanToMar3		: If ($$FlagGetValue:JanToMar.Th0K:##vVchCount) Then 1 Else 0
+	Compute				: AprToJun3		: If ($$FlagGetValue:AprToJun.Th0K:##vVchCount) Then 1 Else 0
+	Compute				: JulToSep3		: If ($$FlagGetValue:JulToSep.Th0K:##vVchCount) Then 1 Else 0
+	Compute				: OctToDec3		: If ($$FlagGetValue:OctToDec.Th0K:##vVchCount) Then 1 Else 0
+	
+
+[Rule Set : TSPL SMP Voucher Count]
+	
+	Break On: Yes
+	Walk On	: Yes
+	Rule	: JanToMar	: @JanToMar
+	Rule	: AprToJun	: @AprToJun
+	Rule	: JulToSep	: @JulToSep
+	Rule	: OctToDec	: @OctToDec
+	
+	Local Formula	: JanToMar	: $$Number:$$MonthOfDate:$Date <= 3
+	Local Formula	: AprToJun	: $$Number:$$MonthOfDate:$Date > 3 AND $$Number:$$MonthOfDate:$Date <= 6
+	Local Formula	: JulToSep	: $$Number:$$MonthOfDate:$Date > 6 AND $$Number:$$MonthOfDate:$Date <= 9
+	Local Formula	: OctToDec	: $$Number:$$MonthOfDate:$Date > 9 AND $$Number:$$MonthOfDate:$Date <= 12
+	
+	Rule Set	: TSPL SMP Amount Count
+	
+	
+[Rule Set : TSPL SMP Amount Count]
+	
+	Break On: Yes
+	Walk On	: Yes
+	Rule	: LessThanTenK		: @LessThanTenK
+	Rule	: LessThanTwentyK	: @LessThanTwentyK
+	Rule	: Tw0Kto30K			: @Tw0Kto30K
+	Rule	: Th0K				: @Th0K
+		
+	Local Formula	: LessThanTenK		: $Amount <= $$AsAmount:"10,000" 
+	Local Formula	: LessThanTwentyK	: $Amount > $$AsAmount:"10,000" AND $Amount <= $$AsAmount:"20,000"
+	Local Formula	: Tw0Kto30K			: $Amount > $$AsAmount:"20,000" AND $Amount <= $$AsAmount:"30,000"
+	Local Formula	: Th0K				: $Amount > $$AsAmount:"30,000"
+	
+	
+;; End of file

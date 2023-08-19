@@ -1,0 +1,15 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Menu: TSPL Smp Columnar Editing Capabilities]
+
+	Title		: "Columnar Edit Scroll"
+
+	Key Item	: "With Object Context"		: W : Alter	: TSPL Smp LedAddress Updation
+	Key Item	: "Without Object Context"	: O : Create: TSPL Smp Attendance Vch Entry
+
+;; Include Files
+
+[Include: With Object Context.txt]
+[Include: Without Object Context.txt]
+
+;; End-of-File

@@ -1,0 +1,108 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+-	This code demonstrates the enhancement in Action 'New Object' within Functions
+-	This code allows user to enter a ledger details in a Form, if the ledger does not
+	exist, creates the ledger else alters the ledger
+
+Syntax -
+-	NEW OBJECT	: <Object Type>		: <Object Identifier>	: <Logical Value>
+	where <Logical Value> decides whether to Create or Alter if the accepting action used
+	is 'Save Target'
+-	Object Identifier is ignored if the ledger does not exist and we need to set the value
+	to the 'Name' method subsequently.
+
+Last Modification -
+-	Altered on 23-01-2010
+*/
+
+[Report: Smp Create or Alter Ledger]
+
+	Form	: Smp Create or Alter Ledger
+
+[Form: Smp Create or Alter Ledger]
+
+	Parts	: Smp Create or Alter Ledger
+	On		: Form Accept	: Yes	: CALL	: Smp New Object Create Alter Ledger	: #SmpLedgerName	: #SmpExistingGroup	: #SmpOpeningBal : #SmpOpDrCr
+	Width	: 30% Page
+
+[Part: Smp Create or Alter Ledger]
+
+	Lines	: Smp Ledger Info, Smp Ledger Name, Smp Existing Group, Smp Opening Bal
+
+	[Line: Smp Ledger Info]
+
+		Fields	: Simple Field
+		Local	: Field	: Simple Field	: Info		: "Ledger Creation/ Alteration Module"
+		Local	: Field	: Simple Field	: Style		: Normal Italic
+		Local	: Field	: Simple Field	: FullWidth	: Yes
+		Local	: Field	: Simple Field	: Align		: Centre
+		Local	: Field	: Simple Field	: Border	: Thin Bottom
+		Space Bottom	: 1
+
+	[Line: Smp Ledger Name]
+
+		Fields		: Medium Prompt, Smp Ledger Name
+		Local: Field: Medium Prompt	: Info	: "Enter Ledger Name:"
+
+		[Field: Smp Ledger Name]
+
+			Use			: Name Field
+
+	[Line: Smp Existing Group]
+
+		Fields		: Medium Prompt, Smp Existing Group
+		Local: Field: Medium Prompt	: Info	: "Under Group:"
+
+		[Field: Smp Existing Group]
+
+			Use			: Name Field
+			Set As		: $Parent:Ledger:#SmpLedgerName
+			Set Always	: Yes
+			Table		: Group
+			Show Table	: Always
+
+	[Line: Smp Opening Bal]
+
+		Fields		: Medium Prompt, Smp Opening Bal, Smp Op DrCr
+		Local: Field: Medium Prompt	: Info	: "Opening Balance:"
+
+		[Field: Smp Opening Bal]
+
+			Use			: Amount Forex Field
+			Set As		: $OpeningBalance:Ledger:#SmpLedgerName
+			Set Always	: Yes
+
+		[Field: Smp Op DrCr]
+
+			Use			: Amount DrCr Field
+			Set As		: $OpeningBalance:Ledger:#SmpLedgerName
+			Set Always	: Yes
+
+[Function: Smp New Object Create Alter Ledger]
+
+;; Definition Block
+
+	Parameter: Ledger Name		: String
+	Parameter: Existing Group	: String
+	Parameter: Opening Bal		: Amount
+	Parameter: Op DrCr			: String
+
+;; Procedural Block
+
+	10	: IF	: NOT $$IsEmpty:##LedgerName
+	20	: 	NEW OBJECT	: Ledger			: ##LedgerName	: Yes	;; if Ledger does not exist, Ledgername and Logical parameter are ignored
+	30	: 	SET VALUE 	: Name 				: ##LedgerName			;; if Ledger does not exist, this line is mandatory else this line is not required
+	40	: 	SET VALUE	: Parent 			: ##ExistingGroup
+	50	: 	IF	: ##OpDrCr = "Cr"	
+	60	: 		SET VALUE	: Opening Balance 	: ##OpeningBal
+	70	:	ELSE: 
+	80	: 		SET VALUE	: Opening Balance 	: -1 * ##OpeningBal
+	90	: 	ENDIF
+	100	: 	SAVE TARGET
+	110	: ENDIF
+
+	120	: MSGBOX		: "Success !!"	: "Ledger created/ altered successfully"
+
+;; End-of-File

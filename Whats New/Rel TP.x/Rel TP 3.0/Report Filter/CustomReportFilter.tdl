@@ -1,0 +1,177 @@
+;;Code for Report Filter in TallyPrime
+
+
+[Report: TSPL Report Filter Capabilities]
+	
+	Use				: Range Value Template           			 ;; Range value template is required to get the filter form for the Input 
+	Title			: $$LocaleString:"Report Filter in Customisation"
+	Form			: TSPL Report Filter Capabilities
+	
+[Form: TSPL Report Filter Capabilities]
+	
+	
+	Use				: TSPL SMP Illustration
+	Add				: Part  : TSPL Report filter Main  			  ;; Created new main part
+	
+	Add				: Button: Blank Button 1,Blank Button 2,Blank Button 3,Blank Button 4,Blank Button 5,Blank Button 6,Blank Button 7, Report Value Filters  		   ;; Added filter button in form level
+    
+	Height			: 100% Screen
+	Width			: 100% Screen
+	
+	Local	: Part	: TSPL SMP Syntax		: Invisible	: Yes
+	Local	: Field	: FormSubTitle			: Info		: $$LocaleString:"Illustration for Filter Report in Customisations"
+		
+	Local	: Field	: TSPL Smp Purpose		: Indent	: 2
+	Local	: Field	: TSPL Smp Purpose		: Info		: $$NewLine + $$LocaleString:"Filter the report by using added UDF in voucher level"  + +
+														  $$LocaleString:" and set the attributes under new Object as 'FLTGroupLabel, FltUserMethodName, FltMethodName, FltMethodType and FltDataType' to view the report based on added UDF."
+			
+	
+	Local	: Field	: TSPL SMP Example		: Info		: $$NewLine	+ "[#Collection: SVFilterObjsColl]" + $$NewLine + $$NewLine + +
+																			"Add: Object: Flt Voucher Salesman" + $$NewLine + $$NewLine + +
+																	   "[Object: Flt Voucher Salesman]"  + $$NewLine + $$NewLine + +
+																			"FLTGroupLabel	    : @@FLTGeneralDetails"  + $$NewLine + +
+																			'FltUserMethodName	: $$LocaleString:"Sales Man"'  + $$NewLine ++
+																			'FltMethodName		: "Salesmansto"' + $$NewLine ++
+																			'FltMethodType		: Voucher' + $$NewLine ++
+																			'FltDataType 		: String'
+													
+	Local	: Field	: TSPL SMP ExampleNote	: Info		: "Filter the Report based on UDF values added in the voucher level."  + $$NewLine ++
+														  "For more details, refer to the help article from help.tallysolutions.com\developer-reference"
+
+;;Code to filter report based on added UDF value
+
+;; Follow the steps given below to filter the value based on UDF in the report
+
+;; 1. Modify default collection '[Collection: SVFilterObjsColl]'
+;; 2. Add a new object 
+;; 3. Define required attributes under the object created
+
+
+
+[#Collection: SVFilterObjsColl]
+	
+		Add: Object: Flt Voucher SalesMan
+	
+[Object: Flt Voucher SalesMan]
+
+		FLTGroupLabel		: @@FLTGeneralDetails					; This attribute helps to add the Group in Table
+		FltUserMethodName	: $$LocaleString:"Sales Man"            ; This attribute helps to set the name of column 
+		FltMethodName		: "SalesmanUDF"                         ; Define the added UDF, which is added in voucher level
+		FltMethodType       : Voucher                               ; Define the context (voucher / Ledger etc.)
+		FltDataType         : String                                ; UDF data type 
+
+
+[Part: TSPL Report Filter Main]    									;; Added the Top part as title part and details part under created new Main part
+
+	Top Part: TopRepleveltitle
+	Part	: ReplevelDet
+	Vertical: Yes
+		
+		[Part:TopRepleveltitle]
+			
+			Use		: ReplevelDet
+			
+			Delete	: Repeat
+			Delete	: Scroll
+			
+			Width 	: 100% Page
+			Border	: Column Titles
+			
+			Local 	: Line : DetailLn : local : Field  : VchDt			: Info : "Date"
+			Local 	: Line : DetailLn : local : Field  : VchNum  	    : Info : "Voucher Number"
+			Local 	: Line : DetailLn : local : Field  : VchTypeNm		: Info : "Voucher Type"
+			Local 	: Line : DetailLn : local : Field  : PartyName		: Info : "Particulars"
+			Local 	: Line : DetailLn : local : Field  : SalesMan		: Info : "Sales Man"
+			
+			Local 	: Line : DetailLn : local : Field  : VchNum  	    : Type	 : String
+			Local 	: Line : DetailLn : local : Field  : VchDt			: Type   : String
+		
+		[Part: Repleveldet]
+			
+			Line	: DetailLn
+			Repeat  : DetailLn  :  TSPL SalesSum Coll 
+			Scroll  : Vertical
+			
+			[Line: DetailLn]
+				
+				Field: VchDt, VchNum, VchTypeNm, PartyName, SalesMan
+				
+				[Field: VchDt]
+					
+					Use		: Uni date field
+					Set as  : $VchDt
+					Align	: Center
+					
+				[Field: VchNum]
+					
+					Use		: Number field
+					Set as	: $VchNo
+					Align	: Center
+					
+				[Field: VchTypeNm]
+					
+					Use		: Name Field
+					Set as	: $VchtypeNm
+					Align	: Center
+					
+				[Field: PartyName]
+					
+					Use		: Name Field
+					Set as	: $VchPtyLedName
+					Align	: Center
+					
+				[Field: SalesMan]
+					
+					Use		: Name Field
+					Set as	: $Vchsalesman
+					Align	: Center
+					
+			
+[Collection: TSPL SalesVch coll]	                                    ;; Voucher collection to set the value in report 	
+					
+	Type	   : Vouchers		: Vouchertype
+	Child Of   : $$VchTypeSales
+		
+	[Collection: TSPL SalesSum Coll]
+		
+		Source Collection: TSPL SalesVch coll
+		Compute			 : VchDt			 : $Date
+		Compute          : VchNo 			 : $Vouchernumber
+		Compute          : VchtypeNm		 : $Vouchertypename
+		Compute          : VchPtyLedName     : $Partyledgername
+		Compute          : Vchsalesman 	     : $SalesmanUDF            ;; Computed added UDF under collection which is repeating
+
+
+
+[#Part:DBLLINE Narration] 
+	
+	Add: Line: Before: VCH NarrPrompt : VCH Salesman                    ;; Added UDF before Narration
+	
+	[Line: VCH Salesman]
+		
+		Field: TitleSalesmanfld, BDSalesmanFld
+				
+		[Field: TitleSalesmanfld]
+			
+			Use			: Name field
+			Set as		: "Sales Man :" 
+			Skip		: Yes
+			Color		: Blue
+			
+		[Field: BDSalesmanFld]
+			
+			Use			: Name field
+			Set as		: ""
+			Storage 	: SalesmanUDF
+			Color		: Blue
+			
+			
+[System: UDF]
+	
+	SalesmanUDF : String : 9002                       					 ;; Define UDF 
+	
+
+
+
+;;End of file
+

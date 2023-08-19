@@ -1,0 +1,37 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+/*
+Objective(s) – 
+- 	The Function 'IsCollSrcObjChanged' is introduced to identify that the source object has changed during the Walk over Sub-Objects in 
+	Summary/ Extract Collection.
+- 	The objective of this program is to demonstrate the usage of IsCollSrcObjChanged 
+
+Syntax -
+	$$IsCollSrcObjChanged:<Expression>
+
+Last modification – 
+-	Created on 19/10/2016
+-	Updated on 07/11/2016
+
+*/
+
+[Report: TSPL Smp IsCollSrcObjChanged]
+	
+	Use		: TSPL Smp ReWalkReCompute
+	Title	: "Function IsCollSrcObjChanged"
+	Delete	: Form	
+	Add		: Form	: TSPL Smp IsCollSrcObjChanged
+	
+[Form: TSPL Smp IsCollSrcObjChanged]
+	
+	Use		: TSPL Smp ReWalkReCompute
+
+	Local	: Field	: Form SubTitle		: Info		: "Illustration for function IsCollSrcObjChanged"
+
+	Local	: Field	: TSPL Smp Purpose	: Info		: "The function 'IsCollSrcObjChanged' is introduced to identify that the source object has changed " +
+			+ "during the walk over sub-objects in summary/ extract collection."
+	
+	Local	: Field	: TSPL Smp Syntax	: Info		: "$$IsCollSrcObjChanged"
+	Local	: Field	: TSPL Smp Example	: Info		: "The function is used in this report to identify the change in the source object and print cumulative " +
+			+ "values only once for a day."
+
+;;  End-of-File

@@ -1,0 +1,188 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+/*
+Objective(s)
+- This code demonstrates sending request and reading response in JSON format over HTTP.
+- To help send requests and recieve response over HTTP in JSON format, a new data source HTTP JSON is introduced in collection.
+- This is similar to datasource HTTP XML. This can be used for both sending GET and POST requests to the URL specified as parameter to HTTP JSON datasource.
+- To read a specific fragment of JSON response the existing attribute 'JSON Object Path' can be used. The JSON response will be available in the collection.
+- In this example, server has information of customers all over India. Company imports only the ledgers of a selected branch with which they have business with. 
+- Click on the Create Ledgers to experience the creation of objects by sending GET request to get branch details and
+- POST request to get customer details for selected branch.
+
+Last modification 
+-	Altered on 01/04/2018
+*/
+
+
+[Report: TSPL HTTP JSON]
+
+	Title	: $$LocaleString:"HTTP JSON"
+	Form	: TSPL HTTP JSON
+
+[Form: TSPL HTTP JSON]
+
+	Use		: TSPL SMP Illustration
+	
+	Height	: 85% Screen
+	Width	: 85% Screen
+	
+	Local   : Part	: TSPL SMP Illustration : Add	: Part: TSPL SMP ExampleExecution
+	
+	Local	: Field	: FormSubTitle		: Info		: $$LocaleString:"Illustration for sending request and reading response in JSON format over HTTP"
+	
+	Local	: Field	: TSPL Smp Purpose	: Indent	: 2
+	Local	: Field	: TSPL Smp Purpose	: Info		: $$LocaleString:"To help send requests and recieve response over HTTP in JSON format, a new data source HTTP JSON is introduced in collection. " +
+	                  + $$LocaleString:"This is similar to datasource HTTP XML. " +
+	                  + $$LocaleString:"This can be used for both sending GET and POST requests to the URL specified as parameter to HTTP JSON datasource. " +
+					  + $$LocaleString:"To send a POST request, i.e. request with payload, attribute RemoteRequest is used to construct the request. " +
+					  + $$LocaleString:"To read a specific fragment of JSON response the existing attribute 'JSON Object Path' can be used. " +
+					  + $$LocaleString:"The JSON response will be available in the collection. "
+				
+	Local	: Field	: TSPL Smp Syntax	: Indent	: 2
+	Local	: Field	: TSPL Smp Syntax	: Info		: "[Collection: <Collection Name>]"+
+			+$$NewLine+ "       DataSource : HTTP JSON: <Target URL> [: <Encoding>]"+
+			+$$NewLine+ "<Target URL> : The URL to which the request has to be sent "+
+			+$$NewLine+ "<Encoding>: This the encoding that the system expects the response JSON string to be in. Default is UTF16. "
+				
+	Local	: Field	: TSPL SMP Example	: Indent: 2
+	Local	: Field	: TSPL SMP Example	: Info: $$LocaleString:"[Collection: GetBranchesColl]"+
+			+$$NewLine+"    Data Source 	: HTTP JSON: 'http://localhost/HttpJson/branchcustomers.php'"+
+			+$$NewLine+"    RemoteRequest: Branch Customers : ASCII "    +
+			+$$NewLine+$$LocaleString:"Here a request created by the report 'Branch Customers' is sent to the URL mentioned in the datasource in JSON format. " +
+			+$$LocaleString:"The response is obtained in the collection"+
+				
+	Local	: Field	: TSPL SMP ExampleExec: Info: $$LocaleString:"Demonstrates an example where server has information of customers all over India. Company imports"+
+	+" only the ledgers of a selected branch with which they have business with. Click on the button 'Branch Ledgers' to create ledgers for the selected branch." + $$Newline +
+	+ "In order to fetch and populate the list of branches in a table for selection, a GET request is sent to the server. Further, to populate the customer details for the selected branch, a POST request is sent with the branch " +
+			+$$LocaleString:"name in the request body. Using this information, ledgers under its branch name are created."
+	Local	: Field	: TSPL SMP ExampleNote: Info:"(Set up a local HTTP server like WAMP server. Copy the folder 'HttpJson' available in the path 'Samples\Supporting Files', "+
+			+ "to your server's www folder or equivalent. In the case of WAMP server copy to www folder present within WAMP installation directory. " +
+			+ "Default path in case of WAMP is C:\wamp\www or C:\wamp64\www)"
+	Buttons	: TSPLCreateBranchLedgers
+	
+
+[Button: TSPLCreateBranchLedgers]
+	
+	Title: $$LocaleString:"Branch Ledgers"
+	Key: Alt + L
+	Action: Alter: TSPL Select Branch
+	
+;;-----------Report to accept the branch name whose ledgers are to be fetched------------;;
+[Report: TSPL Select Branch]
+	
+	Title	: $$LocaleString:"Branch - Ledger Creation"
+	Use		: Modify Variables
+	
+	Local	: Part	: Modify Variables : Add	: Line: TSPL Select Branch
+	Local	: Field	: MV Title 		   : Info	: "Ledger creation for branch"
+	Local	: Form	: Modify Variables : Option : SmallSizeForm : Yes
+	Local	: Form	: Modify Variables : Add	: On: Form Accept: Yes: Call: TSPLCreateCustomerLedgers
+	
+[Line: TSPL Select Branch]
+	
+	Field: Medium Prompt, TSPL Select Branch
+	Local: Field: Medium Prompt : Info: $$LocaleString:"Branch"
+	
+[Field: TSPL Select Branch]
+	
+	Use			: Name Field 
+;; Shows the branch list recieved from the server as table	
+	Table		: TSPLGetBranchesColl
+	Show Table	: Always
+	Modifies	: TSPLBranchName : Yes
+	
+	
+;;;--------- Report used to construct the request with branch name, to get custumer details of the branch------------;;;
+[Report: TSPLBranchCustomers]
+
+	Form  	: TSPLBranchCustomers
+		
+[Form: TSPLBranchCustomers]
+
+    Parts 	: TSPLBranchCustomers
+    Delete  : XMLTag
+	
+[Part: TSPLBranchCustomers]
+
+    Lines	:  TSPLBranchName
+	Scroll	:  Vertical
+
+	[Line: TSPLBranchName]
+
+		Fields 	:  TSPLBranchName
+
+      	[Field: TSPLBranchName]
+
+			Set As 	:  ##TSPLBranchName
+  			XML Tag	: "Branch"
+			
+
+[System: Variables]
+	
+	Variable : TSPLBranchName : String
+
+;; Sends a GET request, to the URL mentioned, and recieves lists of branches as reponse in JSON format	
+[Collection: TSPLGetBranchesColl]
+	
+	Title			: $$LocaleString:"Branches"
+	Data Source 	: HTTP JSON: "http://localhost/HttpJson/getbranchlist.php"
+	JSON Object Path: "BranchName:1"
+	Format			: $BranchName , 20
+	
+
+;; Sends a POST request, to the URL mentioned with the branch name, and recieves customer details of the branch, in JSON format	
+[Collection: TSPLBranchCustomers]
+	
+	Data Source	 : HTTP JSON: "http://localhost/HttpJson/branchcustomers.php"
+	RemoteRequest: TSPL Branch Customers: ASCII
+
+;; Creates Ledgers from the response recieved in collection BranchCustomers, under a group with the Branch Name
+[Function: TSPLCreateCustomerLedgers]
+	
+	Variable: vBranch			: String
+	Variable: vProgressCount	: Number: 1
+	
+	001: Walk Collection: TSPLBranchCustomers
+	003: 	Set: vBranch : $Branch
+	010: 	Do If: NOT($$IsobjectExists:Group:("Branch-" + $Branch)) : Call: TSPLCreateBranchGroup
+	012: 	Start Progress	: ($$NumItems:Customer):"Creating Customer Ledgers":("Branch-" + ##vBranch)
+	015: 	Walk Collection: Customer
+	020:		Do If: NOT($$IsobjectExists:Ledger:(##vBranch + "-" + $Name)) : Call: TSPLCreateBranchLedgers
+	022:		Show Progress: ##vProgressCount
+	025: 	End Walk
+	030: End Progress
+	035: End Walk
+	040: Do If: ##vProgressCount>1: Msg Box: "Success" : "Ledgers created for branch " + ##vBranch + " under Group - " + ("Branch-" + ##vBranch)
+	045: Do If: ##vProgressCount=1: Msg Box: "Remark" : "Ledgers already exist for branch " + ##vBranch + " under Group - " + ("Branch-" + ##vBranch)
+	050: Do If: Yes: Display: List of Accounts
+ 
+ ;;Creates Group with the branch name
+[Function: TSPLCreateBranchGroup]
+	
+	001	: New Object	: Group
+	002	: 	Set Value		: Name			: "Branch-" + $Branch
+	004	: 	Set Value		: Parent		: $$GroupSundryDebtors
+	005	: Create Target
+
+;;Creates Ledgers under the branch name group	
+[Function: TSPLCreateBranchLedgers]
+	
+	001	: New Object	: Ledger
+	002 : Increment: vProgressCount
+	005	: Set Value		: Name			: ##vBranch + "-" + $Name
+	010	: Set Value		: Parent		: "Branch-" + ##vBranch
+	015	: Set Value		: LedStateName	: $State
+	020 : Walk Collection: Contact
+	025 : 	Set Value	: LedgerPhone   : $OfficeNo
+	030 :   Set Value	: LedgerMobile  : $Mobile
+	035 :   Set Value	: EMail 		: $Email
+	037	: End Walk
+	040 : Walk Collection			: Address
+	045 :	Insert Collection Object: Address
+	050	:		Set Value			: Address : $Address
+	055	: 		Set Target			: ..
+	060	: End Walk
+	070	: Create Target
+	
+	
+;;End Of File

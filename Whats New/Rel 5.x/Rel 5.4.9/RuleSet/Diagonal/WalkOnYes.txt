@@ -1,0 +1,79 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) - 
+-	The objective of this program is to demonstrate the usage of Rule Set in the simplest way
+
+Syntax -
+
+[Rule Set: <RuleSetName>]
+     
+    Rule	: <RuleName> : <LogicalExpression>[:<LogicalValue>]
+	RuleSet	: <Rule Definition>	[:<List Of Rule Identifier from Current Rule Set>[:<List Of Rule Identifier from Next Rule Set>]]
+	Walk on	: <Logical Value>
+		
+	
+where,
+	Rule name 			: This is developer defined
+	LogicalExpression	: Any expression to be evaluted in context of requestor / source / target object being passed
+	Logical Value 		: A constant value providing WalkOn condition. This is an optional parameter. 
+						 If this parameter is not specified it will inherit the WalkOn attribute value
+
+Last modification - 
+-	Created on 28/11/2016
+
+*/
+
+[Report: TSPL Smp WalkOnYes]
+		
+	Form		: TSPL Smp WalkOnYes
+	Title		: "WalkOn : Yes"
+
+[Form: TSPL Smp WalkOnYes]
+	
+	Use			: TSPL SMP Illustration
+	Local		: Field	: FormSubTitle		: Info		: "Illustration for attribute WalkOn with value Yes"
+	Local		: Field	: TSPL Smp Purpose	: Info		: "     Attribute WalkOn is a Single attribute at Rule Set definition " +
+			+ "While evaluating each rule, if a rule's result is True, the evaluation flow will continue evaluating the NEXT dimension (depth). " +
+			+ "When Walk On is not specified irrespective of rules' result, evaluation flow will continue for next dimension, however, the same can " +
+			+ "be overridden at the RuleSet by specifying the rules for applicability of RuleSet as well as subsequent Rule filters"
+	Local		: Field	: TSPL Smp Syntax	: Info		: "[Rule Set : <RuleName>]" + 
+	+ $$NewLine + "         RuleSet : <Rule Set Definition> : <ListofRuleNameIdentifierCurrentLevel>:<ListOfRuleNameIdentifierNextLevel>" + 
+			+ $$NewLine + "         WalkOn : <LogicalValue>" 
+	Part		: TSPL Smp SimpleRule
+	Local		: Part		: TSPL Smp SimpleRule	: Delete	: Repeat
+	Local		: Part		: TSPL Smp SimpleRule	: Add		: Repeat	: TSPL Smp SimpleRuleB	: TSPL Smp WalkOnYes
+	Local		: Field		: TSPL Smp SRCompute	: Set as	: @@TSPLChildValues
+		
+		
+[Collection: TSPL Smp WalkOnYes]
+ 
+    Source Collection   : Ledger
+    Fetch               : Name, Parent, IsBillWiseOn, OpeningBalance, LedgerContact, LedgerPhone
+;; The same code could be written with multiple Compute Var. With Rule set introduction
+;; we have written just one compute var and one compute for final result.
+    Compute Var         : cvEvalRSValue     : FlagSet    : $$EvaluateRuleSet:TSPLSmpWalkOnYes
+	Compute             : EvalRSValue       : ##cvEvalRSValue
+ 
+[Rule Set: TSPL Smp WalkOnYes]
+     
+	Rule        : R1    : @IsLedOfGrpDebtors
+	Rule        : R2    : $IsBillWiseOn
+ 
+    LocalFormula: IsLedOfGrpDebtors      : ($$IsLedOfGrp:$Name:$$GroupSundryDebtors)
+    LocalFormula: IsSubGroupofDebtors    : @IsLedOfGrpDebtors AND NOT ($Parent = $$GroupSundryDebtors)
+	
+	Rule Set    : TSPL RuleWalkYes		: R1	: R3, R4
+	
+	WalkOn		: Yes
+	
+[Rule Set: TSPL RuleWalkYes]
+	
+	Rule        : R1                : @IsLedStateKA
+    Rule        : R7                : @IsLedBillsEmpty
+         
+    LocalFormula: IsLedStateKA      : $LedStateName = "Karnataka"
+    LocalFormula: IsLedBillsEmpty   : $$NumItems:BillAllocations = 0
+	
+	
+;; End of file

@@ -1,0 +1,32 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Report: TSPL Smp IsTsPath]
+	
+	Form 	: TSPL Smp IsTsPath
+	Title	: "Usage of Function IsTsPath"
+	
+[Form: TSPL Smp IsTsPath]
+		
+	Parts	: Form SubTitle, TSPL Smp IsTsPath
+	Width	: 70% Page
+	Local	: Field	: Form SubTitle		: Set As: "Tally Server Path Functions"
+	
+[Part: TSPL Smp IsTsPath]
+	
+	Line 	: TSPL Smp IsTsPath
+
+	[Line: TSPL Smp IsTsPath]
+		
+		Field 	: Long Prompt, TSPL Smp Path, Medium Prompt, TSPL Smp PathCheck
+		Local	: Field	: Long Prompt 	: Info	: "Enter the Path :"
+		Local	: Field	: Medium Prompt	: Info	: "Is path Specified Tally Server Path :"  
+		
+		[Field: TSPL Smp Path]
+
+			Use		: Name Field
+			
+		[Field: TSPL Smp PathCheck]
+			
+			Set as	: $$IsTSPath:#TSPLSmpPath		
+
+;; End-of-File

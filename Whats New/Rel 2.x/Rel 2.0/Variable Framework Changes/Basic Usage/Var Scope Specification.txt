@@ -1,0 +1,100 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s):-
+- 	To specify the scope and relative scope etc. in variable dotted syntax.
+
+Capabilities Used:-
+- 	Variable Dotted Syntax
+	
+Syntax -
+-  	..  (DOUBLE DOT) denotes owner scope
+-	... (TRIPPLE DOT) denotes owner’s owner scope and so on
+-	(). denotes the system scope
+
+	(<Definition Type>, <Definition Name Expression>). Can be used to specify an 
+	absolute scope specification.  The element (<Definition Type>, <Definition 
+	Name Expression>) has to be in the current execution chain else one will not 
+	be able to refer the same.
+
+Updation History:-
+- 	Created on 12-8-2010
+*/
+
+[Function: TSPLSmp ScopeSpec]
+
+	VARIABLE 		: TSPLSmpScopeVar
+	
+	01  : SET 		: TSPLSmpScopeVar : "Function Level"
+	02	: Display	: TSPLSmp ScopeSpec
+
+[Report: TSPLSmp ScopeSpec]
+
+	Form		: TSPLSmp ScopeSpec
+	Variable	: TSPLSmpScopeVar
+	Set 		: TSPLSmpScopeVar 	: "Report Level"
+	
+[Form: TSPLSmp ScopeSpec]
+
+	Parts	: Form SubTitle, TSPLSmp ScopeSpec
+	Width	: 50% Page
+	Local	: Field : Form SubTitle	: Info	: "Dotted Scope Specification - Variable"
+	Local	: Field : Form SubTitle	: Width	: 50% Page
+
+[Part: TSPLSmp ScopeSpec]
+
+	Lines		: TSPLSmp ScopeSpec Title, TSPLSmp ScopeSpec Details
+	CommonBorder: Yes
+	Border		: Thin Bottom
+	
+	[Line: TSPLSmp ScopeSpec Title]
+
+		Use		: TSPLSmp ScopeSpec Details
+
+		Local	: Field : Default					: Align		: Centre
+		Local	: Field : Default					: Style		: Normal Bold
+
+		Local	: Field : TSPLSmp ScopeSpecCurrent	: Set As	: "Current Scope"
+		Local	: Field : TSPLSmp ScopeSpecOwner	: Set As	: "Owner"
+		Local	: Field : TSPLSmp ScopeSpecSystem 	: Set As	: "System"
+		Local	: Field : TSPLSmp ScopeSpecAbsolute : Set As 	: "Absolute Spec"
+		Border	: Thin Top Bottom
+
+	[Line: TSPLSmp ScopeSpec Details]
+
+		Fields	: TSPLSmp ScopeSpecCurrent, TSPLSmp ScopeSpecOwner, TSPLSmp ScopeSpecSystem, TSPLSmp ScopeSpecAbsolute
+		Local	: Field : Default	: Align		: Centre
+		Local	: Field : Default	: Style		: Normal
+
+		[Field: TSPLSmp ScopeSpecCurrent]
+
+			Use			: Name Field
+			Set As		: ##TSPLSmpScopeVar
+
+		[Field: TSPLSmp ScopeSpecOwner]
+
+			Use			: Name Field
+			Set As		: ##..TSPLSmpScopeVar
+			Border		: Thin Left Right
+		
+		[Field: TSPLSmp ScopeSpecSystem]
+			
+			Use			: Name Field
+			Set As 		: ##().TSPLSmpScopeVar
+			Border		: Thin Left
+			
+		[Field: TSPLSmp ScopeSpecAbsolute]
+			
+			Use			: Name Field		
+			Set as 		: ##(Report).TSPLSmpScopeVar
+			Border		: Thin Left
+		
+[Variable: TSPLSmpScopeVar]
+	
+	Type 		: String
+
+[System: Variable]
+	
+	TSPLSmpScopeVar	: "System Level"
+
+;; End-of-File

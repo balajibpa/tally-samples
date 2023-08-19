@@ -1,0 +1,30 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Menu for Event Framework
+*/
+
+[Menu: Event Framework for 1.8]
+
+	Indent		: "Object Specific Events"
+	Item		: Blank
+	Key Item	: "On Form Accept"	: A	: CALL	: OnFormAccept Sales Voucher
+	Key Item	: "On Focus"		: F	: CALL	: OnFocus Sales Voucher
+	Key Item	: "On Before Print"	: B	: CALL	: OnBeforePrint Sales Invoice
+	Key Item	: "On After Print"	: P	: Call	: All Ledgers with Index
+	Item		: Blank
+	Indent		: "System Events"
+	Item		: Blank
+	Key Item	: "Info Message"	: S : Call	: System Event Message
+	Item		: Blank
+
+;; Object Specific Events
+[Include: On Form Accept.txt]
+[Include: On Focus.txt]
+[Include: On Before Print.txt]
+[Include: On After Print.txt]
+
+;; System Events
+[Include: System Events.txt]
+
+;; End-of-File

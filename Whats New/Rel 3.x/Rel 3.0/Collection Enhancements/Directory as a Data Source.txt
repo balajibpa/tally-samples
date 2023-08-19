@@ -1,0 +1,121 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+-	This code demonstrates the Enhancement done on 'Data Source' Attribute within 
+    the collection - Directory
+	
+Syntax -
+-	Attribute 'Datasource' Syntax
+		[Collection : <Collection Name>]
+ 			Data Source : <Type> : <Identity> [:< Encoding>] 
+
+Updation History – 
+-	Created on 31/1/2011
+*/
+
+[Report: TSPL Smp Directory Data Source]
+
+	Form	: TSPL Smp Directory Form
+	Title	: "Directory as Data Source"
+
+[Form: TSPL Smp Directory Form]
+      
+	Parts	: TSPL Smp Info, TSPL Smp Directory Part
+	ON  	: Form Accept	: Yes	: CALL	: TSPL Smp Open File
+	Width	: 40% Page
+
+	Local	: Part			: TSPL Smp Info	: Local	: Line	: Info	: Local	: Field : Info Field	: Info	: "The selected file will be read, logged and opened"
+	
+	[Part: TSPL Smp Directory Part]
+
+		Lines	: TSPL Smp Directory Line		
+
+		[Line: TSPL Smp Directory Line]
+              
+ 			Fields	: TSPL Smp Directory Path, TSPL Smp ListofFiles
+
+			[Field: TSPL Smp Directory Path]
+				
+				Use			: Name Field
+				Set As		: ##TSPLSmpDirectoryPath
+				Modifies	: TSPLSmpDirectoryPath	: True
+				Tooltip		: "Enter the folder path from where the files are to be listed"
+				Skip Forward: Yes
+
+			[Field: TSPL Smp ListofFiles]
+   
+				Use 		: Name Field
+   				Table		: TSPL Smp Directory Collection
+				Set Always	: Yes
+   				Show Table	: Always
+				Align		: Center
+				Width		: 40% Page
+				Tooltip		: "Please select a file from the Table"
+			
+/* The Collection 'TSPL Smp Directory Collection' will enable us to gather all 
+the information pertaining to the contents of the disk directory/folder */
+							
+[Collection: TSPL Smp Directory Collection]
+	
+	Data Source : Directory	: #TSPLSmpDirectoryPath
+	Filter		: TSPLSmpTextFiles
+
+	Format		: $Name, 25
+	Format		: $FileSize, 15
+	Format		: $IsReadOnly, 15
+	
+	Title       : "File Listing"
+	Sub Title	: "File Name", "File Size", "Read Only"
+
+[Function: TSPL Smp Open File]
+	
+	Variable 	: TSPLSmpFilePath 	: String
+
+	00	: SET			: TSPLSmpFilePath 	: $$TSPLSmpLastCharExists:@@TSPLSmpDirectoryPath:#TSPLSmpListofFiles
+
+;; Opens up the selected file in Notepad Application
+	10	: EXEC COMMAND	: "Notepad"			: ##TSPLSmpFilePath
+
+[Function: TSPL Smp LastChar Exists]
+	
+	Parameter		: pLocPath	: String
+	Parameter		: pFileName	: String
+	Parameter		: pLastChar	: String	: "\"
+
+	Local Formula	: StrLenDir	: $$StringLength:##pLocPath
+	Local Formula	: LastChar	: $$StringPart:##pLocPath:(@StrLenDir - 1):1
+
+	Variable		: ReturnStr	: String
+
+	00	: IF	: $$ExactMatch:@LastChar:##pLastChar
+	10	: 	SET 	: ReturnStr	: ##pLocPath + ##pFileName
+	20	: ELSE	:
+	30	: 	SET 	: ReturnStr	: ##pLocPath + ##pLastChar + ##pFileName
+	40	: ENDIF
+	50	: RETURN	: ##ReturnStr
+
+[System: Formula]
+	
+;; Specify the required Directory Path
+	TSPL Smp Directory Path : ##TSPLSmpDirectoryPath
+	TSPL Smp Text Files		: $$TSPLSmpRefreshTable:#TSPLSmpDirectoryPath AND NOT $$IsDirectory:$Name AND (($Name CONTAINS ".txt" OR $Name CONTAINS ".xml" OR $Name CONTAINS ".sdf" OR $Name CONTAINS ".tdl") AND $Name NOT CONTAINS "tdlserver")
+
+;; Dummy Function introduced to Refresh the Table dependent on the Previous 
+;; Field Value i.e., User Input
+[Function: TSPLSmpRefreshTable]
+	
+	Parameter		: pTempVar	: String
+	00	: RETURN	: True
+
+;; Variable declaration to hold the last updated Directory path
+[Variable: TSPLSmpDirectoryPath]
+	
+	Type	: String
+	Persist	: Yes
+
+[System: Variable]
+	
+	TSPLSmpDirectoryPath	: ".\"
+
+;; End-of-File

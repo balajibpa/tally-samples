@@ -1,0 +1,36 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	The objective of this program is to demonstrate the usage of Action Exec Excel Macro
+-	This Action is used to trigger the Macro already available in the Excel file exported or open in the current context
+
+Syntax -
+Exec Excel Macro : <Excel Macro Name>
+
+Last modification – 
+-	Created on 08/01/2016
+*/
+
+[Report: TSPL Smp ActionExecExcelMacro]
+
+	Use		: AutoAutoCol Trial Balance
+	
+	Variable: SVExpExportFormat
+	
+	Set		: PrintFileName			: "Tally.xlsm"
+	Set		: SVExpExportFormat		: $$SysName:Excel
+	
+    Set		: DSPRepeatCollection	: "Period Collection"
+	Set		: SVPeriodicity			: "3 Month"
+	Local	: Form	: Default		: Option      		: Set Auto Option   		: $$SetAutoColumns:SVFromDate,SVToDate
+	
+;; The below lines executes Excel Macro in sequence on the current file exported after exporting
+	Local	: Form	: Default		: On: After Export  : Yes	: Exec Excel Macro	: FormatCells
+	Local	: Form	: Default		: On: After Export  : Yes	: Exec Excel Macro	: BarGraphMacro
+	
+	Local	: Line	: AutoAutoCol TB Title1	: Local		: Field	: AutoAutoCol TB DrAmt Field	: Cell	: 2
+	Local	: Line	: AutoAutoCol TB Title2	: Local		: Field	: AutoAutoCol TB DrAmt Field	: Cell	: 2
+	Local	: Line	: AutoAutoCol TB Title3	: Local		: Field	: AutoAutoCol TB DrAmt Field	: Cell	: 2
+
+;; End-of-File

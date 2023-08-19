@@ -1,0 +1,92 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	The objective of this program is to demonstrate the usage of Action FormatExcelSheet
+-	This Action is used to set the cell properties of Excel Sheet.
+
+Syntax -
+
+Format Excel Sheet : <PropertyName> : <PropertyParms>
+
+where
+ PropertyName is a system keyword for an Excel cell property, viz., ColumnWidth or CellTextWrap
+ PropertyParms is a list of required parameters for the specified PropertyName and the number of Parameters vary based on the PropertyName
+ 
+Property Names supported with their Parameters -
+
+ColumnWidth 	: <Column Number>	: <Width in Number>
+CellTextWrap	: <Row Number>		: <Column Number>[	: <Enable Wrapping>] ;; By default text wrapping is enabling
+
+Last modification – 
+-	Created on 15/06/2016
+*/
+
+[Function: TSPL Smp FormatExcelSheet]
+	
+	Variable	: RowIndex, ColIndex	: Number	: 1
+	Variable	: ExcelFileName			: String	: "ActionFormatExcelSheet.XLSX"
+	Variable	: Temp					: String
+	
+	Local Formula	: ColWidth100		: "Column Width 100 with Text Wrap enabled"
+	Local Formula	: ColWidth150		: "Column Width 150 with Text Wrap enabled"
+	Local Formula	: ColWidth200		: "Column Width 200 with Text Wrap enabled"
+	
+	000	: Query Box		: "This will terminate all the running Excel Applications and \n will overwrite the File " + ##ExcelFileName + ". \n\nAre you sure?":Y:N
+	010	: If	: $$LastResult
+	020	: 	Exec Command Ex: "Taskkill.exe /f /im Excel.exe"
+	030	:	Delete File		: ##ExcelFileName
+	040	: 	OPEN FILE		: ##ExcelFileName	: Excel : Write
+	050	: 	WRITE CELL  	: 1	: 1	: @ColWidth100
+	060	: 	WRITE CELL  	: 1	: 2	: @ColWidth150
+	
+;; Wrapping the Excel Text in Row 1 Columns 1 and 2
+	070	: 	Format Excel Sheet	: CellTextWrap	: (1	: 1)
+	080	: 	Format Excel Sheet	: CellTextWrap	: (1	: 2)
+
+	090 : 	WALK COLLECTION 	: TSPL Smp Ledger Info		;; using the Loop Collection
+	100 : 		IF : $$IsEmpty:##Temp OR $Parent != ##Temp
+	110 : 			INCREMENT 			: RowIndex
+	120 : 	  		SET 				: ColIndex 		: 1
+	130 : 	  		WRITE CELL  		: ##RowIndex 	: ##ColIndex	: $Parent
+
+;; Setting the width of the Column to 100 in Loop
+	140	:			Format Excel Sheet	: ColumnWidth	: (##ColIndex	: 100)
+
+;; Wrapping the Excel Text in the corresponding Row Number and Column Number in Loop
+	150	:			Format Excel Sheet	: CellTextWrap	: (##RowIndex 	: ##ColIndex)
+
+	160 :   		INCREMENT  			: ColIndex
+
+;; Setting the width of the Column to 150 in Loop
+	170	:			Format Excel Sheet	: ColumnWidth	: (##ColIndex	: 150)
+	180 : 			WRITE CELL			: ##RowIndex 	: ##ColIndex 	: $Name
+
+;; Wrapping the Excel Text in the corresponding Row Number and Column Number in Loop
+	190	:			Format Excel Sheet	: CellTextWrap	: (##RowIndex 	: ##ColIndex)
+	200 : 		ELSE:
+	210 :  			INCREMENT  			: ColIndex 
+
+;; Setting the width of the Column to 200 in Loop
+	220	:			Format Excel Sheet	: ColumnWidth	: (##ColIndex	: 200)
+	230 :  			WRITE CELL 			: ##RowIndex 	: ##ColIndex 	: $Name
+
+;; Wrapping the Excel Text in the corresponding Row Number and Column Number in Loop
+	240	:			Format Excel Sheet	: CellTextWrap	: (##RowIndex 	: ##ColIndex)
+	250	: 			WRITE CELL  		: 1	: ##ColIndex: @ColWidth200
+
+;; Wrapping the Excel Text in the Title Row 1 and corresponding Column Number in Loop as Numbers of Columns required are dynamic
+	260	: 			Format Excel Sheet	: CellTextWrap	: (1	: ##ColIndex)
+	270 : 		END IF
+	280 : 		SET 					: Temp 			: $Parent
+	290 : 	END WALK
+	
+	300 : 	CLOSE TARGET FILE
+	310	: 	Query Box					: "Completed writing to the Excel File using File I/O Approach. \n\n Open the file " + ##ExcelFileName + "?"	: Y : N
+
+	320	: 	If	: $$LastResult
+	330	: 		EXEC COMMAND Ex			: Excel			: ##ExcelFileName
+	340	: 	End If
+	350	: End If
+	
+;; End-of-File

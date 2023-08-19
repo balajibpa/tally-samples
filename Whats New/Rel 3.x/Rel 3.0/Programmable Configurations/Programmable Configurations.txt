@@ -1,0 +1,13 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Menu: Programmable Configuration for 3.0]
+	
+	Key Item 	: "Export Payment Voucher"	: P : Display	: TSPL Smp List of Pymt Vchs	: NOT $$IsEmpty:$$SelectedCmps AND NOT $$IsRemoteCompany
+	Key Item 	: "Export Trial Balance"	: T : Display	: TSPL Smp Prog Configuration	: NOT $$IsEmpty:$$SelectedCmps
+	
+;; Include Files
+
+[Include: Export Report Payment.txt]
+[Include: Export Report Trial Balance.txt]
+
+;; End-of-File

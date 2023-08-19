@@ -1,0 +1,13 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Menu: Whats New in Rel 3.61]
+
+	Key Item: "New Function FileReadRaw"	: F : Call	: TSPL Smp Function FileReadRaw	: NOT $$IsEmpty:$$SelectedCmps
+	Key Item: "New Action BrowseURLEx"		: B : Call	: TSPL Smp Action BrowseURLEx	: NOT $$IsEmpty:$$SelectedCmps
+
+;; Include Files
+
+[Include: Function FileReadRaw.txt]
+[Include: Action BrowseURLEx.txt]
+
+;; End-of-File

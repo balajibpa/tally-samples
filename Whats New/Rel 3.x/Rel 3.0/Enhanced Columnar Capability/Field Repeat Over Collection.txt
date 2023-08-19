@@ -1,0 +1,160 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This program demonstrates an enhanced Columnar approach using repeat Field
+over a Collection
+-	The following report generates the Itemwise Partywise Sales Report
+
+Syntax -
+-	Repeat Field over a Collection for required number of columns
+
+	[Line: <Line Name>]
+		Field	: <Field Name>
+		Repeat	: <Field Name>	: <Collection>
+
+Updation History – 
+-	Created on 14/01/2011
+-	Altered on 03/02/2011
+*/ 
+
+[Report: TSPL Smp CFBK Rep]
+
+	Use			: DSP Template
+	Form		: TSPL Smp CFBK Rep
+	Title		: "Field Repeat over Collection"
+
+[Form: TSPL Smp CFBK Rep]
+
+	Use			: DSP Template
+	Keys		: Form Remove Line, Form Show Last Removed Line
+	Parts		: TSPL Smp Info, TSPL Smp CFBK Rep
+	Bottom Toolbar Buttons 	: BottomToolBarBtn8, BottomToolBarBtn9, BottomToolBarBtn10, BottomToolBarBtn11, BottomToolBarBtn12
+	
+	Local: Part	: TSPL Smp Info	: Local	: Line	: Info	: Local	: Field	: Info Field	: Info	: "Sample 'Itemwise Partywise Sales' rewritten using Enhanced Columnar Capability where Field is repeated over a Collection"
+
+[Part: TSPL Smp CFBK Rep]
+
+	Lines		: TSPL Smp CFBK Rep Title, TSPL Smp CFBK Rep SubTitle, TSPL Smp CFBK Rep Details
+	Repeat		: TSPL Smp CFBK Rep Details		: TSPL Smp Stock Item
+	Scroll		: Vertical
+	CommonBorder: Yes
+
+	[Line: TSPL Smp CFBK Rep Title]
+
+		Use		: TSPL Smp CFBK Rep Details
+
+		Local	: Field	: Default						: Type		: String
+		Local	: Field	: Default						: Align		: Center
+
+		Local	: Field	: TSPL Smp CFBK Rep Name		: Set as	: "Particulars"
+		Local	: Field	: TSPL Smp CFBK Rep Name		: Widespaced: Yes
+		Local	: Field	: TSPL Smp CFBK Rep Party		: Delete	: Fields
+;; Since Field 'Smp CFBK Rep Party' is repeated over Collection of Party Ledgers,
+;; the current Object context is available and hence the Method 'PName' returns
+;; the Party Name
+		Local	: Field	: TSPL Smp CFBK Rep Party		: Set as	: $PName
+		Local	: Field	: TSPL Smp CFBK Rep Party		: Lines		: 0
+		Local	: Field	: TSPL Smp CFBK Rep Party		: SubTitle	: Yes
+		Border	: Thin Top
+
+	[Line: TSPL Smp CFBK Rep Sub Title]
+
+		Use		: TSPL Smp CFBK Rep Details
+
+		Local	: Field	: Default						: Type		: String
+		Local	: Field	: Default						: Align		: Center
+
+		Local	: Field	: TSPL Smp CFBK Rep Name		: Set as	: ""
+		Local	: Field	: TSPL Smp CFBK Rep Party 		: Border	: Thin Top
+		Local	: Field	: TSPL Smp CFBK Rep Party Qty	: Set as	: "Quantity"
+		Local	: Field	: TSPL Smp CFBK Rep Party Amt	: Set as	: "Amount"
+		Border	: Thin Bottom
+
+	[Line: TSPL Smp CFBK Rep Details]
+
+		Fields	: TSPL Smp CFBK Rep Name, TSPL Smp CFBK Rep Party
+		Repeat	: TSPL Smp CFBK Rep Party		: TSPL Smp CFBK Party
+		
+;; Field 'TSPL Smp CFBK Rep Party' is repeated over the Collection 'TSPL Smp CFBK Party'
+;; which creates columns for Party Ledgers
+		Total	: TSPL Smp CFBK Rep Party
+
+		[Field: TSPL Smp CFBK Rep Name]
+
+			Use			: Name Field
+			Set as		: $IName
+			Display		: Stock Vouchers
+			Variable	: Stock Item Name
+
+		[Field: TSPL Smp CFBK Rep Party]
+
+			Use			: Name Field
+			Fields		: TSPL Smp CFBK Rep Party Qty, TSPL Smp CFBK Rep Party Amt
+						
+			[Field: TSPL Smp CFBK Rep Party Qty]
+
+				Use			: Qty Primary Field
+				Set as		: $$ReportObject:$$CollectionFieldByKey:$BilledQty:@SKFormula:TSPLSmpCFBKSummVoucher
+				SKFormula	: $PName + #TSPLSmpCFBKRepName
+				Format		: "NoZero"
+				Border		: Thin Left
+
+			[Field: TSPL Smp CFBK Rep Party Amt]
+				
+				Use			: Amount Forex Field
+				Set as		: $$ReportObject:$$CollectionFieldByKey:$Amount:@SKFormula:TSPLSmpCFBKSummVoucher
+				SKFormula	: $PName + #TSPLSmpCFBKRepName
+				Format		: "NoZero"
+				Border		: Thin Left
+
+;; Collection Definition
+
+[Collection: TSPL Smp CFBK Voucher]
+
+	Type		: Voucher
+	Filter		: TSPL Smp IsSalesVT
+
+[Collection: TSPL Smp Stock Item]
+
+	Source Collection	: TSPL Smp CFBK Voucher
+
+	Walk				: Inventory Entries
+	By					: IName			: $StockItemName
+	Aggr Compute		: BilledQty		: SUM	: $BilledQty
+
+	Filter				: TSPL Smp NonEmptyQty
+	Keep Source			: ().
+	
+[Collection: TSPL Smp CFBK Party]
+
+	Source Collection	: TSPL Smp CFBK Voucher
+
+	Walk				: Inventory Entries
+	By					: PName			: $PartyLedgerName
+	Aggr Compute		: BilledQty		: SUM	: $BilledQty
+
+	Keep Source			: ().
+	Filter				: TSPL Smp NonEmptyQty
+
+[Collection: TSPL Smp CFBK Summ Voucher]
+
+	Source Collection	: TSPL Smp CFBK Voucher
+
+	Walk				: Inventory Entries
+	By					: PName			: $PartyLedgerName
+	By					: IName			: $StockItemName
+	Aggr Compute		: BilledQty		: SUM	: $BilledQty
+	Aggr Compute		: Amount		: SUM	: $Amount
+
+	Keep Source			: ().
+	Search Key			: $PName + $IName
+
+;; System Formula
+
+[System: Formula]
+
+	TSPL Smp IsSalesVT	: $$IsSales:$VoucherTypeName
+	TSPL Smp NonEmptyQty: NOT $$IsEmpty:$BilledQty
+
+;; End-of-File

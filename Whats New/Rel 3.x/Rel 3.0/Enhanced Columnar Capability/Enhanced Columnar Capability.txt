@@ -1,0 +1,13 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Menu: Enhanced Columnar Capability]
+	
+	Key Item	: "Repeat Field Over Collection"		: F : Display	: TSPL Smp CFBK Rep				: NOT $$IsEmpty:$$SelectedCmps
+	Key Item	: "Object Identifier with Search Key"	: C : Display	: TSPL Smp CFBK Rep Search Key	: NOT $$IsEmpty:$$SelectedCmps
+
+;; Include Files
+
+[Include: Field Repeat Over Collection.txt]
+[Include: Object Identifier with Search Key.txt]
+
+;; End-of-File

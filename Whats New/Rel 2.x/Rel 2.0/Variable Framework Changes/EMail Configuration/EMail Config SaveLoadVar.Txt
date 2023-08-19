@@ -1,0 +1,33 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Report: TSPL Smp SaveLoadConfig]	;; Report Definition
+
+	Form		: TSPL Smp SaveLoadConfig
+	Title		: $$LocaleString:"Save/Load Variable Configuration"
+	Full Screen	: No
+	
+[Form: TSPL Smp SaveLoadConfig]
+
+    Parts       : TSPL Smp SaveLoadConfig
+    Full Width  : No
+    Space Right : 2
+    Space Left  : 2
+    No confirm  : Yes
+    Option      : Small Size Form
+    Background  : @@SV_CMPCONFIG
+
+[Part: TSPL Smp SaveLoadConfig]
+
+	Lines 		: Form SubTitle, TSPL Smp SaveLoadConfig
+	Local: Field: Form SubTitle	: Info 		: $$LocaleString:"Save/Load EMail File Configuration"
+	Local: Line	: Form SubTitle	: Space Top	: 1
+
+	[Line: TSPL Smp SaveLoadConfig]
+
+		Fields		: Medium Prompt, Name Field
+		Local: Field: Medium Prompt	: Set As	: "Config File Name :"
+		Local: Field: Medium Prompt	: Indent	: 1
+		Local: Field: Name Field	: Modifies	: SaveLoadConfigName: Yes
+		Local: Field: Name Field	: Variable	: SaveLoadConfigName
+
+;; End-of-File

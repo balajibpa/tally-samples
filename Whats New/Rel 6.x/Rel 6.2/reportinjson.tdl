@@ -1,0 +1,234 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- This code demonstrates the export of report in JSON format with utf - 8 encoding.
+- To support report based export in JSON format, attribute 'JSON Tag' (Alias of XML Tag) is introduced at Form/Part/Line/Field - To create the structure of information
+- and Report attribute Plain JSON (alias of Plain XML) that defines the content formatting of the output. By default it has the value NO
+- In this example, a report with partywise billwise details is exported in JSON format with utf-8 encoding
+{
+     "Parties": [
+          {
+               "Party Name": "Creditor", 
+               "Bills": [
+                    {
+                         "Bill Number": "1", 
+                         "Bill Date": "1-Apr-2017", 
+                         "Opening Balance": -50.00, 
+                         "Pending Amount": -50.00, 
+                         "Due Date": "1-Apr-2017", 
+                         "Vch": [
+                              {
+                                   "Vch Date": "1-Apr-2017", 
+                                   "Vch Type": "Sales", 
+                                   "Vch Num": "1", 
+                                   "Vch Bill Amt": -50.00
+                              }
+                         ]
+                    }
+                    
+               ]
+          }
+     ]
+}
+
+Last modification – 
+-	Altered on 24/10/2017
+*/
+
+
+[Report: TSPL Report In JSON]
+
+	Title	: $$LocaleString:"Export of Report in JSON utf-8 encoding"
+	Form	: TSPL Report In JSON
+
+[Form: TSPL Report In JSON]
+
+	Use		: TSPL SMP Illustration
+	
+	Height	: 95% Screen
+	Width	: 90% Screen
+	
+	Local   : Part	: TSPL SMP Illustration : Add	: Part: TSPL SMP ExampleExecution
+	
+	Local	: Field	: FormSubTitle		: Info		: $$LocaleString:"Illustration for Export of Report in JSON utf-8 encoding"
+	
+	Local	: Field	: TSPL Smp Purpose	: Indent	: 2
+	Local	: Field	: TSPL Smp Purpose	: Info		: $$LocaleString:" To support report based export in JSON format, attribute 'JSON Tag' (Alias of XML Tag) +
+	is introduced at Form/Part/Line/Field - To create the structure of information, and Plain JSON (alias of Plain XML) that defines the content formatting of the output"
+				
+	Local	: Field	: TSPL Smp Syntax	: Indent	: 2
+	Local	: Field	: TSPL Smp Syntax	: Info		: "[Form/Part/Line/Field: <Defn Name>]"+
+			+$$NewLine+ "       JSON Tag : <String Value>"+
+			+$$NewLine+ " AND"+
+			+$$NewLine+ "[Report: <Report Name>]"+
+			+$$NewLine+ "       Plain Json : <Logical Value>" +
+			+$$NewLine+ "For Tally.ERP 9, 6.0 series, the variable 'SVExportFormat' needs to be set with the combination of the export format "+
+			+"and the encoding, as this variable is used in the platform for format and encoding. Following sysnames are introduced for the same"+
+			+$$NewLine+"- The sysname Utf8JSON is set to SVExportFormat for export of report in Json format with utf 8 encoding"+
+			+$$NewLine+"- JSON for json and utf 16 encoding"+
+			+$$NewLine+"- AnsiJSOn for Json and Ansi encoding "+
+			
+				
+	Local	: Field	: TSPL SMP Example	: Indent: 2
+	Local	: Field	: TSPL SMP Example	: Info: $$LocaleString:"[Part: TSPLVchJSonExpParties]"+
+			+$$NewLine+"    ....."+
+			+$$NewLine+"    Repeat: TSPLVchJSonExpParties: TSPLParties "    +
+			+$$NewLine+"[Line: TSPLVchJSonExpParties]"+
+			+$$NewLine+"   Field: PartyNameTSPL"+
+			+$$NewLine+"   JSONTag: 'Parties'"+
+			+$$NewLine+"[Field: PartyNameTSPL]"+
+			+$$NewLine+"   Set as: $Name"+
+			+$$NewLine+"   JSONTag: 'Party Name'"+
+			+$$NewLine+$$LocaleString:"Here the line repeats over voucher collection. When the report is exported in Json format" +
+			+"in the exported json file, the json tag of every line becomes the array name with object as its element. "+
+			+$$NewLine+$$LocaleString:"The Json tag of the field and the value of the field becomes the member of the object." +
+			+" The sysname Utf8JSON is set to SVExportFormat for export of report in Json format with utf 8 encoding"
+				
+	Local	: Line	: TSPL SMP ExampleNote: Invisible: Yes
+				
+	Local	: Field	: TSPL SMP ExampleExec: Info: $$LocaleString:"Click on the Export in JSON to experience the export of report in JSON format. " +
+			+$$LocaleString:"Make sure that the company has ledgers with billwise enabled and transactions with billwise details"
+	Buttons	: TSPLExportinJSON
+
+
+[Button: TSPL Export in JSON]
+ 
+     Title	 : $$LocaleString:"Export in JSON"
+     Key	 : Alt+ J
+	 
+	 Action	 : Call: TSPLFunction Json
+	 
+
+;; setting relevant system variables with sysnames for exporting in JSON format with utf 8 encoding
+[Function: TSPLFunction Json]
+	
+	000: Set: SVExportFormat 	: $$SysName:Utf8JSON
+	005: Set: SVExportLanguage  : $$SysName:Utf8JSON 
+	010: Set: SVPrintFileName 	: ".\Export\export.json"
+	015: Export:TSPLVchJSonExp  : Yes:Yes
+
+;; Report with appropriate JSON tags to obtain partywise billwise details
+[Report: TSPLVchJSonExp]
+	
+[Form: TSPLVchJSonExp]
+	
+	Part: TSPLVchJSonExpParties
+	Delete: XMLTag: "ENVELOPE"
+	
+[Part: TSPLVchJSonExpParties]
+	
+	Line  : TSPLVchJSonExpParties
+	Repeat: TSPLVchJSonExpParties: TSPLParties
+	Scroll: Vertical
+
+	[Line: TSPLVchJSonExpParties]
+		
+		Field: TSPLPartyName
+		Explode: TSPLVchJSonExp
+		JSONTag: "Parties"
+		
+		[Field: TSPLPartyName]
+			
+			Use: Namefield
+			Set as: $Name
+			JSONTag: "Party Name"
+	
+[Part: TSPLVchJSonExp]
+	
+	Line: TSPLVchJSonExp
+	Repeat: TSPLVchJSonExp: TSPLVchCollection
+	Scroll: Vertical
+	
+[Line: TSPLVchJSonExp]
+	
+	Field: TSPLPartyBillNum, TSPLPartyBillDtae, TSPLPartyBillOpAmt, TSPLPartyBillClAmt, TSPLPartyBillDueDate 
+	
+	Explode: TSPLVchInvJSonExp
+	Json tag: "Bills"
+	
+		[Field: TSPLPartyBillDtae]
+
+            Use     : UniDateField
+            Set as  : $BillDate
+			Json tag: "Bill Date"
+ 
+        [Field: TSPLPartyBillNum]
+
+            Use         : ShortNameField
+            Set as      : $Name  
+			Json tag: "Bill Number"
+	
+		[Field: TSPLPartyBillOpAmt]
+
+			Use         : AmountField
+			Type        : Amount
+			Set as      : $OpeningBalance
+			Json tag: "Opening Balance"
+
+		[Field: TSPLPartyBillClAmt]
+
+			Use         : AmountField
+			Type        : Amount
+			Set as      : $ClosingBalance
+			Json tag: "Pending Amount"
+		
+		[Field: TSPLPartyBillDueDate]
+
+			Use         : UniDateField
+			Set as      : $$String:@@CreditPeriod:UniversalDate
+			Json tag: "Due Date"
+		
+[Part: TSPLVchInvJSonExp]
+	
+	Line: TSPLVchInvJSonExp
+	Repeat: TSPLVchInvJSonExp : LedgerEntries
+
+	Scroll: Vertical
+	
+	[Line: TSPLVchInvJSonExp]
+		
+		Field: TSPLPartyBILLVCH Date, TSPLPartyBILLVCH Type, TSPLPartyBILLVCH Number, TSPLPartyBILLVCH Amount
+		
+		Json tag: "Vch"
+		
+		[Field: TSPLPartyBILLVCH Date]
+
+            Use     : UniDateField
+            Set as  : $Date
+			Json tag: "Vch Date"
+ 
+        [Field: TSPLPartyBILLVCH Type]
+
+            Use     : ShortNameField
+            Set as  : $VoucherTypeName
+			Json tag: "Vch Type"
+			
+		[Field: TSPLPartyBILLVCH Number]
+
+			Use     : ShortNameField
+			Set as  : $VoucherNumber
+			Json tag: "Vch Num"
+
+        [Field: TSPLPartyBILLVCH Amount]
+
+			Use     		: Amount Field
+			Type    		: Amount
+			Set as			: $$GetVchBillAmt:($$Owner:$Name):#PartyNameTSPL:No
+		    Json tag: "Vch Bill Amt"
+	
+
+;; Collections to get parties with bills enabled and respective bills details
+[Collection: TSPLVchCollection]
+	
+	Type: Bills
+	Child Of: #TSPLPartyName
+	Fetch: BillId, BillDate, Closing Balance, LedgerEntries.*
+	
+[Collection: TSPLParties]
+	
+	Type: Ledger
+	Filter: ParentWithBillWise
+
+
+;;End Of File

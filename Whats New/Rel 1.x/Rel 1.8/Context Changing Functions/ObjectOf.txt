@@ -1,0 +1,71 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This Code demonstrates the usage of Data Object Context changing function
+	'ObjectOf'
+
+Syntax -
+-	$$ObjectOf:<DefinitionType>:<AccessName>:<MethodValue>
+
+Updation History – 
+-	Created on 20/04/2010
+*/
+
+[Report: DCCF ObjectOf]
+
+	Form		: DCCF ObjectOf
+	Full Screen	: No
+	Fetch Object: Ledger	: "Cash"			: Name
+	Fetch Object: Group		: "Unsecured Loans"	: Name
+
+[Form: DCCF ObjectOf]
+
+	Parts		: Form SubTitle, DCCF ObjectOf1, DCCF ObjectOf2, DCCF ObjectOf3
+	Local: Field: Form SubTitle	: Info	: "Understanding Function ObjectOf"
+	Width		: 50% Page
+
+[Part: DCCF ObjectOf1]
+
+	Lines		: DCCF ObjectOf1
+	AccessName	: "Cash"
+	ObjectEx	: (Ledger, "Cash").
+
+	[Line: DCCF ObjectOf1]
+
+		Fields		: Medium Prompt, DCCF ObjectOf
+		Local: Field: Medium Prompt		: Set As	: "Part - DCCF ObjectOf 1"
+
+		[Field: DCCF ObjectOf]
+
+			Use		: Name Field
+			Set As	: $Name
+
+[Part: DCCF ObjectOf2]
+
+	Lines		: DCCF ObjectOf1
+	AccessName	: "Unsecured Loans"
+	ObjectEx	: (Group, "Unsecured Loans").
+	Local: Line	: DCCF ObjectOf1	: Local	: Field: Medium Prompt		: Set As	: "Part - DCCF ObjectOf 2"
+
+[Part: DCCF ObjectOf3]
+
+	Lines		: DCCF ObjectOf3
+	Space Top	: 1
+
+	[Line: DCCF ObjectOf3]
+
+		Fields		: Medium Prompt, DCCF OO Line ObjectOf1, DCCF OO Line ObjectOf2
+		Local: Field: Medium Prompt		: Set As	: "Part ObjectOf 1 & 2 - Parent :"
+
+		[Field: DCCF OO Line ObjectOf1]
+
+			Use		: Name Field
+			Set As	: $$ObjectOf:Part:"Cash":$Parent
+
+		[Field: DCCF OO Line ObjectOf2]
+
+			Use		: Name Field
+			Set As	: $$ObjectOf:Part:"Unsecured Loans":$Parent
+
+;; End-of-File

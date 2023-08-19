@@ -1,0 +1,73 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This code demonstrates the usage of Un Zip Procedural Actions
+
+Syntax – 
+	Start Unzip	: <Source File> [: <Password>]
+		Extract Path		: <Folder/ File Path>
+				:
+				:
+		Unzip Exclude Path 	: <Folder/ File Path>
+				:
+				:
+	End Unzip	: <Target folder> [: <Overwrite> [: <Show Progress Bar>]]
+
+	Where 
+		<Source File> is the path of the Zip File which needs to be zipped.
+		
+		<Password> is the password to access the Target zipped file.
+		
+		<Extract Path> is the File/ Folder which need to be extracted from the Zip.
+		
+		<Unzip Exclude Path> is the path of the Files/ Folders which need to be excluded from unzipping.
+		
+		<Target Folder> is the path of the Target folder where the Unzipped Files need to reside.
+		
+		<Overwrite> is the Logical Flag to specify the behaviour if the Target File already exists. Specifying a Yes will overwrite 
+		the file and No will not overwrite the file.  If not specified, the default value is No.
+		
+		<Show Progress Bar> is the Logical Flag to specify if Progress Bar needs to be shown during the Zipping Process.  Specifying 
+		a Yes will show the Progress Bar and No will not show the Progess Bar.  If not specified, the default value is No.
+
+Last modification – 
+-	Created on 04/09/2013
+-	Altered on 18/09/2013
+*/
+
+[Function: TSPL Smp Unzip Procedural Actions]
+	
+	Variable					: TSPLSmpSrcFile 			: String
+	Variable					: TSPLSmpTgtFile 			: String
+							
+	Variable					: TSPLSmpExtractPath		: String
+	Variable					: TSPLSmpExcludePath		: String
+				
+	10 : Set 					: TSPLSmpTgtFile 			: $$SysInfo:ApplicationPath + "\ZipFiles\"
+	20 : Set 					: TSPLSmpSrcFile 			: $$SysInfo:ApplicationPath + "\ZipFiles\zipOutput.zip"  
+	30 : Msg Box				: "Start UnZip"				: "Target File = " + ##TSPLSmpSrcFile + ", \n Password = Tally" 
+
+	;; Start Unzipping from the Source Zip File which contains password as "Tally"
+	40 : START UNZIP			: ##TSPLSmpSrcFile 			: "Tally"
+			
+	;; Path 1 to Extract Folders/ Files from
+	50 : 	Set 				: TSPLSmpExtractPath		: "*.txt"
+	60 : 	Msg Box				: "UnZip Extract Path"		: "Extract Path = \n" + ##TSPLSmpExtractPath
+	70 : 	EXTRACT PATH		: ##TSPLSmpExtractPath	
+		
+	;; Path 2 to Extract Folders/ Files from
+	80 : 	Set 				: TSPLSmpExtractPath		: "*.xml"
+	90: 	Msg Box				: "UnZip Extract Path"		: "Extract Path = \n" + ##TSPLSmpExtractPath
+	100: 	EXTRACT PATH		: ##TSPLSmpExtractPath
+
+	;; Path 1 to Exclude from Folders/ Files selected for Extraction
+	110: 	Set 				: TSPLSmpExcludePath 		: "*\My*.xml"
+	120: 	Msg Box				: "Unzip Exclude Path"		: "Exclude Path = \n" + ##TSPLSmpExcludePath
+	130: 	UNZIP EXCLUDE PATH	: ##TSPLSmpExcludePath
+
+	;; Procedural Action 'End Unzip' with Target Folder Name and Flags Overwrite and Show Progress Bar enabled
+	140: 	Msg Box				: "End UnZip"				: ##TSPLSmpTgtFile + ",\nOverwrite = Yes, \n" + "Show Progress Bar = Yes"
+	150: END UNZIP				: ##TSPLSmpTgtFile 			: Yes 		: Yes
+
+;; End-of-File

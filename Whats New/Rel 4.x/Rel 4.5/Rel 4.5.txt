@@ -1,0 +1,29 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Menu: Whats New in Rel 4.5]
+
+	Indent		: "Functions"
+	Item		: Blank
+	Key Item	: "ExcelInfo"			: L : Display	: TSPL Smp Excel Info			: NOT $$IsEmpty:$$SelectedCmps
+	Key Item	: "IsProdTallyServer" 	: T : Call		: TSPL Smp IsProdTallyServer	: NOT $$IsEmpty:$$SelectedCmps
+	Key Item	: "IsServiceInstalled" 	: S : Call   	: TSPL Smp IsServiceInstalled	: NOT $$IsEmpty:$$SelectedCmps 
+	Key Item	: "IsServiceRunning" 	: E : Call  	: TSPL Smp IsServiceRunning		: NOT $$IsEmpty:$$SelectedCmps 
+	Key Item	: "IsTSAuthorised" 		: A : Call  	: TSPL Smp IsTSAuthorised		: NOT $$IsEmpty:$$SelectedCmps
+	Key Item	: "IsTSPath"			: P : Alter		: TSPL Smp IsTSPath				: NOT $$IsEmpty:$$SelectedCmps
+	Key Item	: "IsUserAllowed"		: U : Alter		: TSPL Smp IsUserAllowed		: NOT $$IsEmpty:$$SelectedCmps
+	Key Item	: "ReadIni"				: I	: Display	: TSPL Smp Read Ini				: NOT $$IsEmpty:$$SelectedCmps
+	Key Item	: "IsTSCompany" 		: O : Alter  	: TSPL Smp IsTSCompany      	: NOT $$IsEmpty:$$SelectedCmps
+
+;; Include Files
+	
+[Include: ExcelInfo.txt]
+[Include: IsProdTallyServer.txt]
+[Include: IsServiceInstalled.txt]
+[Include: IsServiceRunning.txt]
+[Include: IsTSAuthorised.txt]
+[Include: IsTSPath.txt]
+[Include: IsUserAllowed.txt]
+[Include: ReadINI.txt]
+[Include: IsTSCompany.txt]
+
+;; End-of-File

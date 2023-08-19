@@ -1,0 +1,157 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+-	This program demonstrates the capability of DLL XML Collection to post data 
+	from Tally to a DLL and retrieve the response XML in Collection. Also a Pre 
+	Request Report is used to accept User Inputs which are posted.
+-	The XML response thus fetched from the DLL is displayed in a Report.
+
+Syntax -
+-	Collection Attribute 'Data Source'
+		Data Source	: AxPlugin xml : <DLLFileName.ClassName>
+
+Last modification – 
+-	Altered on 19/04/2010
+
+Dependencies -
+- 	.NET Framework 3.5 envoirnment is required 
+-  	Sample2Installer needs to be installed
+*/
+
+; Report Displaying XML response fetched 
+
+[Report: DLL XML Post PreReq Collection]
+
+	Form 	: DLL XML Post PreReq Collection
+	Title 	: "DLL Post Request with Pre-Request Report"
+
+[Form: DLL XML Post PreReq Collection]
+
+	Parts	: DLL XML Post PreReq Collection
+
+[Part: DLL XML Post PreReqCollection]
+
+	Lines	: DLL XML Post PreReq Collection
+	Repeat	: DLL XML Post PreReq Collection 	: DLL XML PreReqCollection
+
+	[Line: DLL XML Post PreReq Collection]
+
+		Fields	: DLL XML Name
+
+		[Field: DLL XMLName]
+			
+			Use		: Name Field
+			Width	: 20% Page
+			Set As	: $Line
+
+;; Collection retrieving XML response from a predefined URL
+
+[Collection: DLL XML PreReqCollection]
+	<InUse:Report:DLL XML PreReqRep, DLLXML PostReqRep1>
+
+	Data Source		: AxPlugIn XML : Sample5.Class1
+	XML Object Path	: Line:1:Result
+    Input XML		: DLLXML PostReqRep1, DLLXML PreReqRep
+	Client Only 	: Yes
+	
+;; Report constructing Request XML
+
+[Report: DLLXMLPostReqRep1]
+
+	Form  	: DLLXMLPostReqRep1
+	Export	: Yes
+		
+[Form: DLLXMLPostReqRep1]
+
+    Parts 	: DLLXMLPostReqRep1
+
+[Part: DLLXMLPostReqRep1]
+
+    Lines	:  DLLXMLPostReqRep1
+	Scroll	:  Vertical
+	XMLTag	:  "Customer"
+
+	[Line: DLLXMLPostReqRep1]
+
+		Fields 	: Short Name Field, DLLXMLPostReqRepName1, Name Field, DLLXMLPostReqRepLName, Simple Field, DLL XMLPostReqAdd
+
+		Local 	: Field	: Short Name Field 	: Set As 	: "Name :"
+		Local 	: Field	: Name Field 		: Set As 	: "Last Name:"
+		Local 	: Field	: Simple Field 		: Set As 	: "Address:"
+
+      	[Field: DLLXMLPostReqRepName1]
+
+			Use		: Name Field
+			Set As 	: ##DLLPreReqNameVar
+            XMLTag	: "FName"
+
+		[Field: DLLXMLPostReqRepLName]
+	
+			Use		: Name Field
+			Set as	: ##DLLPreReqLastName
+		    XMLTag	: "LName"
+
+		[Field: DLL XMLPostReqAdd]
+	
+			Use		: Name Field
+			Set as	: ##DLLPreReqAddr
+		    XMLTag	: "Addr"
+
+;; Pre Request Report accepting User Inputs  
+
+[Report: DLL XML PreReqRep]
+
+	Form  	: DLL XML PreReqRep
+
+[Form: DLL XML PreReqRep]
+
+	Parts 		: Form SubTitle, DLL XML PreReqRep
+	Local: Field: Form SubTitle		: Info	: "PreRequisite Report for DLL Collection"
+	Width		: 30% Page
+	No Confirm	: Yes
+ 
+[Part: DLL XML PreReqRep]
+
+	Lines	:  DLLXML PreReqRep FirstName, DLL XML PreReqRepSecond Name, DLL XML PreReq Addr
+
+	[Line: DLL XML PreReqRepFirst Name]
+
+		Fields 	: Short Prompt, DLLXML PreReqRep FirstName
+		Local 	: Field : Short Prompt	: Info 	: "First Name :"
+
+		[Field: DLLXML PreReqRep FirstName]
+
+			Use  		: Name Field
+			Validate	: NOT $$IsEmpty:$$Value
+  			Modifies	: DLLPreReqNameVar
+
+	[Line: DLL XML PreReqRepSecond Name]
+
+		Fields	: Short Prompt, DLL XML PreReqRepSecond Name
+		Local 	: Field : Short Prompt	: Info 	: "Last Name :"
+
+		[Field: DLL XML PreReqRepSecond Name]
+
+			Use  		: Name Field
+			Validate	: NOT $$IsEmpty:$$Value
+	  		Modifies	: DLLPreReqLastName
+
+	[Line: DLL XML PreReq Addr]
+
+		Fields	: Short Prompt, DLL XML PreReq Addr
+		Local 	: Field : Short Prompt	: Info 	: "City :"
+
+		[Field: DLL XML PreReq Addr]
+
+			Use  		: Name Field
+			Validate	: NOT $$IsEmpty:$$Value
+	  		Modifies	: DLLPreReqAddr
+
+[System: Variable]
+
+	Variable	: DLLPreReqNameVar 	: String	: ""
+	Variable	: DLLPreReqLastName	: String	: ""
+	Variable	: DLLPreReqAddr	 	: String	: ""
+
+;; End-of-File

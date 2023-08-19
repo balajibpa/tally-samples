@@ -1,0 +1,206 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+/*
+Objective(s) – 
+- This sample illustrates how the json files are read and is shown as a report
+
+Last modification – 
+-	Altered on 24/10/2017
+*/
+
+
+;; Button that displays the report showing the Distributor item details read from the Distributors JSON File
+[Button: TSPL View Report]
+ 
+     Title	 : $$LocaleString:"View Distributor Report"
+     Key	 : Alt+ L
+	 
+	 Action	 : Modify Variables: TSPL Distributor file paths
+	 
+;; Report that takes file paths of 2 Distributor JSON files containing the sales details
+[Report: TSPL Distributor file paths]
+
+	Use     : Modify Variables
+	
+	Title	: $$LocaleString:"Distributor data files for report generation" 
+    Local   : Part : Modify Variables 	: Lines	: TSPL Distributor1 File Path Title,TSPL Distributor1 File Path, TSPL Distributor2 File Path
+    Local   : Field: MV Title         	: Info	: $$LocaleString:"Distributor data files for report generation"
+	Local	: Form : Modify Variables 	: On: Form Accept: Yes: Display : TSPLDistributorwiseRep
+
+[Line: TSPL Distributor1 File Path]
+
+	Fields  :  TSPL Distributor1 File Path Info
+
+[Line: TSPL Distributor1 File Path Title]
+	
+	Field: TSPL Distributor1 File Path Title
+	
+	[Field: TSPL Distributor1 File Path Title]
+	
+			Use    	 	: Medium Prompt
+			Info    	: "(Enter 2 exported Distributor json file path along with file name)"
+			Style		: Small Italic
+			Full Width	: Yes
+			Align		: Center
+	
+	[Field: TSPL Distributor1 File Path Info]
+			
+			Use        : Name Field
+			Modifies   : SVDistributor1filepath : Yes
+			Validate   : NOT $$IsEmpty:$$Value
+			Full Width : Yes
+			
+[Line: TSPL Distributor2 File Path]
+	
+	Use: TSPL Distributor1 File Path
+	Local: Field: TSPL Distributor1 File Path Info : Delete	: Modifies
+	Local: Field: TSPL Distributor1 File Path Info : Add	: Modifies: SVDistributor2filepath : Yes
+			
+[System: Variables]
+	
+	Variable : SVDistributorName : String
+	Variable : SVDistributor1filepath : String
+	Variable : SVDistributor2filepath : String
+
+
+;; Report that displays the Distributor - wise Items sales details read from the JSON files given as input in the previous report
+[Report: TSPLDistributorwiseRep]
+
+	Title: $$LocaleString:"Distributor - wise Item Sales Details"
+	
+[Form: TSPLDistributorwiseRep]
+	
+	Part: TSPLDistributorwiseRep
+	Width: 60% screen
+	Height: 60% screen
+	Option: Small Size Form
+	Button: TSPL View Item Report
+
+[Part: TSPLDistributorwiseRep]
+	
+	Line  : FormSubTitle, TSPLDistributorwiseRepTitle, TSPLDistributorwiseRep
+	Local : Field: FormSubTitle : Set as: "Distributor - wise Item Sales details"
+	Repeat: TSPLDistributorwiseRep: TSPLDistributorSalesSrc
+	Scroll: Vertical
+
+[Line: TSPLDistributorwiseRepTitle]
+	
+	Field		: TSPLDistributorName
+	Right Field	: TSPLDistributorSaleAmount
+	
+	Local: Field: TSPLDistributorName 		: Set as: "Distributor"
+	Local: Field: TSPLDistributorSaleAmount : Set as: "Sale Amount"
+	
+	Border	: Flush Column Titles
+
+	[Line: TSPLDistributorwiseRep]
+		
+		Field: TSPLDistributorName
+		Right Field: TSPLDistributorSaleAmount
+		Explode: TSPLItemJSonExp
+		
+		[Field: TSPLDistributorName]
+			
+			Use: Namefield
+			Set as: $Distributor
+			
+		[Field: TSPLDistributorSaleAmount]
+			
+			Use	  : NameField
+			Set as: $TotalSales
+	
+[Part: TSPLItemJSonExp]
+	
+	Line: TSPLItemJSonExp
+	Repeat: TSPLItemJSonExp: TSPLDistributorSalesItems
+	Scroll: Vertical
+	
+[Line: TSPLItemJSonExp]
+	
+	Field: TSPLPartyItemName,TSPLPartyItemQty
+	Indent: $$ExplodeLevel
+	Local: Field: default : Style: small 
+	Remove if: $Distributor != $$ExplodeOwner:#TSPLDistributorName
+	
+		[Field: TSPLPartyItemName]
+
+            Use     : NameField
+            Set as  : $ItemName
+ 
+        [Field: TSPLPartyItemQty]
+
+            Use     : NameField
+            Set as  : $$String:$TotalQty + " "+ $Itemunit
+
+;; Button displays the 	Item - wise Distributor sales details		
+[Button: TSPL View Item Report]
+ 
+     Title	 : $$LocaleString:"Itemwise Sales"
+     Key	 : Alt+ I
+	 
+	 Action	 : Display: TSPLItemwiseRep
+
+;; Report that displays the Item - wise Distributor sales details read from the JSON files given as input in the previous report		
+[Report: TSPLItemwiseRep]
+	
+	Title: $$LocaleString:"Item - wise Distributor Sales Details"
+	
+[Form: TSPLItemwiseRep]
+	
+	Use: TSPLDistributorwiseRep
+	Delete: Button
+	Local: Part: TSPLDistributorwiseRep :Local:Line  : FormSubTitle:Local : Field: FormSubTitle : Set as: "Item - wise Distributor sales details"
+	
+	Local: Line: TSPLDistributorwiseRepTitle : Local: Field: TSPLDistributorName : Set as: "Item Name"
+	Local: Line: TSPLDistributorwiseRepTitle : Local: Field: TSPLDistributorSaleAmount: Set as: "Sale Qty"
+	Local: Line: TSPLDistributorwiseRep : Local: Field: TSPLDistributorName : Set as: $ItemName
+	Local: Line: TSPLDistributorwiseRep : Local: Field: TSPLDistributorSaleAmount: Set as:$TotalQty
+	
+	Local: Part: TSPLDistributorwiseRep: Delete: Repeat
+	Local: Part: TSPLDistributorwiseRep: Add: Repeat: TSPLDistributorwiseRep: TSPL Itemwise Distributors
+	
+	Local: Line: TSPLItemJSonExp: Delete: Remove if
+    Local: Line: TSPLItemJSonExp: Remove if: $ItemName != $$ExplodeOwner:#TSPLDistributorName
+	Local: Line: TSPLItemJSonExp: Local: Field: TSPLPartyItemName: Set as: $Distributor
+
+;; Collection contains the content of the 2 Distributor JSON files as objects
+[Collection: TSPLDistributorSalesSrc]
+	
+	Collection: TSPLDistributor1Sales, TSPLDistributor2Sales
+	
+
+[Collection: TSPLDistributor1Sales]
+	
+	Data Source: File JSON: ##SVDistributor1filepath
+	Fetch: Distributor, Vch.*
+	
+
+[Collection: TSPLDistributor2Sales]
+	
+	Data Source: File JSON: ##SVDistributor2filepath
+	Fetch: Distributor, Vch.*
+
+;; collection giving itemwise Distributor wise total sales quantity from the JSON files of the 2 Distributors
+[Collection: TSPLDistributorSalesItems]
+	
+	Source Collection: TSPLDistributorSalesSrc
+	Walk : Vch , Item
+	
+	By: ItemName	: $StockItem
+	By: Distributor : $$Owner:$Distributor
+	
+	Aggr Compute	: TotalQty	: Sum	: $$Number:$Qty
+	Compute			: Itemunit	: $unit	
+
+;; collection giving itemwise total sales quantity from the JSON files of the 2 Distributors	
+[Collection: TSPL Itemwise Distributors]
+	
+	Source Collection: TSPLDistributorSalesSrc
+	Walk : Vch , Item
+	
+	By: ItemName	: $StockItem
+	
+	Aggr Compute	: TotalQty	: Sum	: $$Number:$Qty
+	Compute			: Itemunit	: $unit	
+
+
+;; End Of File

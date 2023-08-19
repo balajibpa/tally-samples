@@ -1,0 +1,27 @@
+[Menu: TSPL Object Map]
+	
+	Title		: "Object Map"
+	
+	Key Item	: Stock Item Creation						: S : Display 	: TSPL Object Map Stock Item Creation
+	Item		: Blank	
+	
+	Key Item	: Updating Party Details in UDF Field	 	: U : Display 	: TSPL Object Map Set Value Source to Target
+	Item		: Blank
+	
+	Key Item	: Create Voucher  							: V : Display 	: TSPL Object Map Create Voucher
+	Item		: Blank
+	
+	Key Item	: Ledger Import from Excel     				: E : Display 	: TSPL Object Map Ledger Import
+	Item		: Blank
+	
+	Key Item	: Convert Ledger as Employee 				: C : Display 	: TSPL Object Map Ledger as Employee
+	Item		: Blank
+	
+	
+	
+
+[Include: ObjectMapCreateStockItem.tdl]
+[Include: ObjectMapVoucherUpdate.tdl]
+[Include: ObjectMapCreateVoucher.tdl]
+[Include: ObjectMapImport.tdl]
+[Include: ObjectMapLedgertoCostcentre.tdl]

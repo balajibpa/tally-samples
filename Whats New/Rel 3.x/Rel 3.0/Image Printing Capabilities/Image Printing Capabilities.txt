@@ -1,0 +1,38 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Menu: Image Printing Capabilities]
+	
+	Indent	: "Attribute Graph Type Enhanced"
+	Item	: Blank
+	Key Item: "Image File BMP"			: G : Print		: TSPL Smp Graph Type BMP
+	Key Item: "Image File JPEG"			: G : Display	: TSPL Smp Graph Type JPEG
+
+	Item	: Blank
+	Indent	: "Resource Definition"
+	Item	: Blank
+
+	Key Item: "Resource Type BMP"		: B : Display	: TSPL Smp Resource Type BMP
+	Key Item: "Resource Type JPEG"		: J : Display	: TSPL Smp Resource Type JPEG
+	Key Item: "Resource Type Icon"		: I : Display	: TSPL Smp Resource Type Icon
+	Key Item: "Resource Type Cursor"	: C : Display	: TSPL Smp Resource Type Cursor
+	Item	: Blank
+	
+	Indent	: "Resource from Application"
+	Item	: Blank
+	Key Item: "Current Application"		: A : Display	: TSPL Smp Resource from Application
+	Key Item: "Other Application"		: O : Display	: TSPL Smp Other Appl as Resource
+
+;; Include Files
+
+[Include: Graph Type BMP.txt]
+[Include: Graph Type JPEG.txt]
+
+[Include: Resource Type BMP.txt]
+[Include: Resource Type JPEG.txt]
+[Include: Resource Type Icon.txt]
+[Include: Resource Type Cursor.txt]
+
+[Include: Resource from Application.txt]
+[Include: Resource from Other Application.txt]
+
+;; End-of-File

@@ -1,0 +1,48 @@
+;;This is the common file for making the existing sample TDLs to work in TallyPrime
+
+[System: Formula]
+	
+    BillParentLedger 			: $LedgerName = @BillLedName		;;This formula is removed from default code 
+	
+[#Menu: DataTopMenu]
+		
+	Add	: Key Item	: After	: @@locBackup	: User Configured Backup : K : Execute 	: TSPL FFE UCB Config
+
+[#Part: CMP TallyShopFeatures Left]
+
+	Option	: TSPL Smp NR CMP AccFeat Right	: NOT $$IsRemoteCompany
+
+ [#Collection: Sales OrderDetails]
+
+	Add		: Object	: At End	: SADeliveryTerms
+	
+[Object: SADeliveryTerms]
+
+	Use         : Vch Output Configuration
+	Name		: @@ShowWithTerms
+	Value		: ##ShowWithTerms
+	
+	Action		: ConfigAction :  Set       : ShowWithTerms    : NOT ##ShowWithTerms
+
+[Object: SAChequeInfo]
+
+	Use         : Vch Output Configuration
+	Name		: @@PPRChqInfo
+	Value		: ##PPRChqInfo
+	
+	Action		: ConfigAction :  Set       : PPRChqInfo    : NOT ##PPRChqInfo
+		
+[System: Formula]
+	
+	ShowWithTerms						: $$LocaleString:"Print Terms & Conditions ?"				
+	PPRChqInfo							: $$LocaleString:"Print Cheque Info ?"
+
+[#Collection: Rcpt VoucherDetails]
+	
+	Add	: Object	: At End	: SAChequeInfo
+	
+[#Collection: Pymt VoucherDetails]
+	
+	Add	: Object	: At End	: SAChequeInfo
+	
+;;End of file

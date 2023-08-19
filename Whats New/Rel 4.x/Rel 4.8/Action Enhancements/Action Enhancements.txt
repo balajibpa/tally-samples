@@ -1,0 +1,28 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Menu: TSPL Smp Action Enhancements]
+
+	Indent		: "System Actions"
+	Item		: Blank
+
+	Key Item	: "Load TDL"							: L : Alter		: TSPL Smp Load TDL File Path	: NOT $$IsEmpty:$$SelectedCmps
+	Key Item	: "Unload TDL"							: U : Alter		: TSPL Smp UnLoad TDL File Path	: NOT $$IsEmpty:$$SelectedCmps
+	Item		: Blank
+
+	Indent		: "Procedural Actions"
+	Item		: Blank
+
+	Key Item	: "Asynchronous Message Box Actions"	: M : Call		: TSPL Smp Async MsgBox Actions	: NOT $$IsEmpty:$$SelectedCmps
+	Key Item	: "Batch Posting Actions"				: B : Call		: TSPL Smp Batch Posting Actions: NOT $$IsEmpty:$$SelectedCmps
+	
+	Title		: "Action Enhancements"
+
+;; Include Files
+
+[Include: SystemActions\Load TDL.txt]
+[Include: SystemActions\Unload TDL.txt]
+
+[Include: ProceduralActions\BatchPostingActions.txt]
+[Include: ProceduralActions\StartEndMsgBox.txt]
+
+;; End-of-File

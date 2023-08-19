@@ -1,0 +1,78 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This Code demonstrates the usage of Interface Object Context changing 
+	function 'ExplodeOwner'
+
+Updation History – 
+-	Created on 20/04/2010
+*/
+
+[Report: ICCF Explode Owner]
+
+	Form		: ICCF Explode Owner
+	Title		: "ExplodeOwner"
+	Collection	: ICCF Ledgers with Bills
+
+[Form: ICCF Explode Owner]
+
+	Parts		: Form SubTitle, ICCF Explode Owner
+	Local		: Field	: Form SubTitle		: Info		: "Understanding Function ExplodeOwner"
+	Width		: 40% Page
+
+[Part: ICCF Explode Owner]
+
+	Lines		: ICCF Explode Owner Title, ICCF Explode Owner
+	Repeat		: ICCF Explode Owner	: ICCF Ledgers with Bills
+	Scroll		: Vertical
+	CommonBorder: Yes
+
+	[Line: ICCF Explode Owner Title]
+
+		Fields	: ICCF EO Name, ICCF EO Parent
+		Local	: Field	: Default		: Align	: Center
+		Local	: Field	: ICCF EO Name	: Set As: "Name"
+		Local	: Field	: ICCF EO Parent: Set As: "Parent/ExplodeOwner"
+		Border	: Thin Top Bottom
+
+	[Line: ICCF Explode Owner]
+
+		Fields	: ICCF EO Name, ICCF EO Parent
+		Explode	: ICCF EO Explode Part
+
+		[Field: ICCF EO Name]
+
+			Use		: Name Field
+			Set As	: $Name
+
+		[Field: ICCF EO Parent]
+
+			Use		: Name Field
+			Set As	: $Parent
+			Border	: Thin Left
+
+[Part: ICCF EO Explode Part]
+
+	Lines	: ICCF EO Explode Part
+	Repeat	: ICCF EO Explode Part	: Bill Allocations
+	Scroll	: Vertical
+
+	[Line: ICCF EO Explode Part]
+
+		Fields	: ICCF EO Name, ICCF EO Parent
+		Local	: Field	: Default			: Indent: 1
+		Local	: Field : Default			: Style	: Normal Italic
+		Local	: Field	: ICCF EO Parent	: Set As: $$ExplodeOwner:#ICCFEOName
+
+[Collection: ICCF Ledgers with Bills]
+
+	Type	: Ledger
+	Filter	: Non Empty Bills
+	Fetch	: Name, Parent, BillAllocations.Name
+
+[System: Formula]
+
+	Non Empty Bills	: $$NumItems:BillAllocations > 0
+
+;; End-of-File

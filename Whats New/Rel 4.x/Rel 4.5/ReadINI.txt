@@ -1,0 +1,31 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Report: TSPL Smp Read Ini]
+	
+	Form 	: TSPL Smp Read Ini
+	Title	: "Usage of Function Read ini"
+	
+[Form: TSPL Smp Read Ini]
+		
+	Part : TSPL Smp Read Ini
+	Width: 100% Page
+	
+[Part: TSPL Smp Read Ini]
+	
+	Line : TSPL Smp Read Ini 
+	Width: 80% Page
+	
+	[Line: TSPL Smp Read Ini]
+		
+		Field: TSPL Smp Read Ini 
+		
+		[Field: TSPL Smp Read Ini]
+			
+			Use			: Name Field	   
+			Set as	   	: $$ReadINI:@FilePath:@IniSection:@IniParam	;; Last Value of the parameter will be retrieved
+			Full Width	: Yes
+			FilePath    : "tally.ini"
+			IniSection	: "TALLY"
+			IniParam 	: "TDL"
+
+;; End-of-File

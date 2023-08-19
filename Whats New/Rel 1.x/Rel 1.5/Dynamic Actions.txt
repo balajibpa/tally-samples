@@ -1,0 +1,61 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This code demonstrates the capability of Dynamic Functions where 
+	it is now possible to specify the Action Keyword and parameters 
+	as expressions
+-	Action Keyword 'Action' is required to evaluate Actions dynamically
+
+Last modification – 
+-	Altered on 09/11/2009
+*/
+
+[Report: Dynamic Action Rep]
+
+	Form	: Dynamic Action Rep
+
+[Form: Dynamic Action Rep]
+
+	Parts 	: Dynamic Action Rep
+	Buttons	: Dynamic Action Button
+
+[Part: Dynamic Action Rep]
+
+	Lines	: Dynamic Action Rep 1, Dynamic Action Rep 2
+	
+	[Line: Dynamic Action Rep 1]
+		
+		Fields	: Dynamic Action Rep 1
+		
+		[Field: Dynamic Action Rep1]
+
+			Set As	: "Click on the Dynamic Action button"
+			Width 	: 80% Screen
+			Align 	: Centre
+			Style 	: Normal Bold
+
+	[Line: Dynamic Action Rep 2]
+		
+		Fields	: Dynamic Action Rep 2
+		
+		[Field: Dynamic Action Rep 2]
+
+			Set As 	: "It displays Balance Sheet if the company name contains ABC other wise it displays Trial Balance"
+			Width	: 80% Screen
+			Align 	: Centre
+			Style  	: Normal Italic
+
+[Button: Dynamic Action Button]
+
+	Title   : "Dynamic Action"
+	Key     : F6
+	Action	: Action : Display : @@DynamicActionFormula
+
+;; Dynamic Action specifying the parameter as a system formula
+
+[System: Formula]
+
+	Dynamic Action Formula	: if ##SVCurrentCompany CONTAINS "ABC" Then "BalanceSheet" else "TrialBalance"
+
+;; End-of-File

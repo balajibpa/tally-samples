@@ -1,0 +1,37 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Collection: NumSetDataSource]
+	
+    Use         : Ledger
+	Report		: NumSetDataSource
+
+[Report: NumSetDataSource]
+	
+	Title		: "NumSet as Data Source"
+	
+	Use			: FlagSetDataSource
+	Local		: Part		: FlagSetDataSources	: Repeat	: FlagSetDataSources	: NumSetDataSources_NS_Rep
+	Delete		: Form		: FlagSetDataSources
+	Add			: Form		: NumSetDataSources
+
+[Form: NumSetDataSources]
+	
+	Use		: FlagSetDataSources
+	
+	Local	: Field	: FormSubTitle		: Info		: "Illustration for NumSet as DataSource"
+
+	Local	: Field	: TSPL Smp Purpose	: Info		: "This helps to gather data pertaining to NUMSET. " +
+			+ "This data source can be used for customer facing reports using Value and User Description " +
+			+ "methods. This also an debugging aid for developers"
+	Local	: Field	: TSPL Smp Syntax	: Info		: "[Collection   : <CollectionName>]" + $$NewLine + "     DataSource : Num Set : <Identity>" + 
+			+ $$NewLine	+ "where, "+ $$NewLine	+ "       Identity is an expression evaluating to Num Set data type value. This can be a variable or method. "
+
+	Local	: Field	: TSPL Smp Example	: Info		: "The example is to show the output of NumSet for debbuging purpose"
+
+;; Collections with Data Sources
+
+[Collection: NumSetDataSources_NS_Rep]
+	
+	Data Source	: Num Set	: ##NumSetVar
+
+;; End-of-File

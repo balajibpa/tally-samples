@@ -1,0 +1,46 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+;; XML Request for Approach 4
+
+;<ENVELOPE>
+;	<HEADER>
+;		<VERSION>1</VERSION>
+;   	<TALLYREQUEST>Export</TALLYREQUEST>
+;   	<TYPE>Data</TYPE>
+;   	<ID>Sec XML Request4</ID>
+; 	</HEADER>
+;	<BODY>
+;		<DESC>
+;			<STATICVARIABLES>
+;       		<SVEXPORTFORMAT>$$SysName:XML</SVEXPORTFORMAT>
+;       		<EncString>Madhav</EncString>
+;       		<Password>Kishore</Password>
+;   		</STATICVARIABLES>
+;		</DESC>
+;	</BODY>
+;</ENVELOPE>
+
+[Report: Sec XML Request4]
+
+	Use		: Sec XML Request2
+	Variable: EncString	: String: Govind
+	Variable: Password	: String: Krishna
+
+;; Commented the below since the TD9 Compiler considers @@LicSlNo:##Password as single Formula and returns an Error
+;	Local	: Line		: Sec XML Req SerialNo	: Local	: Field	: Name Field	: Set As	: $$CALLDLLFunction:CallDLLEncDec:EncryptData:@@LicSlNo:##Password
+
+	Variable: LicSlNo	: String
+	Set		: LicSlNo	: $$LicenseInfo:SerialNumber
+
+	Local	: Line		: Sec XML Req SerialNo	: Replace: Field: Name Field : TSPL Smp Name Field
+	Local	: Line		: Sec XML Req EncString	: Replace: Field: Name Field : TSPL Smp Name Field
+
+	Local	: Line		: Sec XML Req SerialNo	: Local	: Field	: TSPL Smp Name Field	: Set As	: $$CALLDLLFunction:CallDLLEncDec:EncryptData:@DLLParm1
+	Local	: Line		: Sec XML Req EncString	: Local	: Field	: TSPL Smp Name Field	: Set As	: $$CALLDLLFunction:CallDLLEncDec:EncryptData:@DLLParm2
+
+[#Field: TSPL Smp Name Field]
+	
+	DLLParm1	: $$String:##LicSlNo + ":" + $$Evaluate:##Password
+	DLLParm2	: $$Evaluate:##EncString + ":" + $$Evaluate:##Password
+	
+;; End-of-File

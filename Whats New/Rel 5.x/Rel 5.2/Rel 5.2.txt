@@ -1,0 +1,11 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Menu: Whats New in Rel 5.2]
+
+	Key Item	: "Columnar Repeat Support in Productivity Suite"	: R	: Print	: TSPL Smp ColRepSupinSuite	: NOT $$IsEmpty:$$SelectedCmps
+	
+;; Include Files
+
+[Include: ColRepeatinProdSuite.txt]
+
+;; End-of-File

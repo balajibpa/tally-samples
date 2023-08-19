@@ -1,0 +1,126 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+-	This code demonstrates the usage of Field Attribute 'Table Search'
+-	The latest enhancement in TDL allows the user to search a text from any part of the 
+	elements which appears in the Table.
+-	The table narrows down on the elements containing the keyed input.
+-	A Function $$TableNumItems introduced to result the Number of Items in Table displayed
+	in a field.
+
+Syntax -
+-	Table Search : <Logical Formula 1>:<Logical Formula 2>
+	where <Logical Formula 1> denotes whether to enable reducing table search or not.
+	where <Logical Formula 2> denotes whether to apply table search on all the columns or 
+	only the first column in a Table.
+-	$$TableNumItems 
+	which returns the Number of elements in the Field attribute Table. In other words, sum
+	of elements of all Tables in the Field is returned.
+
+Last Modification -
+-	Altered on 04-03-2010
+*/
+
+[Report: Reducing Table Search]
+	
+	Form			: Reducing Table Search
+;; Fetch Collection is used if same collection is referred multiple times in this 
+;; Report to avoid multiple requests to the Server. However, we have used it here
+;; though it is a single request only
+	Fetch Collection: RTS Ledger
+	
+[Form: Reducing Table Search]
+	
+	Parts	: Reducing Table Search
+	Width	: 60% Page
+
+[Part: Reducing Table Search]
+	
+	Lines	: Form SubTitle, Reducing Table Search YN, Reducing Table Search Columns YN
+	Lines	: Reducing Table Search GT 100, Reducing Table Search Bills
+	Local	: Field	: Form Subtitle	: Info	: "Reducing Table Search"
+	
+	[Line: Reducing Table Search YN]
+		
+		Fields	: Long Prompt, Reducing Table Search YN
+		Local	: Field	: Long Prompt	: Info	: "Reducing Table Search:"
+		
+		[Field: Reducing Table Search YN]
+			
+			Use		: Logical Field
+			Set As	: No
+		
+	[Line: Reducing Table Search Columns YN]
+		
+		Fields	: Long Prompt, Reducing Table Search Columns YN
+		Local	: Field	: Long Prompt	: Info		: "Use all Table Columns Search:"
+		Local	: Field	: Long Prompt	: Inactive	: NOT #ReducingTableSearchYN
+
+		[Field: Reducing Table Search Columns YN]
+			
+			Use			: Logical Field
+			Set As		: No
+			Inactive	: NOT #ReducingTableSearchYN
+		
+	[Line: Reducing Table Search GT 100]
+		
+		Fields	: Long Prompt, Reducing Table Search GT 100
+		Local	: Field	: Long Prompt	: Info		: "Select Ledger (Table Search) :"
+		SpaceTop: 1
+
+		[Field: Reducing Table Search GT 100]
+			
+			Use			: Name Field
+			Table		: RTS Ledger
+			Show Table	: Always
+			Table Search: @@TableSearchCriteria		: #ReducingTableSearchColumnsYN
+;; If the sum of elements in the Table 'RTS Ledger' is greater than 100 and Enabled in the
+;; previous Field, then Reduced Table Search is enabled
+
+	[Line: Reducing Table Search Bills]
+		
+		Fields	: Long Prompt, Reducing Table Search Bills
+		Local	: Field	: Long Prompt	: Info		: "Bills of the above Selected Ledger :"
+
+		[Field: Reducing Table Search Bills]
+			
+			Use			: Name Field
+			Table		: RTS Ledger Bills
+			Dynamic		: ""
+			Show Table	: Always
+			Table Search: #ReducingTableSearchYN	: #ReducingTableSearchColumnsYN
+
+[System: Formula]
+	
+	Table Search Criteria	: $$TableNumItems > 100	AND #ReducingTableSearchYN
+
+[Collection: RTS Ledger]
+
+	Type		: Ledger
+
+;; Fetch is required to get only the required methods from the concerned Object
+	Fetch		: Name, Parent, ClosingBalance
+	Format		: $Name
+	Format		: $Parent
+	Format		: $ClosingBalance
+	
+	Title		: "List of Ledgers"
+	SubTitle	: "Name", "Group", "Closing Balance"
+
+[Collection: RTS Ledger Bills]
+
+	Type		: Bills
+	ChildOf		: #ReducingTableSearchGT100
+	Fetch		: BillDate, BillCreditPeriod, ClosingBalance
+
+	Title		: "Bills of Ledger " + #ReducingTableSearchGT100
+	SubTitle	: "Name", "Date", "Opening Balance", "Closing Balance"
+	
+	Format		: $$Name
+	Format		: $BillDate
+	Format		: $OpeningBalance
+	Format		: $ClosingBalance
+	Fetch		: Name, BillDate, OpeningBalance, ClosingBalance
+
+;; End-of-File

@@ -1,0 +1,38 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	These TDL Files demonstrate the usage and purpose of Simple and Compound List
+	Variables
+
+Last modification – 
+-	Altered on 05/04/2010
+
+Dependencies -
+-	TDL File 'Variables.txt' and 'Compound Var Usage in Report Config.txt'
+*/
+
+;; Demo TDLs for Simple and Compound List Variables
+
+[Menu: List Variables]
+
+	Indent	: "Basic Usage"
+	Item	: Blank
+	Key Item: Help on List	: H	: CALL		: List View Help
+	Key Item: Simple List	: S	: Menu		: Simple List
+	Key Item: Compound List	: C	: Menu		: Compound List
+	Item	: Blank
+
+	Indent	: "Report Config"
+	Item	: Blank
+	Key Item: Stock Summary	: T : Display	: Stock Summary
+	Key Item: Trial Balance	: B : Display	: Trial Balance
+
+[Function: List View Help]
+
+	00	: MSGBOX	: "Help"	: "Wherever LOG File opens up, traverse thru the end to view the recent output"
+
+[Include: Basic Usage\Variables.txt]
+[Include: Report Config\Compound Var Usage in Report Config.txt]
+
+;; End-of-File

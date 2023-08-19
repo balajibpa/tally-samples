@@ -1,0 +1,63 @@
+/*
+Objective	: This sample code is to depict the behavior of Advanced in a collection. 
+Use Case	: We shall hide batches with Negative Closing balance
+*/
+
+[Report	: TSPL Advanced]
+	
+	Title	: "Listing of Masters"
+	Form	: TSPL Advanced
+	Local	: Collection	: TSPL All Batches of All Stock Items	: Format	: $ClosingBalance, 10
+	Local	: Collection	: TSPL All Batches of All Stock Items	: Fetch		: ClosingBalance
+	Local	: Collection	: TSPL All Batches of All Stock Items	: Sub Title	: $$LocaleString:"Closing Balance"
+	Local	: Collection	: TSPL All Batches of All Stock Items	: Advanced	: $ClosingBalance =< 0
+
+[Form	: TSPL Advanced]
+
+	Use				: TSPL SMP Illustration
+		
+	Height			: 100% Screen
+	Width			: 100% Screen
+	
+	Local	: Part	: TSPL SMP Syntax		: Invisible	: Yes
+	Local	: Field	: FormSubTitle			: Info		: $$LocaleString:"Illustration for attribute Advanced at Table"
+		
+	Local	: Field	: TSPL Smp Purpose		: Indent		: 2
+	Local	: Field	: TSPL Smp Purpose		: Info		:  $$LocaleString:"This attributes allows to hide objects of a table based on a conditon." + $$NewLine + +
+															$$LocaleString:"The below mentioned code describes an approach to use Advance in Collection"
+			
+	
+	Local	: Field	: TSPL SMP Example		: Info		: $$NewLine	+ "[Collection	: TSPL All Batches of All Stock Items]" + $$NewLine + +
+														"         |"  + $$NewLine + +
+															"Advanced	: $ClosingBalance =< 0" 
+	Local	: Field	: TSPL SMP ExampleNote	: Info		: "List of All batches is listed in the Table. Closing Balance which is less than or equal to 0 is hidden." 	
+
+
+	
+	Part				: TSPL Advanced
+	Vertical Align		: Top
+	Horizontal Align	: Left
+	No Confirm			: Yes
+	
+[Part	: TSPL Advanced]
+	
+	Line	: TSPL AdvancedTitle, TSPL AdvancedTable
+	Local	: Field		: Default	: Width		: 40
+	
+	[Line	: TSPL AdvancedTitle]
+		
+		Field			: Name Field
+		Local			: Field		: Name Field	: Info	: "Listing of Batch"
+		
+	[Line	: TSPL AdvancedTable]
+		
+		Space Top	: 1
+		Field		: Medium prompt, Name Field
+		
+		Local		: Field		: Medium prompt	: Info			: $$LocaleString:"Closing balance less than or equal to 0 is hidden. If batch name typed the name shall appear in the field"
+		Local		: Field		: Medium prompt	: Width			: 60% Screen
+
+		Local		: Field		: Name Field	: Table			: TSPL All Batches of All Stock Items
+		Local		: Field		: Name Field	: Show Table	: Always
+
+;; End of file

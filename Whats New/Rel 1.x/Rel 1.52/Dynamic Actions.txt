@@ -1,0 +1,34 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This code demonstrates the Enhancement done on Dynamic Actions.
+- 	Action Keyword must be prefixed for Dynamic Action usage.
+-	Action and Action Parameters both can be dynamically evaluated from
+	a variable or any formula
+-	On evaluating the action and action parameters, action is performed
+	on the result
+-	Actions can also be executed based on satisfying the given conditions i.e.,
+	If Else statements can also be used with Dynamic Action Keyword Action
+
+Last modification – 
+-	Altered on 09/11/2009
+*/
+
+[Function: Dynamic Action within Function]
+
+	Variable		: DA Report Name 	: String
+	Variable		: DA Logical		: Logical
+	Variable		: DA Action			: String
+
+	00	: SET		: DA Report	Name	: "Balance Sheet"
+	01	: SET		: DA Action			: "Display"
+	10	: ACTION	: ##DAAction		: ##DAReportName
+	20	: SET		: DA Report	Name	: "Ledger"
+	21	: SET		: DA Action			: "Alter Collection"
+	30	: ACTION	: ##DAAction		: ##DAReportName
+	40	: SET		: DA Logical		: Yes
+	50	: ACTION	: Display			: if ##DALogical then "Trial Balance" else "Balance Sheet"
+	60	: DISPLAY	: Stock Summary
+
+;; End-of-File

@@ -1,0 +1,106 @@
+;; Sri Ganeshji Maharaj : Sri Pitreshwarji Maharaj : Sri Balaji Maharaj : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This code intends to demonstrate the usage of $$TgtObject function
+	available in Collection for accessing the target object as a context
+- 	Function $$TGTObject within Collection can be used to access Methods
+	in the Target Object.
+-	Target Object refers to the object being populated. In simple collection, 
+	it is the same as the source object but in case of extraction/aggregation,
+	the target is the extracted/aggregated Object
+-	The target object and its values can now be accessed during population 
+	of values using $$TgtObject function. When an expression needs to use 
+	a previously computed value, then the target object needs to be used 
+	since the value has been put in that object, this is where $$TgtObject 
+	comes handy
+-	Lets take the following -
+		Compute : MyValue    : some-expression
+		Compute : MyNewValue : if NOT $$IsEmpty:$MyValue then $x else $y
+    This will *NOT* work in aggregation/extraction since MyValue is not 
+	available in Source Object
+-	Now we can use the following instead -
+		Compute : MyValue    : some-expression
+		Compute : MyNewValue : if NOT $$TgtObject:$$IsEmpty:$MyValue then $x else $y
+	This will work properly in aggregation/extraction also since MyValue 
+	is available in target object
+-	When we need to find the maximum sales amount for each Item in a 
+	Voucher Entry accross the entire data and also the date of the voucher 
+	in which this maximum value occurred, Function $$TGTObject comes handy.
+- 	When a SUM is applied on Data Type which is not addable such as string,
+	date, etc.; it degrades to the last value.
+
+Last modification – 
+-	Altered on 09/11/2009
+*/
+
+[Report: TgtObject Coll]
+
+	Form	: TgtObject Coll
+
+[Form: TgtObject Coll]
+
+	Parts	: TgtObject Coll
+
+[Part: TgtObject Coll]
+
+	Lines		: TgtObject Coll Title, TgtObject Coll
+	Repeat		: TgtObject Coll	: Summ Voucher
+	Scroll		: Vertical
+	CommonBorder: Yes
+
+	[Line: TgtObject Coll Title]
+
+		Use			: TgtObject Coll
+		Local: Field: Default				: Align	: Center
+		Local: Field: Default				: Style	: Normal Bold
+		Local: Field: Default				: Type	: String
+
+		Local: Field: TgtObject Coll Name	: Set As: "Item Name"
+		Local: Field: TgtObject Coll MaxDate: Set As: "Max Date"
+		Local: Field: TgtObject Coll Det	: Set As: "Max Sales Amt"
+		Border		: Thin Top Bottom
+
+	[Line: TgtObject Coll]
+
+		Fields		: TgtObject Coll Name
+		Right Fields: TgtObject Coll Max Date, TgtObject Coll Det
+		Local: Field: Default	: Style	: Normal
+
+		[Field: TgtObject Coll Name]
+
+			Use		: Name Field
+			Set As	: $ItemName
+
+		[Field: TgtObject Coll Max Date]
+
+			Use		: Uni Date Field
+			Set As	: $MaxDate
+			Border	: Thin Left Right
+
+		[Field: TgtObject Coll Det]
+
+			Use		: Amount Forex Field
+			Set As	: $ItemDet
+
+[Collection: Src Voucher]
+
+	Type	: Vouchers	: VoucherType
+	ChildOf	: $$VchTypeSales
+
+[Collection: Summ Voucher]
+
+	Source Collection	: Src Voucher
+	Walk				: Inventory Entries
+	By					: ItemName	: $StockItemName
+
+;; The following returns the Date and Amount for an Item on which Maximum Sales has happened
+
+	Aggr Compute		: MaxDate	: SUM	: IF $$IsEmpty:$$TgtObject:$ItemDet OR +
+							$$TgtObject:$ItemDet < $Amount THEN $Date ELSE $$TgtObject:$MaxDate
+;; ItemDet is the method in Target Object and not Source hence $$TgtObject must be prefixed to
+;; Method ItemDet to evaluate in Target Object Context
+
+	Aggr Compute		: ItemDet	: MAX	: $Amount
+
+;; End-of-File

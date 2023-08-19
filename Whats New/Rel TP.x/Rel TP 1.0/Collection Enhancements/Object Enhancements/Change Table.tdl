@@ -1,0 +1,89 @@
+/*
+Objective : To showcase Change Table action
+
+Elements applied
+
+*/
+
+[Report	: TSPLChange Table]
+	
+	Title	: "Change Table"
+	Local	: Object		: Stock Group	: Full Width	: Yes
+	Variable: TSPLStkGroupName
+	
+[Form	: TSPLChange Table]	
+	
+	Use			: TSPL SMP Illustration
+		
+	Height		: 100% Screen
+	Width		: 100% Screen
+	
+	Local	: Part	: TSPL SMP Syntax		: Invisible	: Yes
+	Local	: Field	: FormSubTitle			: Info		: $$LocaleString:"Illustration for Change Table"
+		
+	Local	: Field	: TSPL Smp Purpose		: Indent	: 2
+	Local	: Field	: TSPL Smp Purpose		: Info		:  $$LocaleString:"The action Change Table has been introduced at Object." +
+															+ "To refresh the change table for the field, Process Change Table has been introduced at Field." + +
+															$$LocaleString:"The below mentioned code describes an approach to change Table in a field."
+			
+	
+	Local	: Field	: TSPL SMP Example		: Info		: $$NewLine	+ "[#Object	: Stock Group]" + $$NewLine + +
+														"         |"  + $$NewLine + +
+															"Action		: TSPLChildStockItem	: Set			: TSPLStkGroupName	: $$CurrentTableObj:$Name" + $$NewLine + +
+															"Action		: TSPLChildStockItem	: Change Table	: TSPLChildStockItemCollection"
+	Local	: Field	: TSPL SMP ExampleNote	: Info		: "Stock Items would be listed based on selected Stock Group." 	
+
+	Part				: TSPLChange Table
+	Horizontal Align	: Center
+	Vertical Align		: Top
+	No Confirm			: Yes
+
+[Part	: TSPLChange Table]
+	
+	Line	: TSPLChange Table
+	Space Left	: .5
+	
+	[Line	: TSPLChange Table]
+		
+		Field	: Medium Prompt, TSPLChange Table
+		Local	: Field		: Medium Prompt	: Info	: "Selection of Inventory"
+		
+		[Field	: TSPLChange Table]
+			
+			Use			: Name Field
+			Table		: TSPLList of Stock Group
+			Show Table	: Always and Never Hide
+			
+			Act On Table Element	: Yes						: Execute Obj Actions	: TSPLChildStockItem
+			Process Change Table	: Yes
+
+[Collection	: TSPLList of Stock Group]
+	
+	Title	: "List of Stock Group"
+	Type	: Stock Group
+	Format	: $Name,20
+	
+	Align	: Center
+	
+[#Object	: Stock Group]
+	
+	Action		: TSPLChildStockItem	: Set			: TSPLStkGroupName	: $$CurrentTableObj:$Name
+	Action		: TSPLChildStockItem	: Change Table	: TSPLChildStockItemCollection
+	
+[Collection	: TSPLChildStockItemCollection]
+	
+	Title		: "Stock Item of " + ##TSPLStkGroupName
+	Type		: Stock Item
+	Child Of	: ##TSPLStkGroupName
+	Align		: Center
+	Format		: $Name,25
+	
+[System	: Variable]
+	
+	TSPLStkGroupName	: ""
+	
+[Variable: TSPLStkGroupName]
+	
+	Type	: String
+
+;; End of file

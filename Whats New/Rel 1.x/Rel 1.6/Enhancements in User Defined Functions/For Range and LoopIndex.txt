@@ -1,0 +1,75 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+-	This code demonstrates the enhancement For Range and LoopIndex Function
+-	This code loops over Dates, Numbers, Groups and Logs them along with LoopIndex
+
+Syntax -
+-	FOR RANGE : <IteratorVarName> : <Datatype> : <StartRangeExpr> : <EndRangeExpr> [: <IncrementExpr> [: <DateRangeKeyword> ]]
+		Action Statements inside loop.
+	END FOR
+	where 
+	-	Data Type can be a Number or Date
+	-	StartRangeExpr and EndRangeExpr depends on the Data Type, if Data Type is Number, 
+		the StartRangeExpr and EndRangeExpr have to return a Number else Date
+	-	IncrementExpr is a number which is taken as 1 if not specified
+	-	If the Data Type is Date, then DateRangeKeyword can be specified as, Day, Week, Month,
+		or Year, So the IncrementExpr will increment accordingly. 1 day, 1 month, etc.
+
+Last Modification -
+-	Altered on 23-01-2010
+
+Specification(s) -
+-	Changing the Current Date will effect changes
+*/
+
+[Function: Smp For Range and LoopIndex]
+
+	Local Formula		: PreviousLoopIndex		: $$LoopIndex:1
+	Local Formula		: Previous2ndLoopIndex	: $$LoopIndex:2
+
+	00	: SET FILE LOG ON
+
+	10	: LOG			: "$$Loopindex in Walk Collection"
+	20	: WALK COLLECTION: Group
+	30	: 	LOG			: $Name
+	40	: 	LOG			: $$LoopIndex
+	50	: END WALK
+
+	60	: LOG			: "'For Range' Loop and $$LoopIndex in For Range Loop"
+	70	: FOR RANGE 	: IteratorVar 	: Date		: ##SVCurrentDate : $$MachineDate	: 1 : "Day"
+	80	:	IF	: ##IteratorVar = $$Date:$$MachineDate
+	81	:		IF	: ##SVCurrentDate < $$Date:$$MachineDate
+	90	: 			LOG		: "You are " + $$String:$$LoopIndex + " days behind schedule"
+	91	: 		ENDIF
+	92	:		IF	: ##SVCurrentDate > $$Date:$$MachineDate
+	93	: 			LOG		: "You are " + $$String:$$LoopIndex + " days ahead of schedule"
+	94	: 		ENDIF
+	95	:		IF	: ##SVCurrentDate = $$Date:$$MachineDate
+	96	: 			LOG		: "Good Job!! You are on schedule"
+	97	: 		ENDIF
+	100	: 	ENDIF
+	110	: END FOR
+
+	120	: LOG			: "'For Range' Loop - Month End Dates ranging between From and To Dates"
+	130	: FOR RANGE 	: IteratorVar 	: Date		: ##SVFromDate : ##SVToDate	: 1 : "Month"
+	140	: 	LOG			: $$MonthEnd:##IteratorVar
+	150	: END FOR
+
+	160	: LOG			: "LoopIndex Function to get value for outer Loop count"
+	170	: WALK COLLECTION	: Group
+	180	:	LOG		: "Group = " + $Name + ", LoopCount = " + $$String:$$LoopIndex
+	190	: 	FOR RANGE		: IteratorVar	: Number	: 1	: 5				: 1
+	200	: 		FOR RANGE	: IteratorVar1	: Number	: 1 : ##IteratorVar	: 2
+	210	:			LOG		: "Index of Current Loop = " + $$String:$$LoopIndex + " , Value = " + $$String:##IteratorVar1
+	220	:			LOG		: "Index of Parent Loop = " + $$String:@PreviousLoopIndex + " , Value = " + $$String:##IteratorVar
+	230	:			LOG		: "Index of 2nd Level Parent Loop = " + $$String:@Previous2ndLoopIndex + " , Value = " + $Name
+	240	: 		END FOR
+	250	: 	END FOR
+	260	: END WALK
+
+	270	: SET FILE LOG OFF
+	280	: EXEC COMMAND	: "TDLFunc.LOG"
+
+;; End-of-File

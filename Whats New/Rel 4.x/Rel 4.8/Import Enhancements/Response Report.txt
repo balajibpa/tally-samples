@@ -1,0 +1,134 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s):-
+	- To understand the usage of customized Response when SOAP Request is received for Import of Data
+	- To demonstrate the usage of Import File Attribute 'Response Report'
+
+Capabilities Used:-
+	- Import File Attribute 'Response Report'
+	- New Functions supporting Data Import 'ImportType', 'LastImportError', 'ImportInfo' and 'HTTPInfo'
+
+Syntax -
+	[Import File: <Import File Definition Name>]
+		Response Report		: <Response Report Name>
+
+	Functions -
+		$$ImportType
+		$$LastImportError
+		$$ImportInfo:<Info Type>			;; Info Type could Created, Altered, Ignored, Errors
+
+		$$HTTPInfo:<Info Type>    			;; Info Type could Header, ContentLength and URL
+		$$HTTPInfo:Header:<Info Sub Type>] 	;; Info Sub Type can be any Header Info like Unicode, ContentType, etc.
+
+Updation History:-
+	- Created on 14-2-2014
+*/
+
+[#Import File: All Masters]
+
+	Option	: TSPL Smp Custom Response Report
+
+[#Import File: Vouchers]
+
+	Option	: TSPL Smp Custom Response Report
+
+	[!Import File: TSPL Smp Custom Response Report]
+
+;; For SOAP Request, the Response Report will generate the customized Response designed by the Report
+		Response Report	: TSPL Smp ResponseRpt
+
+;; Response Reports
+[Report: TSPL Smp ResponseRpt]
+	
+	Form		: TSPL Smp ResponseRpt
+	
+[Form: TSPL Smp ResponseRpt]
+	
+	Parts		: TSPL Smp ResponseRpt
+	XMLTag		: "Custom Response Form"
+
+[Part: TSPL Smp ResponseRpt]
+	
+	Lines		: TSPL Smp ResponseRpt
+	Scroll		: Vertical
+	XMLTag		: "Custom Response Part"
+	
+	[Line: TSPL Smp ResponseRpt]
+		
+		Fields		: TSPL Smp ImportType, TSPL Smp LastImportError
+		XMLTag		: "Custom Response Line"
+
+		Explode		: TSPL Smp ImportInfo
+		Explode		: TSPL Smp HTTPInfo
+
+		[Field: TSPL Smp ImportType]
+
+;; Function 'ImportType' returns the Source of Data i.e., MANUAL, SOAP, SYNC, etc.
+			Set as	: $$ImportType
+			XMLTag	: "Import Type"
+
+		[Field: TSPL Smp LastImportError]
+			
+;; Function 'LastImportError' returns the Error String if there is an error
+			Set as	: $$LastImportError
+			XMLTag	: "LastImportError"
+
+;; Exploded Part for ImportInfo Function
+		
+		[Part: TSPL Smp ImportInfo]
+			
+			Lines	: TSPL Smp ImportInfo
+			
+			[Line: TSPL Smp ImportInfo]
+				
+				Fields	: TSPL Smp ImportInfoCreated, TSPL Smp ImportInfoAltered, TSPL Smp ImportInfoCombined
+				Fields	: TSPL Smp ImportInfoIgnored, TSPL Smp ImportInfoErrors
+				XMLTag	: "ImportInfo"
+				
+				[Field: TSPL Smp ImportInfoCreated]
+					
+;; Function 'ImportInfo' returns the status of the Objects being imported and returns Number
+					Set as	: $$ImportInfo:Created
+					XMLTag	: "Created"
+
+				[Field: TSPL Smp ImportInfoAltered]
+					
+					Set as	: $$ImportInfo:Altered
+					XMLTag	: "Altered"
+
+				[Field: TSPL Smp ImportInfoCombined]
+					
+					Set as	: $$ImportInfo:Combined
+					XMLTag	: "Combined"
+
+				[Field: TSPL Smp ImportInfoIgnored]
+					
+					Set as	: $$ImportInfo:Ignored
+					XMLTag	: "Ignored"
+
+				[Field: TSPL Smp ImportInfoErrors]
+					
+					Set as	: $$ImportInfo:Errors
+					XMLTag	: "Errors"
+
+;; Exploded Part for ImportAction Function
+
+		[Part: TSPL Smp HTTPInfo]
+			
+			Use		: TSPL Smp ImportInfo
+			Local	: Line	: TSPL Smp ImportInfo			: XMLTag	: "HTTPInfo"
+
+;; Function 'HTTPInfo' returns the HTTP info of the SOAP Request
+			Local	: Field	: TSPL Smp ImportInfoCreated	: Set as	: $$HTTPInfo:URL
+			Local	: Field	: TSPL Smp ImportInfoCreated	: XMLTag	: "URL"
+			Local	: Field	: TSPL Smp ImportInfoAltered	: Set as	: $$HTTPInfo:HEADER:"Connection"
+			Local	: Field	: TSPL Smp ImportInfoAltered	: XMLTag	: "HeaderConnection"
+			Local	: Field	: TSPL Smp ImportInfoCombined	: Set as	: $$HTTPInfo:HEADER:Unicode
+			Local	: Field	: TSPL Smp ImportInfoCombined	: XMLTag	: "Unicode"
+			Local	: Field	: TSPL Smp ImportInfoIgnored	: Set as	: $$HTTPInfo:HEADER:ContentType
+			Local	: Field	: TSPL Smp ImportInfoIgnored	: XMLTag	: "HeaderContentType"
+			Local	: Field	: TSPL Smp ImportInfoErrors		: Set as	: $$HTTPInfo:ContentLength
+			Local	: Field	: TSPL Smp ImportInfoErrors		: XMLTag	: "ContentLength"
+
+;; End-of-File

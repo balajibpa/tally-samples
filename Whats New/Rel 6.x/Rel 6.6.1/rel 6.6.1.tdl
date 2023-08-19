@@ -1,0 +1,22 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Menu: Whats New in Rel 6.6.1]
+
+	Indent		: "View Customised Reports on Browser"
+	Item		: Blank
+	Item		: Blank
+	Key Item	: "Report - Party Contact Details" 		: P : Display			: TSPL Smp Party Details
+	Item		: Blank
+	Key Item	: "Trigger Report - SD Group Summary"	: G	: Display Collection: TSPL Smp SD Group Summary
+	Item		: Blank
+	Key Item	: "Drill Down Report - Trial Balance"	: D : Display			: TSPL Smp DD Trial Balance
+	Item		: Blank
+	
+
+;;Include Files	
+
+[Include: ReportsOnBrowser\PartyContactDetails.tdl]
+[Include: ReportsOnBrowser\GrpSummaryTriggerReport.tdl]
+[Include: ReportsOnBrowser\CustomTBDrillDownReport.tdl]
+
+;; End-of-File

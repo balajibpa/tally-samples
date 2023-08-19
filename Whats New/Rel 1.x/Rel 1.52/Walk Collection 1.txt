@@ -1,0 +1,117 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This code demonstrates the Enhancement done on Walk Collection.
+- 	Collection Name is dynamically evaluated first and then the same
+	is walked over.
+-	Walk Collection also takes an additional parameter for the reverse
+	order.  By default, this is No.  If set to Yes, Collection will be
+	walked in reverse order.
+-	Multiple Objects and Sorting Order is accepted from the user and on
+	every line, the function is executed in order to log the Object 
+	selected
+
+Last modification – 
+-	Altered on 09/11/2009
+*/
+
+[Report: Walk Collection1]
+
+	Form	: Walk Collection1
+	Auto	: Yes
+
+[Form: Walk Collection1]
+
+	Parts	: DC Title, Walk Collection1
+	On		: Form Accept		: Yes	: Form Accept
+	On		: Form Accept		: Yes	: EXEC COMMAND		: TDLFunc.Log
+
+	[Part: DC Title]
+
+		Lines	: Info, Note
+		Local	: Line	: Note	: Local: Field: Name Field	: Info		: "(This code demonstrates the Dynamic evaluation of Collection Name within a Function)"
+
+		[Line: Info]
+
+			Fields: Info Field
+			Local: Field: Info Field	: Info		: "Collection Name evaluated dynamically"
+			Local: Field: Info Field	: FullWidth	: Yes
+			Local: Field: Info Field	: Align		: Center
+			Local: Field: Info Field	: Border	: Thin Bottom
+			Local: Field: Info Field	: Style		: Normal Italic
+			Space Bottom: 1
+
+	[Part: Walk Collection1]
+
+		Lines	: Walk Collection1
+		Scroll	: Vertical
+
+		[Line: Walk Collection1]
+
+			Fields		: Medium Prompt, Walk Collection1, Short Prompt, DC Sort Order
+			Local: Field: Medium Prompt	: Info		: "Object Type (Master) :"
+			Local: Field: Medium Prompt	: Inactive	: $$ExplodeLevel > 0
+			Local: Field: Short Prompt	: Info		: "Ascending Order :"
+			Local: Field: Short Prompt	: Width		: @@MediumWidth
+			Local: Field: Short Prompt	: Inactive	: $$ExplodeLevel > 0
+			Explode		: Walk Collection1			: NOT $$IsEnd:#WalkCollection1
+			
+			[Field: Walk Collection1]
+
+				Use			: Name Field
+				Table		: DC Object Type, EndofList
+				Show Table	: Always
+
+			[Field: DC Sort Order]
+
+				Use			: Logical Field
+				Delete		: Key
+				Add			: Key	: DC Save Call Function
+				Set As		: No
+				Inactive	: $$IsEnd:#WalkCollection1
+
+[Key: DC Save Call Function]
+
+	Key			: Enter
+	Action List	: Field Accept, DC Call Function
+
+[Key: DC Call Function]
+
+	Key			: Enter
+	Action		: CALL		: WalkCollection1:#WalkCollection1:$$Value
+
+[Table: DC Object Type]
+
+	Title			: "Object Type"
+	List Name		: "Group", "Ledger", "Stock Group", "Stock Item", "Cost Category", "Cost Centre", "Godown", "Stock Category"
+
+[Function: Walk Collection1]
+
+	Parameter		: Dynamic Collection Name	: String
+	Parameter		: Parm Desc Sort Order		: String
+
+	Variable		: DC Log Sort Order			: String
+
+	00	: SET FILE LOG ON
+	10	: IF		: ##ParmDescSortOrder
+	20	: 	SET		: DC Log Sort Order			: "Ascending Order"
+	30	: ELSE		: 
+	40	: 	SET		: DC Log Sort Order			: "Descending Order"
+	50	: END IF
+
+	60	: LOG		: "List of Objects " + ##DynamicCollectionName + " in " + ##DCLogSortOrder
+	70	: LOG		: "--------------------------------------------"
+	80	: CALL		: Walk Dynamic Collection Name 1
+	90	: LOG		: "--------------------------------------------"
+
+	100	: SET FILE LOG OFF
+	110	: RETURN	: True
+
+[Function: Walk Dynamic Collection Name 1]
+
+	00	: WALK COLLECTION	: ##DynamicCollectionName : NOT ##ParmDescSortOrder
+	10	: 	LOG		: "Name : " + $Name
+	20	: END WALK
+
+;; End-of-File

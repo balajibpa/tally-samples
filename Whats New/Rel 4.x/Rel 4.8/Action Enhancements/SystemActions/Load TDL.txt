@@ -1,0 +1,70 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s):-
+	- To dynamically Load the TDLs
+	- To demonstrate the usage of Action Load TDL
+
+Capabilities Used:-
+	- Action Load TDL
+
+Syntax -
+	Load TDL : <TDL/ TCP File Path>
+
+Updation History:-
+	- Created on 14-2-2014
+*/
+
+[System: Variable]
+	
+	Variable: TSPL Smp TDL File Path	: String	: "."
+
+[Report: TSPL Smp Load TDL File Path]
+	
+	Form	: TSPL Smp TDL File Path
+	Title	: "Action Load TDL"
+	
+[Form: TSPL Smp TDL File Path]
+	
+	Parts	: Form SubTitle, TSPL Smp TDL File Path
+	Width	: 50% Page
+	
+	Local	: Field	: Form SubTitle	: Info		: "Action Load TDL"
+	
+	On		: Form Accept	: Yes	: Call		: TSPL Smp Action Load TDL	: #TSPLSmpTDLFilePath
+
+[Part: TSPL Smp TDL File Path]
+	
+	Lines	: TSPL Smp TDL File Path
+	
+	[Line: TSPL Smp TDL File Path]
+		
+		Fields	: Medium Prompt, TSPL Smp TDL File Path
+		
+		Local	: Field	: Medium Prompt	: Info	: "TDL File Path"
+
+		[Field: TSPL Smp TDL File Path]
+			
+			Use		: Name Field
+			Tooltip	: "Please paste the TDL File Path here"
+			Width	: 30% Page
+			Modifies: TSPL Smp TDL File Path	: True
+
+[Function: TSPL Smp Action Load TDL]
+
+	Parameter		: pTDLPath		: String
+	Variable		: LastError		: String
+
+	00	: If	: $$IsTDLLoaded:##pTDLPath
+	10	: 	Msg Box		: "Status!"		: "TDL File " + ##pTDLPath + " is already loaded"
+	20	: Else	: 
+;; Action Load TDL loads the TDL File dynamically
+	30	: 	Load TDL	: ##pTDLPath
+;; Logical Function IsTDLLoaded determines whether the TDL File is Loaded or not
+	40	:	If	: $$IsTDLLoaded:##pTDLPath
+	50	:		Msg Box	: "Status!"		: "TDL File " + ##pTDLPath + " loaded successfully"
+	60	:	End If
+	70	: End If
+	80	: Display		: ReportProductNFeatures
+	
+;; End-of-File

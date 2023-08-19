@@ -1,0 +1,113 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This TDL File demonstrate the change in the Collection attribute, 'Unique'
+-	This ensures Uniqueness across any combinations, i.e., Unique only within the 
+	Table, Unique Items selected in the previous Fields or Unique Items selected 
+	across some other dependent field
+
+Syntax -
+-	Unique	: <Table Object Method>[, <Field Object Method>[, <Extended Method>]]
+	where Table Object Method is the Method within the Table,
+	Field Object Method is the Method or Storage selected in the previous fields,
+	Extended Method is the Method of other Field for table uniqueness
+
+Important -
+-	For Unique to work, Fields must contain the Storage Methods/UDFs
+
+Last modification – 
+-	Altered on 22/04/2010
+*/
+
+[Report: Smp StkBatchName]
+
+	Form	: Smp StkBatchName
+
+[Form: Smp StkBatchName]
+
+	Parts	: Form SubTitle, Smp StkBatchName
+	Height	: 50% Page
+	Width	: 50% Page
+	Local	: Field	: Form SubTitle	: Info	: "Understanding Enhancement in Unique Attribute"
+	NoConfirm	: Yes
+	
+[Part: Smp StkBatchName]
+  
+	Lines		: Smp StkBatchTitle, Smp StkBatchName
+	Repeat		: Smp StkBatchName		: Stock Item Agg UDF
+	BreakOn		: $$IsEnd:$SmpStkItemName
+	Scroll		: Vertical
+	CommonBorder: Yes
+
+	[Line: Smp StkBatchTitle]
+
+		Fields	: Smp StkItem, Smp StkBatchName
+
+		Local	: Field	: Default			: Style	: Normal
+		Local	: Field	: Default			: Align	: Centre
+		Local	: Field	: Default			: Delete: Inactive
+
+		Local	: Field	: Smp StkItem		: Info	: "Stock Item Name"
+		Local	: Field	: Smp StkBatchName	: Info	: "Batch within selected Item"
+		Border	: Thin Top Bottom
+
+	[Line: Smp StkBatchName]
+
+		Fields	: Smp StkItem, Smp StkBatchName
+
+		[Field: Smp StkItem]
+
+			Use    		: Name Field
+			Storage		: Smp StkItemName
+			Table		: Stock Items of Engg Items, End of List
+			Show Table 	: Always
+			Width		: 25% Page
+	
+	 	[Field: Smp StkBatchName]
+			
+			Use    		: Name Field
+			Table  		: Smp BatchList, Not Applicable
+			Inactive	: $$IsEnd:#SmpStkItem
+			Dynamic		: ""
+			Storage		: Smp BatchName
+			Show Table 	: Always
+			Border		: Thin Left
+			Width		: 25% Page
+
+[Collection: Stock Items of Engg Items]
+
+	Type		: Stock Item
+	Child Of	: "Engineering Items"
+	Belongs To	: Yes
+	Format		: $Name, 20
+	Title		: "Engg Items"
+	Fetch		: Name
+
+[Collection: Smp BatchList]
+
+	Title  		: "List of Batches"
+	Type   		: Batch
+	Format 		: $BatchName, 20
+	Child of	: #SmpStkItem
+	Fetch		: BatchName
+
+;; Unique across 3 combinations i.e., BatchName in the Table, SmpBatchName selected 
+;; in any of the above fields and SmpStkItemName to check uniqueness for particular 
+;; Stock Item Name
+
+	Unique		: $BatchName, $SmpBatchName, $SmpStkItemName
+
+;; The above table will be unique for each Item i.e., for example, once Batch 'B1' 
+;; is selected for Stock Item 'Item 1', Batch 'B1' will not be listed again if  
+;; Stock Item 'Item 1' is selected
+
+[System: UDF]
+	
+;; Following are the adhoc storages and used for the purpose of Collection Attribute 
+;; 'Unique'. The same is not recorded in any object
+	Stock Item Agg UDF	: Aggregate	: 2011
+	Smp StkItemName		: String	: 2011
+	Smp BatchName 		: String 	: 2012
+
+;; End-of-File

@@ -1,0 +1,38 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This Code demonstrates the usage of new Object Context Functions 
+	'FirstObj' and 'LastObj' within User Defined Functions
+-  	'FirstObj' is used to evaluate the parameter in the context of 
+	First Object in the Collection and 'LastObj' is used to evaluate 
+	the parameter in the context of Last Object in the Collection
+-	'IsFirstObj' and 'IsLastObj' Functions are now extended to be used
+	within User Defined Functions
+
+Last modification – 
+-	Altered on 09/11/2009
+*/
+
+[Function: Object Context Functions]
+
+	00	: SET FILE LOG ON
+	10	: WALK COLLECTION	: Ledger
+	15	: 	LOG	: "Walk begins here --------------------"
+	20	: 	LOG	: "Is First Object  : " + $$String:$$IsFirstObj
+	30	: 	LOG	: "Is Last Object   : " + $$String:$$IsLastObj
+	40	: 	LOG	: "First Object     : " + $$FirstObj:$Name
+	50	: 	LOG	: "Last Object      : " + $$LastObj:$Name
+	60	:	IF	: NOT $$IsEmpty:$$PrevObj:$Name
+	70	: 		LOG	: "Previous Object  : " + $$PrevObj:$Name
+	80	:	ENDIF
+	90	: 	LOG	: "Current Object   : " + $Name
+	100	:	IF	: NOT $$IsEmpty:$$NextObj:$Name
+	110	: 		LOG	: "Next Object      : " + $$NextObj:$Name
+	120	: 	ENDIF
+	125	: 	LOG	: "Walk ends here   --------------------"
+	130	: END WALK
+	140	: EXEC COMMAND	: "TDLFunc.Log"
+	180	: SET FILE LOG OFF
+
+;; End-of-File

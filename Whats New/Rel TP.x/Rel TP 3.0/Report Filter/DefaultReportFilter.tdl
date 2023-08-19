@@ -1,0 +1,194 @@
+;;Code for Default Report Filter in TallyPrime
+
+[Report: TSPL Default Report Filter Capabilities]
+	
+	Title			: $$LocaleString:"Default Report Filter in Customisation"
+	Form			: TSPL Default Report Filter Capabilities
+	
+[Form: TSPL Default Report Filter Capabilities]
+	
+	
+	Use				: TSPL SMP Illustration
+	
+	
+	Height			: 100% Screen
+	Width			: 100% Screen
+	
+	Local	: Part	: TSPL SMP Syntax		: Invisible	: Yes
+	Local	: Field	: FormSubTitle			: Info		: $$LocaleString:"Illustration for Default Report Filter"
+		
+	Local	: Field	: TSPL Smp Purpose		: Indent	: 2
+	Local	: Field	: TSPL Smp Purpose		: Info		: $$NewLine + $$LocaleString:"Filter the report by using the added UDF in Master level"  + +
+														  $$LocaleString:" and set the attributes under new Object as 'FltUserMethodName, FltMethodName, FltMethodType, FltDataType and FltChain'. Fetch the added UDF values in default report collection to view the report."
+			
+	
+	Local	: Field	: TSPL SMP Example		: Info		: $$NewLine	+ "[#Collection: SVFilterObjsColl]" + $$NewLine + $$NewLine + +
+																			"Add: Object: Flt IMEI number" + $$NewLine + $$NewLine + +
+																	   "[Object: Flt Voucher Remarks]"  + $$NewLine + $$NewLine + +
+																			'FltUserMethodName	: $$localestring:"IMEI Number"'  + $$NewLine + +
+																			'FltMethodName		: "IMEIVCHSTORAGE"' + $$NewLine + +
+																			'FltMethodType		: Voucher' + $$NewLine + +
+																			'FltDataType 		: String'  + $$NewLine  + +
+																			'FltChain			: "All Inventory Entries, IMEIVCHSTORAGE"' + $$NewLine + $$NewLine + +
+																			"[#Collection: Daybook Vouchers of Company]" + $$NewLine + $$NewLine + +
+																		    'Add: Fetch  :AllInventoryEntries.*, AllInventoryEntries.IMEIVCHSTORAGE'
+																			
+
+													
+	Local	: Field	: TSPL SMP ExampleNote	: Info		: "Filter Default Report based on UDF added in the master level."
+	
+;;Code to filter default report based on added UDF 
+
+;; We have to follow the given below steps
+
+;; 1. Modify default collection '[Collection: SVFilterObjsColl]'
+;; 2. Add new object 
+;; 3. Define require attributes under new object
+;; 4. Fetch the added UDF value in default report collection  
+
+
+
+[#Collection: SVFilterObjsColl]
+	
+		Add: Object: Flt IMEI number
+	
+[Object: Flt IMEI number]
+
+	FLTGroupLabel		: @@FLTItemDetails               				; It will help to show the User Method name in table                     
+	fltusermethodname	: $$localestring:"IMEI Number"					; This attributes help to set the name of define column
+	FltMethodName		: "IMEIVCHUDF"									; Define the added UDF, which is added in voucher level
+	FltMethodType		: Voucher										; Define the context (voucher / Ledger etc.)
+	FltDataType			: String										; UDF data type 
+	FltChain			: "All Inventory Entries, IMEIVCHUDF" 			; Define the UDF root
+	
+
+[#Collection: Daybook Vouchers of Company]                                       ;;Under Default daybook collection fetch the UDF value 
+
+	  Add: Fetch  :AllInventoryEntries.*, AllInventoryEntries.IMEIVCHUDF
+
+
+;; ===================IMEI F12 Configration in Master level (Stock Item)==========================
+
+
+
+[#Part: StockItem Left Config] 
+
+	Add: Lines: After: MST UseAliases: MST IMEI Number 
+	
+	[Line: MST IMEI Number]
+
+		Add: Fields  : Long Prompt, IMEILogFld
+		Local   : Field : Long Prompt : Info : $$LocaleString:"Provide IMEI Number :"
+		Local   : Field : Long Prompt : color: Blue
+	
+
+		[Field: IMEILogFld]                                         ;; Based on logical value, added UDF will display in master level.
+			Use		  : Logical field 
+			Modifies  : IMEIVerLog
+			Variable  : IMEIVerLog
+			Color	  : Blue
+			Storage	  : Storlogval 
+		
+
+[Variable: IMEIVerLog]
+	Type	  : Logical
+	
+[System: Variable]
+	IMEIVerLog  : ""
+		
+;==================== Added IMEI field in Stock item master =======================
+	
+
+[#Part: MST Basic]
+	
+	[#Line: MST Name]
+		
+		Add: Option: IMEILine : $$BaseOwner:$$isstockitem   		; Only for the stock item master
+		
+		[!Line: IMEILine]
+			Right Field:  IMEI Field title, IMEI Field Value
+
+
+	[Field:IMEI Field title]
+		Use			: Name field
+		Set as		: "IMEI Number  :"
+		Skip		: Yes
+		Style   	: Large
+		Color		: Blue
+		Invisible   : Not ##IMEIverlog
+		
+	[Field: IMEI Field Value]
+		Use			: Name Field
+		Set as		: ""
+		Unique		: Yes
+		Color		: Blue
+		Storage		: IMEIStorage
+		Invisible   : Not ##IMEIVerLog
+		Control     : Duplicatevalue : @@controlval                         ;; Given the control to avoid Duplicate value 
+		Validate    : NOT $$IsEmpty:$$Value
+
+[System: Formula]
+	Duplicatevalue : "Already Enter Value is exists"
+	controlval	   : if $$FilterCount:STKsummcol:contrlval > 0 then yes else no
+	contrlval      : $IMEI=$$Value
+	
+
+
+[System: UDF]                                                               ;; Define the Storage
+	
+	IMEIStorage		: String : 9003
+	Imeilogstr	 	: Logical: 9004
+	IMEIVCHUDF		: String : 9005
+	Storlogval  	: Logical: 9006
+	
+
+;=========================  Added IMEI Number in Voucher level under Inventoryentries   ===========================
+
+[#Line: EI ColumnOne]
+	
+	 Add: Option: ItemVchLn : @@IsSales
+	 
+		[!Line: ItemVchLn]
+			Add: Left Field: VCH IMEI Title
+	 
+	[Field: VCH IMEI Title]
+		Use         : Name Title Field
+		Width       : @@VCHShortNameWidth
+		Set as      : $$LocaleString:"IMEI Number"
+		Style       : Normal Bold
+		Color		: Blue
+		Space Left  : 16
+		
+
+[#Line: EI InvInfo]
+		Add: Option:ItemVchValLn :  @@IsSales
+		
+		[!Line: ItemVchValLn]
+
+		Add:Left Field : VCH IMEI Value
+		
+	[Field: VCH IMEI Value]
+		 Use         : Voucher Name Field
+		 Set as		 : $$CollectionFieldByKey:$IMEI:#VCHstockitem:STKsummcol          
+		 Skip		 : Yes
+		 Color       : Blue
+		 Storage	 : IMEIVCHUDF
+		 
+
+;====== Written Stock Item collection to compute the UDF value and set the same in voucher level under Inventoryentries ===========		
+
+
+[Collection:STKMst]
+	Type 	: Stock Item
+	
+[Collection: STKsummcol]
+	Source Collection: STKMst
+	Walk 			 : Languagename ;LANGUAGENAME 
+
+	Compute          : IMEI          : $.IMEIStorage
+	Compute	         : STKNM         : $Name
+	
+	Search Key       : $STKNM
+
+;;End of file
+

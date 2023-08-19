@@ -1,0 +1,186 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This code demonstrates the usage of Columnar Editing Capabilities with Object Context and Storages
+
+Syntax -
+-	No Syntax Changes, only Scrolling behavioral changes to support Columnar Editing
+
+Constraints -
+-	With Object Context, fields i.e., columns are repeated over Sub Objects which must contain values to be repeated.  
+	In other words, the Object Context approach will work only in case of Alter Mode and new Sub Objects cannot be added.
+
+Last modification -
+-	Created on 19-07-2013
+-	Updated on 13-09-2013 with Coding Standards and Comments
+*/
+
+[Report: TSPL Smp Attendance Vch Entry]
+	
+	Form	: TSPL Smp Attendance Vch Entry
+	
+;; List Variable to hold Employee and Attendance Type Values entered by User
+	List Var: TSPL Smp CEC CV Emp
+	Title	: "Attendance Entry"
+		
+[Form: TSPL Smp Attendance Vch Entry]
+
+	Part	: TSPL Smp Attnd Vch Entry
+
+	On		: Form Accept 	: Yes	: Form Accept
+	
+;; On Acceptance of this Form, values from the List Variable needs to be updated to the Data Object 'Voucher'
+	On		: Form Accept 	: Yes	: Call		: TSPL Smp Attendance Vch Create
+
+;; This is a dummy option to execute the Function TSPLSmpSetListVariable in order to update List Variable with Master Values,
+;; i.e., Employees and Attendance Types to the List Variable so that the variable values can be Modified in the Fields later.
+	Option	: TSPL Smp Set List Variable		: $$TSPLSmpSetListVariable
+	
+	[!Form: TSPL Smp Set List Variable]
+	
+[Part: TSPL Smp Attnd Vch Entry]
+	
+	Lines			: TSPL Smp Attnd Vch Title, TSPL Smp Attnd Vch Details
+	Repeat			: TSPL Smp Attnd Vch Details
+	
+;; Since the line is repeated without any Collection, the number of Lines/ Objects to be repeated is not known, hence setting the 
+;; value of Attribute 'Set' to total number of Employees
+	Set				: $$NumItems:Employees
+	Scroll			: Vertical
+	Common Border	: Yes
+
+	[Line: TSPL Smp Attnd Vch Title]
+
+		Use		: TSPL Smp Attnd Vch Details
+		
+		Local	: Field : Default 					: Type		: String
+		Local	: Field : Default 					: Align		: Center
+		Local	: Field : TSPL Smp AttdType			: Invisible	: No
+
+		Local	: Field : TSPL Smp VCHAttdEmpName	: Set As	: "Employee"
+		Local	: Field	: TSPL Smp AttdTypeValue 	: Set as	: ""
+		Border	: Thin Top Bottom
+
+	[Line: TSPL Smp Attnd Vch Details]
+		
+		Left Field	: TSPL Smp VCH AttdEmpName, TSPL Smp Main Field
+		Repeat		: TSPL Smp Main Field
+
+;; Since the field is repeated without any Collection, the number of Fields/ Objects to be repeated is not known, hence setting the 
+;; value of Attribute 'Set' to total number of Attendance Types
+
+		Set			: $$NumItems:TSPLSmpListofAttdTypesExtracts
+
+		[Field: TSPL Smp VCH AttdEmpName]
+
+			Use     : Name Field
+			Set As	: ##TSPLSmpCECCVEmp[$$Line]		;; Setting the Employee Name
+			Skip	: Yes
+
+		[Field: TSPL Smp Main Field]
+			
+			Fields	: TSPL Smp AttdTypeValue, TSPL Smp AttdType
+
+			[Field: TSPL Smp AttdTypeValue]
+			
+				Use 		: Number Field
+				Width		: 2
+				Format		: "NoZero, NoComma"
+				Align		: Right
+				
+;; Modifying the corresponding Attendance Value Variable with the value entered by the user
+
+				Modifies	: TSPLSmpCECCVEmp[$$Line].TSPLSmpAttendanceDetails[$$FieldIndex].AttndValue  : Yes
+				Border		: Thin Left
+
+			[Field: TSPL Smp AttdType]
+				
+				Use			: Name Field
+				Set As		: @AttdType + " (in " + @AttdUnit + ")"
+				AttdType	: ##TSPLSmpCECCVEmp[$$Line].TSPLSmpAttendanceDetails[$$Column].AttndType
+				AttdUnit	: if $$IsEmpty:$AttendancePeriod:AttendanceType:@AttdType then $BaseUnits:AttendanceType:@AttdType else $AttendancePeriod:AttendanceType:@AttdType
+				Invisible	: Yes
+
+;; Function to update the List Variable with List of Employees and Attendance Types				
+[Function: TSPL Smp SetListVariable]
+	
+	Variable	: KeyVar			: String
+
+	Variable	: IndexFromKey 		: Number
+	Variable	: EmpName Var 		: String
+	Variable	: SubIndexFromKey  	: String
+
+	10 : List Delete	: TSPL Smp CEC CV Emp
+	20 : Walk Collection: Employees
+	30 : 	List Add	: TSPLSmpCECCVEmp							: $Name
+	40 : 	Set			: IndexFromKey 								: $$ListIndex:TSPLSmpCECCVEmp:$Name
+	50 : 	Set			: TSPLSmpCECCVEmp[##IndexFromKey].EmpName	: $Name
+	60 : 	Set 		: Emp Name Var 								: $Name
+	70 : 	Walk Collection	: TSPL Smp List of AttdTypesExtracts
+	80 : 		List Add	: TSPLSmpCECCVEmp[##IndexFromKey].TSPLSmpAttendanceDetails			: $Name
+	90 : 		Set			: SubIndexFromKey 				: $$ListIndex:TSPLSmpCECCVEmp[##IndexFromKey].TSPLSmpAttendanceDetails:$Name
+	100: 		Set			: TSPLSmpCECCVEmp[##IndexFromKey].TSPLSmpAttendanceDetails[##SubIndexFromKey].AttndType		: $Name
+	110 : 	End Walk
+	200 : End Walk
+
+;; Variable Declariation
+
+[Variable: TSPL Smp CEC CV Emp]
+
+	Variable		: Emp Name		: String
+	Variable		: Emp Number	: Number
+
+	List Var		: TSPL Smp Attendance Details
+	
+[Variable: TSPL Smp Attendance Details]
+	
+	Variable		: Attnd Type	: String
+	Variable		: Attnd Value	: Number
+	Variable		: Attnd Unit    : String
+	
+[Collection:  TSPL Smp List of AttdTypesExtracts]
+	
+	Source Collection	: List of Attendance TypesSRC
+	Fetch				: Name, Parent, BaseUnits, AttendancePeriod, AttendanceProductionType
+
+;; Collection of List Variable
+[Collection: TSPL Smp EmpCLColl]
+
+	Data Source		: Variable		: TSPLSmpCECCVEmp
+
+;; On acceptance of the Form, this Function is invoked to create Attendance Voucher from the Collection of List Variable
+[Function: TSPL Smp Attendance Vch Create]
+	
+	Variable 		: ProdType Var 		: String
+
+	Local Formula	: StringofAttendance: $$String:$AttndValue
+
+	10 : Set 		: SVVoucherType 	: $$VchTypeAttendance
+	20 : Set 		: SVViewName  		: @@AccountingView 	
+
+	30 : New Object	: Voucher
+	40 : 	Set Value 	: Date 			: ##SVCurrentDate
+		
+	50 : 	Walk Collection : TSPL Smp EmpCLColl
+	60 : 		Walk Collection : TSPL Smp Attendance Details
+	70 : 	      If : NOT $$IsEmpty:$AttndValue
+	
+	80 : 	  			Insert Collection Object 	: AttendanceEntries
+	90 :					Set Value 		: Name 				: $..EmpName
+	100: 					Set Value 		: AttendanceType	: $AttndType
+
+	120:					If	: $$TgtObject:$$IsSysNameEqual:Production:$AttendanceProductionType:AttendanceType:$AttendanceType
+	130: 						Set Value   : AttdTypeValue     : $$TGTObject:$$AsQty:@StringofAttendance
+	140: 					Else:
+    150: 	 					Set Value	: AttdTypeTimeValue	: $AttndValue
+	160: 					End If
+	170: 	       		Set Target 			: ..
+	180: 			End If
+	190: 		End Walk
+	200: 	End Walk
+	210: 	Set Value 	: Persisted View	: ##SVViewName
+
+	220: Save Target
+
+;; End-of-File

@@ -1,0 +1,164 @@
+{
+	"LeaveDetails": [
+		{
+			"Employee": "Rashmi Reddy",
+			"EmpId": "5989",
+			"Gender": "Female",
+			"LeaveInfo": [
+				{
+					"Type": "Earned Leave",
+					"Entitled": 24,
+					"Availed": 10
+				},
+				{
+					"Type": "Sick Leave",
+					"Entitled": 10,
+					"Availed": 6
+				},
+				{
+					"Type": "Relocation Leave",
+					"Entitled": 5,
+					"Availed": 0
+				},
+				{
+					"Type": "Paternity Leave",
+					"Entitled": 0,
+					"Availed": 0
+				},
+				{
+					"Type": "Maternity Leave",
+					"Entitled": 180,
+					"Availed": 190
+				}
+			]
+		},
+		{
+			"Employee": "John Fernandes",
+			"EmpId": "5145",
+			"Gender": "Male",
+			"LeaveInfo": [
+				{
+					"Type": "Earned Leave",
+					"Entitled": 24,
+					"Availed": 17
+				},
+				{
+					"Type": "Sick Leave",
+					"Entitled": 10,
+					"Availed": 3
+				},
+				{
+					"Type": "Relocation Leave",
+					"Entitled": 5,
+					"Availed": 0
+				},
+				{
+					"Type": "Paternity Leave",
+					"Entitled": 5,
+					"Availed": 0
+				},
+				{
+					"Type": "Maternity Leave",
+					"Entitled": 0,
+					"Availed": 0
+				}
+			]
+		},
+		{
+			"Employee": "Arvind Kumar",
+			"EmpId": "5178",
+			"Gender": "Male",
+			"LeaveInfo": [
+				{
+					"Type": "Earned Leave",
+					"Entitled": 24,
+					"Availed": 12
+				},
+				{
+					"Type": "Sick Leave",
+					"Entitled": 10,
+					"Availed": 5
+				},
+				{
+					"Type": "Relocation Leave",
+					"Entitled": 5,
+					"Availed": 0
+				},
+				{
+					"Type": "Paternity Leave",
+					"Entitled": 5,
+					"Availed": 5
+				},
+				{
+					"Type": "Maternity Leave",
+					"Entitled": 0,
+					"Availed": 0
+				}
+			]
+		},
+		{
+			"Employee": "Mohammed Shehzan",
+			"EmpId": "5696",
+			"Gender": "Male",
+			"LeaveInfo": [
+				{
+					"Type": "Earned Leave",
+					"Entitled": 24,
+					"Availed": 23
+				},
+				{
+					"Type": "Sick Leave",
+					"Entitled": 10,
+					"Availed": 7
+				},
+				{
+					"Type": "Relocation Leave",
+					"Entitled": 5,
+					"Availed": 3
+				},
+				{
+					"Type": "Paternity Leave",
+					"Entitled": 5,
+					"Availed": 0
+				},
+				{
+					"Type": "Maternity Leave",
+					"Entitled": 0,
+					"Availed": 0
+				}
+			]
+		},
+		{
+			"Employee": "Jessica Jones",
+			"EmpId": "5147",
+			"Gender": "Female",
+			"LeaveInfo": [
+				{
+					"Type": "Earned Leave",
+					"Entitled": 24,
+					"Availed": 14
+				},
+				{
+					"Type": "Sick Leave",
+					"Entitled": 10,
+					"Availed": 9
+				},
+				{
+					"Type": "Relocation Leave",
+					"Entitled": 5,
+					"Availed": 2
+				},
+				{
+					"Type": "Paternity Leave",
+					"Entitled": 0,
+					"Availed": 0
+				},
+				{
+					"Type": "Maternity Leave",
+					"Entitled": 180,
+					"Availed": 0
+				}
+			]
+		}
+	]
+}

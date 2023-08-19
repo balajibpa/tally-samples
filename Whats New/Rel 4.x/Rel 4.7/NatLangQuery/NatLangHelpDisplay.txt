@@ -1,0 +1,174 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This code displays the write-up on the Natural Language Query Capability to update the data in Tally.ERP9.
+-	It also displays various templates supported by our samples as a help
+
+Syntax -
+-	Event NLQ
+
+	[System: Event]
+	
+		<Event Name>	: NLQ	: <Logical Condition>	: <Action>	: <Action Parameters>
+		
+		where
+		<Event Name> can be any meaningful unique Event Name
+		<Logical Condition> if evaluated to True, then only the given Action will be triggered
+		<Action> must be Call and <Action Parameters> must be Function Name with required Function Parameters
+
+Last modification -
+-	Created on 16-08-2013
+*/
+
+[Report: TSPL Smp NLQ Event]
+	
+	Form		: TSPL Smp NLQ Event
+	Title		: "Write-up on Event 'NLQ'"
+	
+[Form: TSPL Smp NLQ Event]
+	
+	Parts		: Form SubTitle, TSPL Smp NLQ Event, TSPL Smp NLQ Event Note
+	Button		: Print Button, Export Button
+	Local		: Field		: Form SubTitle		: Info		: "Write-up on Event 'NLQ'"
+	Local		: Field		: Form SubTitle		: Style		: Large Bold
+
+	Width		: 100% Page
+
+[Part: TSPL Smp NLQ Event]
+	
+	Lines		: TSPL Smp NLQ Event Msg1, TSPL Smp NLQ Event Msg2, TSPL Smp NLQ Event Msg3
+	Lines		: TSPL Smp NLQ Event Msg TL, TSPL Smp NLQ Event TLS1, TSPL Smp NLQ Event TLS2, TSPL Smp NLQ Event TLE
+	Lines		: TSPL Smp NLQ Event Msg TS, TSPL Smp NLQ Event TSS1, TSPL Smp NLQ Event TSS2, TSPL Smp NLQ Event TSE
+	Lines		: TSPL Smp NLQ Event Msg TV, TSPL Smp NLQ Event TVS1, TSPL Smp NLQ Event TVS2, TSPL Smp NLQ Event TVE
+	
+	[Line: TSPL Smp NLQ Event Msg1]
+		
+		Fields		: Name Field
+		Local		: Field		: Name Field	: Width		: 100% Page
+		Local		: Field		: Name Field	: Style		: TSPL Smp NLQ Msg
+		Local		: Field		: Name Field	: Lines		: 0
+		
+		Local		: Field		: Name Field	: Set as	: "Tally has a natural language processing capability which accepts queries either from Calculator Pane or from SMS Request. Tally has intelligence of parsing received/ given commands in order to process the same. This parsed information is used by the system to process the query and deliver the result."
+		Space Bottom: 1
+
+	[Line: TSPL Smp NLQ Event Msg2]
+		
+		Use			: TSPL Smp NLQ Event Msg1
+		
+		Local		: Field		: Name Field	: Set as	: "So far, this feature was available only for retrieval of information from Tally Data. From Release 4.7 onwards, a new Event 'NLQ' is introduced to support updation of data. With this Event, complete control is given to the hands of TDL Programmer who can process the query and do the needful."
+
+	[Line: TSPL Smp NLQ Event Msg3]
+		
+		Use			: TSPL Smp NLQ Event Msg1
+		
+		Local		: Field		: Name Field	: Set as	: "This Sample TDL is written for creating Ledger, Stock Item and Sales Order Voucher. The templates for creating these Objects are given below:"
+
+	[Line: TSPL Smp NLQ Event Msg TL]
+
+		Use			: TSPL Smp NLQ Event Msg1
+		
+		Local		: Field		: Name Field	: Style		: Large Bold
+		Local		: Field		: Name Field	: Align		: Centre
+		Local		: Field		: Name Field	: Info		: "Template for Creating Ledger"
+		Local		: Field		: Name Field	: Border	: Thin Bottom
+		Local		: Field		: Name Field	: Full Width: Yes
+		Space Top	: 1
+
+	[Line: TSPL Smp NLQ Event TLS1]
+
+		Use			: TSPL Smp NLQ Event Msg1
+		
+		Local		: Field		: Name Field	: Align		: Centre
+		Local		: Field		: Name Field	: Style		: Normal Bold
+		Local		: Field		: Name Field	: Set as	: "Syntax: Create Ledger <Ledger Name>[ <Group Name>]"
+		Space Bottom: 0
+
+	[Line: TSPL Smp NLQ Event TLS2]
+
+		Use			: TSPL Smp NLQ Event TLS1
+		
+		Local		: Field		: Name Field	: Style		: Normal Italic
+		Local		: Field		: Name Field	: Set as	: "(Group Name if not specified, will be defaulted to 'Sundry Debtors')"
+		Space Bottom: 1
+
+	[Line: TSPL Smp NLQ Event TLE]
+
+		Use			: TSPL Smp NLQ Event TLS1
+		
+		Local		: Field		: Name Field	: Style		: Normal
+		Local		: Field		: Name Field	: Set as	: "Example: Create Ledger RadheShyam SundryCreditors"
+		Space Bottom: 1.5
+
+	[Line: TSPL Smp NLQ Event Msg TS]
+
+		Use			: TSPL Smp NLQ Event Msg TL
+		
+		Local		: Field		: Name Field	: Info		: "Template for Creating Stock Item"
+
+	[Line: TSPL Smp NLQ Event TSS1]
+
+		Use			: TSPL Smp NLQ Event TLS1
+		
+		Local		: Field		: Name Field	: Set as	: "Syntax: Create Item <Stock Item Name> <Stock Group Name> <Primary Unit Name> <Opening Qty> <Opening Amount>"
+
+	[Line: TSPL Smp NLQ Event TSS2]
+
+		Use			: TSPL Smp NLQ Event TLS2
+		
+		Local		: Field		: Name Field	: Set as	: "(Group and Simple Unit Name, if not available in Tally Data, will be created)"
+
+	[Line: TSPL Smp NLQ Event TSE]
+
+		Use			: TSPL Smp NLQ Event TLE
+		
+		Local		: Field		: Name Field	: Set as	: "Example: Create Item MotherBoard FinishedGoods Nos 30 17000"
+
+	[Line: TSPL Smp NLQ Event Msg TV]
+
+		Use			: TSPL Smp NLQ Event Msg TL
+		
+		Local		: Field		: Name Field	: Info		: "Template for Creating 'Sales Order' Voucher"
+
+	[Line: TSPL Smp NLQ Event TVS1]
+
+		Use			: TSPL Smp NLQ Event TLS1
+		
+		Local		: Field		: Name Field	: Set as	: "Syntax: Create SO <PartyName> <Order Reference No> <ItemName 1> <Qty 1> <Amount 1> <ItemName 2> <Qty 2> <Amt 2> ...... <ItemName n> <Qty n> <Amt n>"
+
+	[Line: TSPL Smp NLQ Event TVS2]
+
+		Use			: TSPL Smp NLQ Event TLS2
+		
+		Local		: Field		: Name Field	: Set as	: "(Party and Stock Item Name must be available in Tally Data for Voucher to be created successfully)"
+
+	[Line: TSPL Smp NLQ Event TVE]
+
+		Use			: TSPL Smp NLQ Event TLE
+		
+		Local		: Field		: Name Field	: Set as	: "Example: Create SO RadheShyam PO1102 AssembledPIV 10 25000 MotherBoard 15nos 10000 DustCovers 8 500"
+
+	[Line: TSPL Smp NLQ Event Note]
+	
+		Use			: TSPL Smp NLQ Event TLE
+		
+		Local		: Field		: Name Field	: Style		: TSPL Smp NLQ Note
+		Local		: Field		: Name Field	: Align		: Left
+		Local		: Field		: Name Field	: Set as	: "Note: The space is considered as a delimiter in the above templates.  One can consider any other pre-decided delimiters like comma, semi-colon, etc. with the help of which given query string can be tokenized and appropriate action can be taken."
+
+[Part: TSPL Smp NLQ Event Note]
+
+	Lines		: TSPL Smp NLQ Event Note
+
+[Style: TSPL Smp NLQ Msg]
+	
+	Use		: Normal
+	Height	: 14
+
+[Style: TSPL Smp NLQ Note]
+	
+	Use		: Normal
+	Italic	: Yes
+	Height	: 12
+
+;; End-of-File

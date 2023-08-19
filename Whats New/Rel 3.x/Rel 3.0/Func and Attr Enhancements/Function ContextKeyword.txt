@@ -1,0 +1,88 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+-	This code demonstrates the usage of enhanced Function ContextKeyword which returns current or parent 
+UI Title or Definition Name as required.
+
+Syntax -
+- 	$$ContextKeyword[:<Logical Formula1>:<Logical Formula2>]
+
+where 'Logical Formula1' if set to Yes then the Parent UI Title or Definition Name is displayed else 
+current UI Title or Definition Name is displayed
+where 'Logical Formula2' if set to Yes then the Current or Parent UI Definition Name gets displayed else 
+Current or Parent UI Title is displayed
+
+Updation History -
+-	Created on 09-02-2011
+*/
+
+[Report: TSPL Smp Context Keyword Rep]
+
+	Form	: TSPL Smp Context Keyword Rep
+	Title	: "Usage of Function 'Context Keyword'"
+	
+[Form: TSPL Smp Context Keyword Rep]
+	
+	Parts	: TSPL Smp Info, TSPL Smp Context Keyword Rep
+	Local	: Part	: TSPL Smp Info	: Local	: Line	: Info	: Local	: Field	: Info Field	: Info	: "Usage of Function ContextKeyword for retrieval of current or parent UI Definition Name or Title"
+	
+[Part: TSPL Smp Context Keyword Rep]
+	
+	Lines	: TSPL Smp Report Title,  TSPL Smp CK Title, TSPL Smp CK Details
+	Local	: Line	: TSPL Smp Report Title	: Local	: Field		: Form SubTitle	: Set As	: "Retrieval of Title or Definition Name from Current or Parent Interface Definition"
+	
+	[Line: TSPL Smp CK Title]
+		
+		Use		: TSPL Smp CK Details
+
+		Local	: Field	: Default	: Align	: Centre
+		Local	: Field	: Default	: Style	: Normal Bold
+
+		Local	: Field	: TSPL Smp CK Current Title	: Set As	: "Current Title"
+		Local	: Field	: TSPL Smp CK Current Desc	: Set As	: "Current UI Definition Name"
+		Local	: Field	: TSPL Smp CK Parent Title	: Set As	: "Parent Title"
+		Local	: Field	: TSPL Smp CK Parent Desc	: Set As	: "Parent UI Definition Name"
+		Border	: Thin Top Bottom
+	
+	[Line: TSPL Smp CK Details]
+		
+		Fields	: TSPL Smp CK Current Title, TSPL Smp CK Current Desc
+		Fields	: TSPL Smp CK Parent Title, TSPL Smp CK Parent Desc
+		Border	: Thin Bottom
+
+		Local	: Field	: Default	: Align	: Centre
+		Local	: Field	: Default	: Style	: Normal
+		
+		[Field: TSPL Smp CK Current Title]
+			
+			Use		: Name Field
+;; The below syntax returns the Current UI Title
+			Set As	: $$ContextKeyword
+			Width	: 25% Page
+
+		[Field: TSPL Smp CK Current Desc]
+			
+			Use		: Name Field
+
+;; The second parameter if set to Yes returns the current UI Definition Name as the first logical parameter is No
+			Set As	: $$ContextKeyword:No:Yes
+			Border	: Thin Left
+			Width	: 25% Page
+
+		[Field: TSPL Smp CK Parent Title]
+			
+			Use		: Name Field
+;; The below syntax returns the Parent UI Title
+			Set As	: $$ContextKeyword:Yes
+			Border	: Thin Left Right
+			Width	: 25% Page
+
+		[Field: TSPL Smp CK Parent Desc]
+			
+			Use		: Name Field
+;; The second parameter if set to Yes returns the parent UI Definition Name as the first logical parameter is Yes
+			Set As	: $$ContextKeyword:Yes:Yes
+			Width	: 25% Page
+
+;; End-of-File

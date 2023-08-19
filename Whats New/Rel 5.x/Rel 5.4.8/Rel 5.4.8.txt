@@ -1,0 +1,25 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Menu: Whats New in Rel 5.4.8]
+
+	Key Item	: "Function IsAnyEmpty"			: E	: Alter		: TSPL Smp IsAnyEmpty		: NOT $$IsEmpty:$$SelectedCmps ;; Done
+	Key Item	: "MSExcel"						: M	: Display	: TSPL Smp MSExcel			: NOT $$IsEmpty:$$SelectedCmps ;; Done
+				
+	Item		: Blank
+	Key Item	: "Action Increment/ Decrement"	: I	: Alter		: TSPL Smp IncrDecr			: NOT $$IsEmpty:$$SelectedCmps	
+
+	Item		: Blank
+	Key Item	: "Collection Enhancements" 	: O	: Menu		: TSPL Smp Coll Enh 5.4.8	: NOT $$IsEmpty:$$SelectedCmps
+	
+;; Include Files
+
+[Include: Illustration.txt]
+
+[Include: IsAnyEmpty.txt]
+[Include: IncrDecr.txt]
+[Include: MSExcel Map.txt]
+
+;; New Collection Attributes and Enhancements to existing Collection attributes
+[Include: Collection Enhancements\Collection Enhancements.txt]
+
+;; End-of-File

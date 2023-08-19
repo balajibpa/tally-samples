@@ -1,0 +1,86 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+-This code is used to provide a demo of the pre processor directive inuse
+-The collection 'TSPLGrossSalaryProjectionPeriod' is indirectly referenced here 
+-Since the Analyser cannot understand that collection 'TSPLGrossSalaryProjectionPeriod' is used(as it is set as a string value), 
+-when this TDL file is compiled, it will not throw a warning of unused definition. 
+-As a result, to provide hints to the analyser about dynamically used definition, 
+-the preprocessor directive INUSE is introduced"
+
+COMPILE THIS PROJECT
+
+Last modification – 
+-	Altered on 21/06/2017
+*/
+
+[#Menu: Gateway of Tally]
+	
+	Add: Button: TSPLCodeWithInuse
+	Add: Button: TSPLCodeWithoutInuse
+	
+[Button: TSPLCodeWithInuse]
+	
+	Key     : Ctrl + F
+	Action	: Execute:TSPL Code with Inuse
+
+[Button: TSPLCodeWithoutInuse]
+	
+	Key     : Ctrl + G
+	Action	: Execute:TSPL Code Without Inuse
+	
+;; This report dynamically uses the collection TSPL Coll with Inuse, and since inuse is mentioned, the collection will be
+;; shown will be treated as a used definition and analysed further for any errors/warnings.
+[Report: TSPL Code with Inuse]
+	<INUSE:Collection:TSPLCollwithInuse>
+    
+	 Variable    	: TSPLInuseVar
+     Repeat      	: TSPLInuseVar
+     Set         	: DSPRepeatCollection 		: "TSPL Coll with Inuse"  
+	 Use			: IT GrossSalaryProjection
+ 
+[Variable: TSPLInuseVar]
+	
+    Type    : String
+    Repeat  : ##DSPRepeatCollection
+ 
+[Collection: TSPL Coll with Inuse]
+    Type    : Period
+	Compute	: FullMonthFromName			: @@TSPLGrossSalProjMonthStart
+	Compute	: FullMonthToName			: @@TSPLGrossSalProjMonthEnd
+	
+	ColumnVar	: TSPLInuseVar
+	
+
+;; This report dynamically uses the collection TSPL Coll without Inuse, but since inuse is not mentioned, the collection will be
+;; shown as unused definition when compiled.	
+[Report: TSPL Code without Inuse]
+    
+	 Variable    	: TSPLInuseVar
+     Repeat      	: TSPLInuseVar
+     Set         	: DSPRepeatCollection 		: "TSPL Coll without Inuse"  
+	 Use			: IT GrossSalaryProjection
+
+ 
+[Collection: TSPL Coll without Inuse]
+    Type    : Period
+	Compute	: FullMonthFromName			: @@TSPLGrossSalProjMonthStart
+	Compute	: FullMonthToName			: @@TSPLGrossSalProjMonthEnd
+	
+	ColumnVar	: TSPLInuseVar
+	
+	
+[System: Formula]
+	
+    TSPLGrossSalProjMonthStart	: $$MonthStart:##TSPLInuseVar
+;; Comment this Formula to experience how inuse helps to identify errors in dynamically used definitions. Since this formula
+;; is used in dynamically used collection 'TSPL Coll with Inuse', and this collection is mentioned in inuse of report TSPL Code with Inuse,
+;; you will see that a error of missing formula gets reported when this code is compiled.
+;; While the same formula is used in collection 'TSPL Coll without Inuse', which is dynamically used in report 'TSPL Code without Inuse'
+;; But since Inuse is not mentioned there, no errror gets reported when the project is compiled.
+	TSPLGrossSalProjMonthEnd    : $$MonthEnd:##TSPLInuseVar
+	
+
+
+;;End Of File

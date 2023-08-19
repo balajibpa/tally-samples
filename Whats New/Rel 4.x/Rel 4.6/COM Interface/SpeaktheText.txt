@@ -1,0 +1,82 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+/*
+Objective(s) -
+-	This code demonstrates the ‘COM Interface’ capability that has been introduced to call a function available in external DLL/EXE 
+-	With this code, any generic DLL can be used for e.g., like the Micrsoft Speech API to read out the given text which could be 
+used as 'Tally For Blind' etc.
+
+Syntax -
+-	[COM Interface: <COM Interface name>]
+         Project	: <Name of the Project/ Namespace>
+		 Class		: <Name of the Class>
+		 Interface	: <Name of the function to be invoked>
+		 Parameter	: <Parameter Name>		: <Data Type>[	: <Nature of Parameter>]
+		 Returns	: <Data Type>
+		 
+		 where 
+			Project accepts the name of the DLL Project or Namespace
+			Class accepts the name of the Class within the DLL Project specified above
+			Interface accepts the name of the Function within the Class specified under the Class attribute
+			Parameter is a list type attribute where it accepts multiple parameters as required by the corresponding DLL Function
+				and it accepts 3 parameter, viz., Parameter Name, Data Type of the Parameter and the Nature of Parameter which can be 
+				In if the Parameter is only an Input to the DLL Function, Out if the Parameter is only an Output Parameter and
+				InOut if the Parmaeter acts both as an Input as well as Output.
+		 		 
+-   Exec COM Interface: <COM Interface name> [: <Parameter 1> [: <Parameter 2>…… [:<Parameter N>]…]]
+
+		where
+			COM Interface Name is the Name of the COM Interface defined as per the Syntax above.
+			Parameter 1, 2, .... N are the optional Parameters accepted by the DLL Function being called
+				and they must correspond to the Parameters declared, i.e., they must be in the same order declared in the COM Interface
+				definition.  The Parameters can accept an expression provided it is not an Out or InOut Parameter.  If the Parameter is
+				an Out or InOut Parameter, the variable name must only be specified i.e, without prefixing a ##.
+
+
+Dependencies -
+-	There are no dependencies as such as Speech API is already available with Windows, by default.
+
+
+Last Modification -
+-	Created on 19-4-2013
+*/
+
+[Report: TSPL Smp Speak the Text]
+	<InUse:COMInterface:TSPL Smp Voice Interface>
+
+	Form	: TSPL Smp Speak the Text
+	Title	: "Speak the Text"
+
+[Form: TSPL Smp Speak the Text]
+	
+	Part	: TSPL Smp Speak the Text
+	Width	: 30% Page
+	On      : Form Accept : Yes : Exec COM Interface  	: TSPL Smp Voice Interface : #TSPLSmpSpeaktheText
+;; Action Exec COM Interface is used to invoke the COM Interface 'TSPL Smp Voice Interface' with the required parameters
+
+[Part: TSPL Smp Speak the Text]
+	
+	Lines	: Form SubTitle, TSPL Smp Speak the Text
+	Local	: Field	: Form SubTitle		: Info			: "Speak the Text"
+
+	[Line: TSPL Smp Speak the Text]
+			
+		Fields	: TSPL Smp Speak the Text
+			
+		[Field: TSPL Smp Speak the Text]
+			
+			Use		: Name Field
+			Set as  : "Tally supports COM DLLs from Release 4.6 onwards"
+			Case	: Normal
+			Width	: 100% Page
+			Max		: 500
+
+;; COM Interface definition
+
+[COM Interface:	TSPL Smp Voice Interface]
+
+    Project      	: Sapi				;; Generic DLL provided by Microsoft 'Speak API'
+	Class           : SpVoice			;; Class within the above DLL
+	Interface  		: Speak				;; Interface Speak to be invoked from the above Class
+	Parameter 	    : P1	: String	;; The above Interface accepts a parameter of Type String
+
+;; End-of-File

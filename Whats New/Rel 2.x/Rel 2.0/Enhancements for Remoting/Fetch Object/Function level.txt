@@ -1,0 +1,111 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This code demonstrates the usage of Fetch Object at TDL Procedual
+
+Last modification – 
+-	Altered on 28/07/2010
+*/
+
+[Report : TSPL Smp Function Level FO]
+	
+	Form	: TSPL Smp Function Level FO
+	Set		: SVFromDate	: ($LastVoucherDate:Company:##SVCurrentCompany)
+	Set		: SVToDate		: ($LastVoucherDate:Company:##SVCurrentCompany)
+	;Fetch Object : Company : LastVoucherDate
+	Title	: $$LocaleString:"Function Level Fetch Object"
+	
+[Form : TSPL Smp Function Level FO]
+	
+	Parts 	: TSPL Smp VchDBTitle, TSPL Smp VchDBDetails
+	Height	: 100% Page
+	Width	: 100% Page
+
+[Part : TSPL Smp VchDBTitle]
+	
+	Use		: TSPL Smp VchDBDetails
+	
+	Local	: Field	: Default					: Type		: String
+	Local	: Field	: Default					: Style		: Normal Bold
+	Local	: Field	: Default					: Align		: Centre
+	Local	: Field	: Default					: Lines		: 0
+
+	Local	: Field	: TSPL Smp VchDBDate		: Set as	: "Date"
+	Local	: Field	: TSPL Smp VchDBLedAccount	: Set as	: "Particulars"
+	Local	: Field	: TSPL Smp VchDBLedGrp		: Set as	: "Ledger Group"
+	Local	: Field	: TSPL Smp VchDBType		: Set as	: "Voucher Type / Voucher Number"
+	
+	Delete	: Repeat
+	Border	: Thin Top Bottom
+	Delete	: Scroll
+	
+[Part: TSPL Smp VchDBDetails]
+
+	Lines		: TSPL Smp VchDBDetails 
+	Repeat		: TSPL Smp VchDBDetails : TSPL Smp DBVouchers
+	Scroll		: Vertical
+	CommonBorder: Yes
+	
+	[Line: TSPL Smp VchDBDetails]
+
+		Fields    	: TSPL Smp VchDBDate, TSPL Smp VchDBLedAccount
+		Right Fields: TSPL Smp VchDBLedGrp, TSPL Smp VchDBType
+
+		[Field: TSPL Smp VchDBDate]
+			
+			Use			: Uni Date Field
+			Set as		: $Date
+			Width		: 15% Page
+
+		[Field: TSPL Smp VchDBLedAccount]
+
+			Use         : Name Field
+			Set as      : $LedgerName
+			QuickSearch : Yes
+			FullWidth   : Yes
+			Border		: Thin Left
+
+		[Field: TSPL Smp VchDBLedGrp]
+
+			Use         : Name Field
+			Style       : Small Bold
+			Set as		: $$TSPLSmpLedParent:$LedgerName
+			Case		: Normal
+			ASCII Only	: Yes
+			Width		: 25% Page
+			Border		: Thin Left
+			
+		[Field: TSPL Smp VchDBType]
+			
+			Use			: Short Name Field
+			Set as		: $VoucherTypeName + "/" + $VoucherNumber
+			Width		: 25% Page
+			Border		: Thin Left
+
+[Function: TSPL Smp LedParent]
+
+	PARAMETER	: pLedgerName	: String
+	RETURN		: String
+	FETCH OBJECT: Ledger		: ##pLedgerName		: Parent
+
+	010	: RETURN: @@TSPLSmpLedParent
+	
+[System: Formula]	
+	
+	TSPL Smp LedParent	: $Parent:Ledger:##pLedgerName
+	
+	TSPL Smp IsPaymentV	: $$IsPayment:$VoucherTypeName
+    TSPL Smp IsReceiptV	: $$IsReceipt:$VoucherTypeName
+	TSPL Smp IsContraV	: $$IsContra:$VoucherTypeName
+    TSPL Smp IsPurchaseV: $$IsPurchase:$VoucherTypeName
+    TSPL Smp IsSalesV	: $$IsSales:$VoucherTypeName	
+	TSPL Smp OnlyAcc	: @@TSPLSmpIsPaymentV OR @@TSPLSmpIsReceiptV OR @@TSPLSmpIsContraV OR @@TSPLSmpIsPurchaseV OR @@TSPLSmpIsSalesV
+
+[Collection : TSPL Smp DBVouchers]
+	
+	Type	: Voucher
+	Fetch	: Date, LedgerName, VoucherTypeName, VoucherNumber
+	Filter	: TSPL Smp OnlyAcc
+
+;; End of file

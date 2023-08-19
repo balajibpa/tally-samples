@@ -1,0 +1,60 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This code demonstrates the Enhancement done on Walk Collection.
+- 	Collection Name is dynamically evaluated first and then the same
+	is walked over.
+-	Walk Collection also takes an additional parameter for the reverse
+	order.  By default, this is No.  If set to Yes, Collection will be
+	walked in reverse order.
+-	Local Formula, Global Formula and Variable values are being passed
+	as parameter to Walk Collection.
+
+Last modification – 
+-	Altered on 09/11/2009
+*/
+
+[System: Formula]
+
+	Dynamic Collection Name	: "Group"
+
+[Function: Walk Collection 2]
+
+	Variable		: DCSortOrder				: Logical
+	Variable		: Dynamic Collection Name	: String
+
+	00	: SET FILE LOG ON
+	10	: SET		: Dynamic Collection Name	: "Stock Item"
+	20	: SET		: DC Sort Order				: No
+	30	: CALL		: Walk Dynamic Collection Name 2
+
+	40	: EXEC COMMAND	: "TDLFunc.Log"
+	50	: SET FILE LOG OFF
+	60	: RETURN		: True
+
+[Function: Walk Dynamic Collection Name 2]
+
+	Local Formula	: Dynamic Collection Name	: "Stock Group"
+	00	: LOG	: "List of Object " + @DynamicCollectionName	
+	10	: LOG	: "---------------------------------------------------"
+	20	: WALK COLLECTION	: @DynamicCollectionName : ##DCSortOrder	;; Local Formula passed - Expression
+	30	: 	LOG		: "Name : " + $Name
+	40	: END WALK
+	50	: LOG	: "---------------------------------------------------"
+
+	60	: LOG	: "List of Object " + @@DynamicCollectionName
+	70	: LOG	: "---------------------------------------------------"
+	80	: WALK COLLECTION	: @@DynamicCollectionName : ##DCSortOrder	;; Global Formula passed - Expression
+	90	: 	LOG		: "Name : " + $Name
+	100	: END WALK
+	110	: LOG	: "---------------------------------------------------"
+
+	120	: LOG	: "List of Object " + ##DynamicCollectionName
+	130	: LOG	: "---------------------------------------------------"
+	140	: WALK COLLECTION	: ##DynamicCollectionName : ##DCSortOrder	;; Variable Value passed - Expression
+	150	: 	LOG		: "Name : " + $Name
+	160	: END WALK
+	170	: LOG	: "---------------------------------------------------"
+
+;; End-of-File

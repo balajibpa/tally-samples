@@ -1,0 +1,143 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This code demonstrates the usage of Columnar Editing Capabilities with Object Context and Storages
+
+Syntax -
+-	No Syntax Changes, only Scrolling behavioral changes to support Columnar Editing
+
+Constraints -
+-	With Object Context, fields i.e., columns are repeated over Sub Objects which must contain values to be repeated.  
+	In other words, the Object Context approach will work only in case of Alter Mode and new Sub Objects cannot be added.
+
+	i.e., In this example, 
+	if Address of a particular ledger contains only 2 Lines address, then Fields will be repeated only twice for that Ledger. 
+	If no Address is there, then only 1 Line of Address can be entered, hence only 1 Field will be available for such Ledgers.
+
+Last modification -
+-	Created on 12-09-2013
+-	Updated on 13-09-2013 with Comments
+*/
+
+[Report: TSPL Smp LedAddress Updation]
+	
+	Form		: TSPL Smp LedAddress Updation
+	Title		: "Ledger Details Updation"
+
+;; This is mandatory for updating values of multiple Objects.
+;; The Collection Name should be the one on which the Line is repeated
+
+	MultiObjects: TSPL Smp LU DrsCrsLed
+	
+[Form: TSPL Smp LedAddress Updation]
+	
+	Parts		: TSPL Smp LedAddress Updation	 
+
+[Part: TSPL Smp LedAddress Updation]
+	
+	Lines		: TSPL Smp LU Title, TSPL Smp LU Details
+	Repeat		: TSPL Smp LU Details				: TSPL Smp LU DrsCrsLed
+	Scroll		: Both
+	CommonBorder: Yes
+	
+	[Line: TSPL Smp LU Title]
+		
+		Use			: TSPL Smp LU Details
+		Delete		: Repeat
+		Add			: Repeat: TSPL Smp Address Field
+
+;; Since there is no Object Context with the Title Field Repeat, we need to specify the number of Fields to be repeating 
+;; under the Line Attribute 'Set'. Either Ledgers with Maximum Lines of Address can be calculated and set in the Set 
+;; Attribute or one can hard code the common maximum number as below. If some Ledger contains the 6th Address Line, only 
+;; the Title will not be available for the sixth field in the details line as we have set the maximum number as 5
+
+		Set			: 5
+
+		Local		: Field	: Default				: Style		: Normal Bold
+		Local		: Field	: Default				: Delete	: Storage
+		Local		: Field	: Default				: Align		: Centre
+		Local		: Field	: Default				: Skip		: Yes
+		
+		Local		: Field	: TSPL Smp Name Field	: Set as	: "Ledger Name"
+		Local		: Field	: TSPL Smp Parent Field	: Set as	: "Parent"
+		Local		: Field	: TSPL Smp AddressField	: Set as	: "Address " + $$String:$$Column
+		Border		: Thin Top Bottom
+	
+	[Line: TSPL Smp LU Details]
+		
+		Fields		: TSPL Smp Name Field, TSPL Smp Parent Field, TSPL Smp Address Field
+		Local		: Field	: Default				: Style		: Normal
+
+;; With the Repeat, the Field 'TSPL Smp Address Field' will be repeated over the Sub Objects 'Address' of each Ledger.
+;; If the Ledger contains 3 Lines of Address, then Field will repeat only thrice for the concerned Ledger Object
+
+		Repeat		: TSPL Smp Address Field		: Address
+
+		[Field: TSPL Smp Name Field]
+			
+			Use			: Name Field
+			Storage		: Name
+			Skip Forward: Yes
+
+		[Field: TSPL Smp Parent Field]
+			
+			Use			: Name Field
+			Border		: Thin Left Right
+			Storage		: Parent
+			Show Table	: Always
+			Table		: TSPL Smp SDrsCrsGroup
+			Inactive	: $$IsEmpty:#TSPLSmpNameField
+			Skip Forward: Yes
+
+		[Field: TSPL Smp Address Field]
+			
+			Use			: Name Field
+			Border		: Thin Left
+
+;; Usage of Attribute Storage within a repeated Field now becomes possible since Columnar Editing Capabilities is supported.
+;; Since this field is associated with the nth Sub Object 'Address', appropriate nth value is altered/ updated.
+
+			Storage		: Address
+			Inactive	: $$IsEmpty:#TSPLSmpNameField
+
+;; Collection for Debtors and Creditors Ledger to be repeated over
+
+[Collection: TSPL Smp LU DrsCrsLed]
+	
+	Collection	: TSPL Smp LU DrsLed, TSPL Smp LU CrsLed
+	
+[Collection: TSPL Smp LU DrsLed]
+	
+	Type		: Ledger
+	Child Of	: $$GroupSundryDebtors
+	Belongs To	: Yes
+	Fetch		: *, *.*, Address.*
+
+[Collection: TSPL Smp LU CrsLed]
+	
+	Type		: Ledger
+	Child Of	: $$GroupSundryCreditors
+	Belongs To	: Yes
+	Fetch		: *.*, Address.*
+
+;; Collection for Parent Table
+
+[Collection: TSPL Smp SDrsCrsGroup]
+	
+	Collection	: TSPL Smp SDrsGroup, TSPL Smp SCrsGroup
+	Title		: "List of Debtors/ Creditors"
+	
+[Collection: TSPL Smp SDrsGroup]
+	
+	Type		: Group
+	Child Of	: $$GroupSundryDebtors
+	Belongs To	: Yes
+	
+[Collection: TSPL Smp SCrsGroup]
+	
+	Type		: Group
+	Child Of	: $$GroupSundryCreditors
+	Belongs To	: Yes
+
+;; End-of-File

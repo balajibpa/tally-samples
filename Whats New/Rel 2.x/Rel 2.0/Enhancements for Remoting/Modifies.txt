@@ -1,0 +1,57 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Report: TSPL Smp Report Modifies]
+
+	Variable 	: TSPL Smp VarModified
+	Title		: "Enhanced Modifies"
+	
+[Form: TSPL Smp Report Modifies]
+	
+	Part	: Form SubTitle, TSPL Smp Report Modifies
+	Local	: Field : Form SubTitle	: Set as 		: "Modifies now takes additional parameter to provide expression"
+	Local	: Field : Form SubTitle	: Width	 		: 43
+	Local	: Field : Form SubTitle	: Full Width	: No
+	Local	: Field : Form SubTitle	: Lines			: 0
+	Local	: Field : Form SubTitle	: Align			: Center
+	
+[Part: TSPL Smp Report Modifies]
+	
+	Lines	: TSPL Smp UserField, TSPL Smp FieldValue, TSPL Smp VariableValue
+	
+	[Line: TSPL Smp UserField]
+		
+		Field	: Medium Prompt, TSPL Smp UserField
+		Local	: Field	: Medium Prompt	: Info		: "Enter Field Value :"
+
+		[Field: TSPL Smp UserField]
+			
+			Use			: Name Field
+			Variable	: TSPL Smp VarModified
+			Modifies	: TSPL Smp VarModified	: Yes		: #TSPLSmpVarModified + " -" + ##SVCurrentCompany
+			
+	[Line: TSPL Smp FieldValue]
+		
+		Fields	: Medium Prompt, TSPL Smp FieldValue 
+		Local	: Field	: Medium Prompt	: Info	: "Field Value :"
+
+		[Field: TSPL Smp FieldValue]
+			
+			Use			: Name Field
+			Set as		: #TSPLSmpUserField
+			Set Always	: Yes
+			
+	[Line: TSPL Smp VariableValue]
+		
+		Field	: Medium Prompt, TSPL Smp VariableValue
+		Local	: Field	: Medium Prompt	: Info : "Variable Value :"
+
+		[Field: TSPL Smp VariableValue]
+			
+			Use		: Name Field
+			Set as	: ##TSPLSmpVarModified
+	
+[Variable: TSPL Smp VarModified]
+	
+	Type	: String
+	
+;; End of file

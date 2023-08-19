@@ -1,0 +1,22 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Menu for Whats New in Rel 2.0
+*/
+
+[Menu: Whats New in Rel 2.0]
+
+	Key Item: "Procedural File I/O"			: P : Menu		: Procedural File IO
+	Key Item: "Variable Framework Changes"	: V	: Menu		: Variable Framework Changes
+	Key Item: "Function Optional Parameter"	: F : Execute 	: EMail Configuration
+	Key Item: "Event Framework Changes" 	: E : Menu		: Event Framework Changes
+	Key Item: "Enhancements for Remoting"	: R : Menu		: Enhancements for Remoting
+
+;; Include Files
+
+[Include: Procedural File IO\Procedural File IO.txt]
+[Include: Variable Framework Changes\Variable Framework Changes.txt]
+[Include: Event Framework Changes\Event Framework Changes.txt]
+[Include: Enhancements for Remoting\Enhancements for Remoting.txt]
+
+;; End-of-File

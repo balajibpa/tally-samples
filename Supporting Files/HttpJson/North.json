@@ -1,0 +1,117 @@
+{
+	"Branch": "North",
+	"Customer": [
+		{
+			"Name": "Sapna Awasthi",
+			"State": "Delhi",
+			"Contact":
+			{
+				"OfficeNo": "011-66282789",
+				"Mobile": "990208391",
+				"Email": "sapna@gmail.com "
+			},
+			"Address": [
+				"C/o. Info Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		},
+		{
+			"Name": "Ashish Rai",
+			"State": "Delhi",
+			"Contact":
+			{
+				"OfficeNo": "011-66282559",
+				"Mobile": "990209867",
+				"Email": "ashish@gmail.com "
+			},
+			"Address": [
+				"C/o. Tech Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		},
+		{
+			"Name": "Shefali",
+			"State": "Jammu & Kashmir",
+			"Contact":
+			{
+				"OfficeNo": "0194-66282909",
+				"Mobile": "990209819",
+				"Email": "shef@gmail.com "
+			},
+			"Address": [
+				"C/o. Infotech Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		},
+		{
+			"Name": "Saurabh",
+			"State": "Haryana",
+			"Contact":
+			{
+				"OfficeNo": "0124-66282989",
+				"Mobile": "990209819",
+				"Email": "sau@gmail.com "
+			},
+			"Address": [
+				"C/o. SauTech Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		},
+		{
+			"Name": "Rohit Tiwari",
+			"State": "Himachal Pradesh",
+			"Contact":
+			{
+				"OfficeNo": "0178-66564909",
+				"Mobile": "990209819",
+				"Email": "roh@gmail.com "
+			},
+			"Address": [
+				"C/o. Tiwari Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		},
+		{
+			"Name": "Rithika Agarwal",
+			"State": "Punjab",
+			"Contact":
+			{
+				"OfficeNo": "0183-66282909",
+				"Mobile": "990209819",
+				"Email": "ritu@gmail.com "
+			},
+			"Address": [
+				"C/o. Agarrwal Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		},
+		{
+			"Name": "Samir Mishra",
+			"State": "Jammu & Kashmir",
+			"Contact":
+			{
+				"OfficeNo": "0194-66276459",
+				"Mobile": "990209807",
+				"Email": "sam@gmail.com "
+			},
+			"Address": [
+				"C/o. Sam Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		}
+	]
+}

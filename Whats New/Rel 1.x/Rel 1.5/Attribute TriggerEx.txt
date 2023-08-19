@@ -1,0 +1,68 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This code demonstrates the usage of New Field Attribute TriggerEx
+-	This is similar to Trigger Attribute in a Field but the only difference 
+	is that instead of a report name any expression can be used which basically 
+	implies the usage of a TDL defined function. This allows us to operate 
+	complex flows and get the final value as a String and add it to the table
+
+Last modification – 
+-	Altered on 09/11/2009
+*/
+
+[Report: FieldTriggerEx]
+
+	Form	: FieldTriggerEx
+
+[Form: FieldTriggerEx]
+
+	Parts	: FieldTriggerEx
+
+[Part: FieldTriggerEx]
+
+	Lines	: FieldTriggerExTitle, FieldTriggerEx
+
+	[Line: FieldTriggerEx Title]
+
+		Use		: FieldTriggerEx
+
+		Local	: Field	: Default		: Align	: Center
+		Local	: Field	: Default		: Border: Thin Bottom
+		Local	: Field	: Default		: Delete: Table
+
+		Local	: Field	: FieldTrigger	: Info	: "Field using Trigger"
+		Local	: Field	: FieldTrigger	: Delete: Trigger
+		Local	: Field	: FieldTriggerEx: Info	: "Field using TriggerEx"
+		Local	: Field	: FieldTriggerEx: Delete: TriggerEx
+
+	[Line: FieldTriggerEx]
+
+		Fields	: FieldTrigger, FieldTriggerEx
+
+		[Field: FieldTrigger] ;; On selection of any value of Table gives MAV
+
+			Use			: Name Field
+			Table		: New Number, Not Applicable ;; Added ledger table gives mav as soon as entered on menu
+			Show Table	: Always
+			Trigger     : New Number		: $$IsSysNameEqual:NewNumber:$$EditData
+			CommonTable : No
+			Dynamic		: ""
+			Key         : Create New Number ;; Added
+			
+		[Field: FieldTriggerEx]
+
+			Use			: Name Field
+			Table		: Ledger, New Number, Not Applicable
+			Show Table	: Always
+			TriggerEx	: $$FieldTriggerEx	: NOT ($$IsSysNameEqual:NotApplicable:$$EditData OR $$IsSysNameEqual:NewNumber:$$EditData)
+			CommonTable : No
+			Set Always	: Yes
+			Dynamic		: ""
+
+[Function: FieldTriggerEx]
+
+	01: RETURN	: $Parent:Ledger:$$EditData
+
+;; End-of-File

@@ -1,0 +1,83 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective – 
+- 	The objective of this program is to demonstrate the usage of attribute 'Plain XML'
+-	This program displays a report of Ledgers and their closing balances
+-   When the report is Exported in XML Format, the XML is exported as one string without line breaks
+
+Syntax -
+-	[Report: <Report Name>]
+		Plain XML	: <Logical Expression>
+
+Updation History – 
+-	Created on 01/02/2011
+*/
+
+[Report: TSPL Smp Plain XML]
+
+    Form        : TSPL Smp Plain XML
+	Title       : "Usage of Report Attribute 'Plain XML'"
+/* Attribute Plain XML if enabled, the entire XML getting exported will be exported without line breaks 
+An expression returning logical value can be specified in Attribute Plain XML For e.g., If ##SVCurrentCompany 
+Contains "TDL" then Yes else No */
+	Plain XML   : Yes
+
+[Form: TSPL Smp Plain XML]
+
+    Parts       : TSPL Smp Info, TSPL Smp Report Title, TSPL Smp Plain XML
+    Height      : 100% Page
+    Width       : 100% Page
+	Button		: Export Button
+
+	Local: Part	: TSPL Smp Info			: Local	: Line	: Info			: Local	: Field	: Info Field	: Info	: "Export the Report in XML Format and observe that the entire XML (opened in Notepad/Wordpad) appears continuosly without line breaks as single string. This behavior is due to Report Attribute 'Plain XML'."
+	Local: Part	: TSPL Smp Info			: Local	: Line	: Info			: Local	: Field	: Info Field	: Lines	: 0
+	Local: Line	: TSPL Smp Report Title	: Local	: Field	: Form SubTitle	: Set As: "List of Ledgers with their Closing Balances"
+		
+[Part: TSPL Smp Plain XML]
+
+    Lines       : TSPL Smp Plain XML Title, TSPL Smp Plain XML Details
+    Repeat      : TSPL Smp Plain XML Details	: TSPL Smp Plain XML Ledgers
+    Scroll      : Vertical
+    CommonBorder: Yes
+		
+    [Line: TSPL Smp Plain XML Title]
+        
+        Use     : TSPL Smp Plain XML Details
+        Local   : Field : Default           : Type  : String
+        Local   : Field : Default           : Align : Centre		
+		Local: Field: Default				: Style	: Normal Bold
+        Local   : Field : TSPL Smp PX Name 	: Set as: "Particulars"
+        Local   : Field : TSPL Smp PX Amt 	: Set as: "Amount"
+        Border  : Flush Totals
+
+    [Line: TSPL Smp Plain XML Details]
+
+        Fields      : TSPL Smp PX Name
+        Right Fields: TSPL Smp PX Amt
+
+		Local: Field: Default	: Style	: Normal
+
+        [Field: TSPL Smp PX Name]
+
+			Use     	: Name Field
+			Set as		: $Name
+			FullWidth	: Yes
+
+        [Field: TSPL Smp PX Amt]
+
+            Use    		: Amount Forex Field
+		    Set as 		: $ClosingBalance
+		    Border 		: Thin Left
+					
+[Collection: TSPL Smp Plain XML Ledgers]
+
+    Type   	: Ledger
+	Fetch	: Name, ClosingBalance
+	Filter	: TSPL Smp NonEmptyCB
+    
+[System: Formula]
+	
+	TSPL Smp NonEmptyCB	: $ClosingBalance > 0
+
+;; End-of-File

@@ -1,0 +1,37 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Menu for Calendar Data Type Enhancement
+*/
+
+[Menu: TSPL SMP Data Types Introduced]
+
+	Indent		: "Basic Examples"
+	Item		: Blank
+
+	Key Item	: "Time Formats"			: O : Alter	: TSPL Smp CDT Set Time Format
+	Key Item	: "Date Formats"			: I : Alter	: TSPL Smp CDT Set Date Format
+	Key Item	: "DateTime Formats"		: D : Alter	: TSPL Smp CDT Set DateTimeFormat
+	Key Item	: "Duration Formats"		: E : Alter	: TSPL Smp CDT Duration Format
+
+	Item		: Blank
+	Indent		: "Advanced Usage"
+	Item		: Blank
+
+	Key Item	: "Voucher Alteration"		: S : Call 	: TSPL Smp CDT VchAlterationMsg
+	Key Item	: "Voucher Alteration Log" 	: L : Call 	: TSPL Smp CDT VchEntryAltrationLog
+
+	Title		: "Data Types Introduced"
+
+;; Basic Usage
+
+[Include: BasicTimeFormat.txt]
+[Include: BasicDateFormat.txt]
+[Include: BasicDateTimeFormat.txt]
+[Include: BasicDurationFormat.txt]
+
+;; Advanced Usage
+
+[Include: AdvVchEntryAlteration.txt]
+
+;; End-of-File

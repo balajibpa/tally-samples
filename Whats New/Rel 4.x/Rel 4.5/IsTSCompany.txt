@@ -1,0 +1,42 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Report: TSPL Smp IsTSCompany]
+	
+	Form 	: TSPL Smp IsTSCompany
+	Title	: "Usage of Function IsTSCompany"
+	
+[Form: TSPL Smp IsTSCompany]
+		
+	Parts	: Form SubTitle, TSPL Smp IsTSCompany
+	Width	: 50% Page
+	Local	: Field	: Form SubTitle		: Info		: "Usage of Function IsTSCompany"
+	Local	: Field	: Long Prompt		: Width		: 30% Page
+	
+[Part: TSPL Smp IsTSCompany]
+	
+	Line 	: TSPL Smp IsTSCompany, TSPL Smp IsTSCompany Result
+
+	[Line: TSPL Smp IsTsCompany]
+		
+		Fields	: Long Prompt, TSPL Smp Company
+		Local	: Field	: Long Prompt	: Info		: "Select a Company from the List"
+ 
+		[Field: TSPL Smp Company]
+			
+			Use		: Name Field
+			Table	: Company Collection
+			Width	: 50% Page
+			
+	[Line: TSPL Smp IsTSCompany Result]
+		
+		Fields	: Long Prompt, TSPL Smp CompanyCheck
+		Local	: Field	: Long Prompt	: Set as	: "Is the Company opened through Tally.Server9 ?"
+		SpaceTop: 1
+		
+		[Field: TSPL Smp CompanyCheck]
+			
+			Use		: Name Field
+;; This Function returns if the parameter Company is opened through Tally Server 9.
+			Set as	: $$IsTSCompany:#TSPLSmpCompany
+
+;; End-of-File

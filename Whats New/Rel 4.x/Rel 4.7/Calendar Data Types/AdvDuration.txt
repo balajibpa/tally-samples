@@ -1,0 +1,78 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+- This sample TDL demonstrates the newly introduced Duration data type. Employee tenure
+  is been shown in Attendance Sheet
+
+Requirement - Payroll should be enabled and Employee Joining date is must.
+	Display --> Payroll Reports --> Attendance Sheet
+
+- Default Functionality
+
+	1) In Duration data type if nothing is specified then it is taken as days
+	2) Negative Duration is not supported
+	
+- Input Formats allowed i.e. for Attribute Format at Field
+
+	Year/Years/Yr/Yrs 			>> This displays duration in years
+	Month/Months				>> This displays duration in months
+	Day/Days/Dys				>> This displays duration in days
+	Week/Weeks/Weak/Wks			>> This displays duration in weeks
+	Hour/Hours/Hr/Hrs			>> This displays duration in Hours
+	Minutes/Mins/Min/Minute		>> This displays duration in Minutes
+	Second/Seconds/Sec/Secs		>> This displays duration in Seconds
+	YMD							>> This displays duration in years, months and days
+	HMS							>> This displays duration in hours, minutes and seconds
+
+-Supported Functions
+
+	$$Duration - This function is used to convert a time specified in 
+			 string format into the "Duration" data type.
+			 
+-Operational Functions
+
+	$$GetEndDateTime
+	$$GetStartDateTime
+	$$Get Duration
+	$$AddDuration
+	$$SubDuration
+
+Last modification -
+-	Altered on 
+*/
+
+[#Line:  DSP AttdItem Title]
+	
+	Add		: Field	: After	: DSP Name Title	: Name Field, EMP DurationTitle
+	Local	: Field	: Name Field	: Info		: "Joining Date"
+	Local	: Field	: Name Field	: Width		: 15
+	
+	[Field: EMP DurationTitle]
+		
+		Use		: Name Field
+		Width	: 10
+		Set as	: "Tenure"
+
+[#Line : DSP Attd Emp Name]
+	
+	Add	: Field	: After 	: Name Field : DSP Joining Date, EMP Duration
+	
+	[Field: DSP Joining Date]
+		
+		Use			: Uni Date Field
+		Set as		: $DateofJoin
+		Width		: 15
+		Align		: Left
+		
+	[Field	:  EMP Duration]
+		
+		Type	: Duration
+		Set as	: If $$IsEmpty:$DateofJoin Then "" Else $$GetDuration:$DateOfJoin:##SVToDate
+		Format	: "YMD"
+	
+[#Collection: Paysheet Employees]
+	
+	Fetch	: DateofJoin
+	
+;; End of file

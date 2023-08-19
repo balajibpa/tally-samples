@@ -1,0 +1,67 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This code demonstrates how Excel File can be opened to perform Read and Write Operations.
+
+Last modification – 
+-	Altered on 14/08/2010
+*/
+
+[Function: TSPL Smp Write Ledgers to Excel]
+
+	Variable	: RowIndex 	: Number	: 0
+	Variable	: ColIndex 	: Number
+	Variable    : Temp 		: String	: ""
+
+	10	: OPEN FILE			: "ChartofAccounts.xls" 		: Excel : Write  
+
+	30  : WALK COLLECTION 	: TSPL Smp Ledger Info
+	40  : 	IF : $$IsEmpty:##Temp OR $Parent != ##Temp
+	50  : 		INCREMENT 	: RowIndex
+	60  :   	SET 		: ColIndex 		: 1
+	70  :   	WRITE CELL  : ##RowIndex 	: ##ColIndex	: $Parent
+	80  :   	INCREMENT  	: ColIndex
+	90  : 		WRITE CELL	: ##RowIndex 	: ##ColIndex 	: $Name
+	100 : 	ELSE:
+	110 :  		INCREMENT  	: ColIndex 
+	120 :  		WRITE CELL 	: ##RowIndex 	: ##ColIndex 	: $Name
+	130 : 	END IF
+	140 : 	SET 			: Temp 			: $Parent
+	150 : END WALK
+	160 : CLOSE TARGET FILE
+	170	: EXEC COMMAND		: Excel			: "ChartofAccounts.xls"
+
+[Collection: TSPL Smp Ledger Info]
+
+	Collection	: TSPL Smp LedgerColl 		: TSPL Smp Group Coll
+
+[Collection: TSPL Smp Ledger Coll]
+
+	Type		: Ledger
+	Child of 	: $Name
+	Fetch 		: Name, Parent
+	
+[Collection: TSPL Smp GroupColl]
+
+	Type 		: Group
+	Child Of	: ##ParmLedName	
+	Parm Var	: ParmLedName	: String	: ""
+	Belongs To 	: Yes
+
+;; Read from Excel File
+
+[Function: TSPL Smp Read Ledgers from Excel]
+
+	Variable	: RowIndex 	: Number	: 1
+	Variable	: ColIndex 	: Number	: 1
+
+	10	: OPEN FILE		: "ChartofAccounts.xls" : Excel : Read
+	20	: WHILE			: NOT $$IsEmpty:($$FileReadCell:##RowIndex:1)
+	40	: 	LOG			: $$FileReadCell:##RowIndex:1
+	50	: 	LOG			: $$FileReadCell:##RowIndex:2
+	60	: 	INCREMENT	: RowIndex
+	70	: END WHILE
+	80	: EXEC COMMAND	: "TDLFunc.LOG"
+
+;; End-of-File

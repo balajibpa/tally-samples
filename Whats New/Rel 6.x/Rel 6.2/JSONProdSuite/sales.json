@@ -1,0 +1,16 @@
+{
+		"Distributor": "$DistributorId",
+		"TotalSales" : "$TotalSales",
+		"Vch": [{
+			"Vch Num": "$VchNum",
+			"Vch Dt": "$Vchdt",
+			"Vch Type": "$VchType",
+		
+				"item": [{
+					"Stock Item": "$StkName",
+					"Qty": "$Qty",
+					"unit": "$unit"
+				}]
+			
+		}]
+}

@@ -1,0 +1,37 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+-	This code demonstrates the basic programmable configuration report
+-	This code prints a Trial Balance Report without bringing up the Print Configuration
+	Screen since Configuration details are preset in the Function
+
+Syntax -
+-	There is an enhancement in syntax of Print, Export, Upload and Mail Actions
+-	They are changed to accept an additional logical parameter.
+	-	If set to Yes, then these actions get carried out silently.
+	-	If set to No, the behavior is similar to previous wherein the configuration screen
+		is displayed to accept various parameters
+-	<Action>	: <Report Name>	: <Logical Value>
+-	E.g., Mail	: Trial Balance	: Yes which means all the required configurations like
+	SMTP Details, From Address, etc. are set sequentially within the Function before requesting
+	for this action.
+
+Last Modification -
+-	Altered on 23-01-2010
+
+Specification(s) -
+-	Configuration for PrinterName in this code is set to 'SnagIt 7'. It must be altered as
+	required
+*/
+
+[Function: Smp TB Print Config]
+
+	Variable	: DSPShowClosing: Logical
+
+	00	: SET 	: SVPrinterName	: "SnagIt 7"
+	05	: SET	: SVPreview		: No
+	06	: SET	: DSPShowClosing: Yes
+	10	: Print	: Trial Balance	: Yes
+
+;; End-of-File

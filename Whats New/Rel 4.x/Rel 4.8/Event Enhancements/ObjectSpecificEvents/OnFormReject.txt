@@ -1,0 +1,48 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s):-
+	- To display the appropriate MessageBox when the payment voucher is rejected
+	- To understand the event 'Reject' at the form level
+
+Capabilities Used:-
+	- Event 'On Reject'
+
+Syntax -
+	- On : <Event>	: <Logical Condition> : <Action>	: <Action Parameters>
+	- On : Reject	: <Logical Condition> : <Action>	: <Action Parameters>
+
+Updaion History:-
+	- Created on 14-02-2014
+*/
+
+[Report: TSPL Smp Evnt Form Reject]
+	
+	Use		: Voucher
+	Variable: RejectOnFormReject	: Logical
+	Set 	: SVVoucherType			: Sales
+	Set 	: InvoicingModeFlag 	: Yes
+	
+	On		: Load	: Yes			: Call	: TSPL Smp MsgBox
+
+[Form: TSPL Smp Evnt Form Reject]
+	
+	Use		: Voucher
+	
+;; Calling a function to display a message once the form is rejected using the event 'On Reject'
+	On		: Reject: Yes					: Call	: TSPL Smp Evnt Rej Msg
+	On		: Reject: ##RejectOnFormReject	: Form Reject
+	
+[Function: TSPL Smp Evnt Rej Msg]
+	
+	00	: Msg Box	: "Caution!!"			: "You are about \n to reject this transaction. \n All the Info will be lost"
+	10	: Query Box	: "Are you sure"		: Y:N
+	20	: Set		: RejectOnFormReject	: $$LastResult
+
+[Function: TSPL Smp MsgBox]
+	
+	Parameter		: pMessageBox		: String	: "Reject the Form by pressing Ctrl + Q or Esc Key to notice the impact of Form Reject Event"
+	
+	00	: Msg Box	: "Alert!!"			: ##pMessageBox
+
+;; End-of-File

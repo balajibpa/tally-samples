@@ -1,0 +1,36 @@
+{
+	"employees": {
+		"employee": [
+			{
+				"Name": "Rashmi Reddy",
+				"Department": "Marketing",
+				"Gender": "Female",
+				"EmpId": "5989"
+			},
+			{
+				"Name": "John Fernandes",
+				"Department": "RnD",
+				"Gender": "Male",
+				"EmpId": "5145"
+			},
+			{
+				"Name": "Arvind Kumar",
+				"Department": "PM",
+				"Gender": "Male",
+				"EmpId": "5178"
+			},
+			{
+				"Name": "Mohammed Shehzan",
+				"Department": "Accounts",
+				"Gender": "Male",
+				"EmpId": "5696"
+			},
+			{
+				"Name": "Jessica Jones",
+				"Department": "RnD",
+				"Gender": "Female",
+				"EmpId": "5147"
+			}
+		]
+	}
+}

@@ -1,0 +1,49 @@
+;;Code for printing QR Code in TallyPrime
+
+[Report: TSPL Custom QR Code Illustration]
+	
+	Title			: $$LocaleString:"Printing QR Code in Customisation"
+	Form			: TSPL Custom QR Code Illustration
+	
+[Form: TSPL Custom QR Code Illustration]
+	
+	Use				: TSPL SMP Illustration
+		
+	Height			: 100% Screen
+	Width			: 100% Screen
+	
+	Local	: Part	: TSPL SMP Syntax		: Invisible	: Yes
+	Local	: Field	: FormSubTitle			: Info		: $$LocaleString:"Illustration for Printinig QR Code in Customisations"
+		
+	Local	: Field	: TSPL Smp Purpose		: Indent	: 2
+	Local	: Field	: TSPL Smp Purpose		: Info		: $$LocaleString:"You can generate QR code in TallyPrime using the attribute 'QR Code' at Part definition. " + +
+															$$LocaleString:"The below mentioned code describes an approach for displaying a QR Code for Stock Item to contain its Name and Closing Balance."
+			
+	
+	Local	: Field	: TSPL SMP Example		: Info		: $$NewLine	+ "[#Part: STKI Basic]" + $$NewLine + $$NewLine + +
+														"Add	: Right Part	: At End	: StockItem QRcode"  + $$NewLine   +  $$NewLine + +
+															"[Part: StockItem QRcode]"  + $$NewLine + $$NewLine + +
+														"Line		: Empty" + $$NewLine + +
+														'QRCode		: ($Name + ", Closing Balance: "	+ $$String:$ClosingBalance) : True'  + $$NewLine ++
+														"Width		: 20% screen" + $$NewLine ++
+														"Height		: 20% screen"
+	
+	Local	: Field	: TSPL SMP ExampleNote	: Info		: "You can open any Stock Item and see the QRCode in the screen" 	
+
+
+;;Code to add QR Code in the stockitem creation screen
+
+
+[#Part: STKI Basic]
+	
+	Add	: Right Part	: At End	: StockItem QRcode
+	
+[Part: StockItem QRcode]
+	
+	Line		: Empty					
+	QRCode		: ($Name + ", Closing Balance: "	+ $$String:$ClosingBalance) : True
+	Width		: 20% screen
+	Height		: 20% screen
+
+;;End of file
+

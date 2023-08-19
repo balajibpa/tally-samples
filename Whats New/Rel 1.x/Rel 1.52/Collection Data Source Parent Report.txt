@@ -1,0 +1,82 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This code demonstrates the Enhancement done on 'Data Source' Attribute
+	within Collection - Parent Report
+
+Last modification – 
+-	Altered on 09/11/2009
+*/
+
+;; Parent Report as Data Source
+
+[Collection: Data Source Parent Report Unselected]
+
+	Data Source : Parent Report : Unselected Lines
+	Client Only : Yes
+
+[Button: Data Source Parent Report Unselected]
+
+	Key 	: Ctrl + B
+	Action  : Alter  : Ledger Data
+	Title 	: "Unselected Groups"
+
+;; Original Display Report
+
+[Report: Data Source Parent Report Unselected]
+	
+	Form 	: Data Source Parent Report Unselected
+
+[Form: Data Source Parent Report Unselected]
+
+	Parts 	: Data Source Parent Report Unselected
+	Button	: Data Source Parent Report Unselected
+
+[Part: Data Source Parent Report Unselected]
+	
+	Lines 	: Data Source Parent Report Unselected
+	Scroll 	: Vertical
+	Repeat	: Data Source Parent Report Unselected	: Group
+	
+	[Line: Data Source Parent Report Unselected]
+
+		Fields	: Data Source Parent Report Unselected
+		
+		[Field: Data Source Parent Report Unselected]
+	
+			Set as : $Name
+
+;; Ledger Alter report using Parent Report as Data Source for Table display
+
+[Report: Ledger Data]
+
+	Form 	: Ledger Data
+
+[Form: Ledger Data]
+
+	Parts	: Ledger Data
+
+[Part: Ledger Data]
+	
+	Line 	: Ledger Data
+	Scroll 	: Vertical
+	Repeat	: Ledger Data 	: Ledger
+	
+	[Line: Ledger Data]
+		
+		Fields	: Ledger Data1, Ledger Data2
+		
+		[Field: Ledger Data1]
+				
+			Set as 	: $Name	
+			Width  	: 30
+
+		[Field: Ledger Data2]
+				
+			Set as 		: $Parent	
+			Table 		: Data Source Parent Report Unselected	;; Unselected Lines within the Parent Report will be displayed within the Table
+			Show Table 	: Always
+			Width  		: 30
+
+;; End-of-File

@@ -1,0 +1,85 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+- This sample TDL demonstrates the newly introduced Time data type. To return Sales Voucher
+  Print Time to voucher and save in Time data type
+
+Requirement - 
+ - Print After save should be enabled for voucher Types
+
+- Default Format is '12 hour'
+
+- Input Keywords allowed
+	Now				>> This will set current Time
+	Midnight		>> This will set time as 0:00
+	Noon			>> This will set time as 12:00 pm
+	
+- Input Formats allowed i.e. for Attribute Format at Field
+	
+	12 hour			>> This would return time as 09:09 PM
+	24 hour			>> This would return time as 21:09
+	With Secs		>> This would retunr time with seconds based on hour clock i.e. 21:09:09
+	With MilliSecs	>> This would retunr time with seconds based on hour clock i.e. 21:09:09:054
+	PrefixAMPM		>> By default in 12 hour clock AM or PM is sufixed. This would prefix
+	Time Separator	>> ????????????????????????????
+
+Note : A Skip is mandate for this field
+
+-Supported Functions
+
+	$$Time - This function is used to convert a time specified in 
+			 string format into the "Time" data type.
+
+Last modification -
+-	Altered on 
+*/
+
+[#Part: DBLLINE Narration]
+	
+	Add		: Line:  After : CreatedDateTime	: PrintedTime
+	
+	[Line	: PrintedTime]
+		
+		Fields		: Medium Prompt, PrintedTime
+		Local		: Field			: Medium Prompt	: Info	: "Printed Time"
+		Local		: Field			: Default		: Style	: Normal bold Italic
+		Space Top	: 0.1
+		Border		: Thick Box Red
+
+		[Field	: PrintedTime]
+			
+			Type    : Time
+			Width	: 35
+			Format	: "12 hour, With Secs"
+			Storage	: PrintedTimeInv
+			Skip	: Yes
+			
+[System: UDF]
+	
+	PrintedTimeInv	: Time	: 50002
+
+[System: Variables]
+	
+	SVID	: ""
+	
+[Variable: SVID]
+	
+	Type	: String
+	
+[#Report: Printed Invoice]
+	
+	On	: After Print	: NOT $$InPreviewMode : Set 	: SVID		: "ID:" + ($$String:$MasterID)
+	On	: After Print	: NOT $$InPreviewMode : Call	: PrintDate:$$PrintTime
+	
+[Function: PrintDate]
+
+	Parameter	: PrintTime	: Time
+	Object		: Voucher	: ##SVID
+	
+	00	: Set Target
+	01	: Set Target
+	02	: Set Value		: PrintedTimeInv : ##PrintTime
+	03	: Accept Alter
+	
+;; End of file

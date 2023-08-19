@@ -1,0 +1,329 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+-	This code demonstrates the advanced programmable configuration report
+-	This code allows user to print, export, upload or email outstanding details for each 
+	ledger falling under the selected Group by displaying the Configuration report only once
+-	Only Export button does not bring up the Initial screen as the LedgerName is taken as 
+	filename and Excel Format is defaulted.
+
+Syntax -
+-	There is an enhancement in syntax of Print, Export, Upload and Mail Actions
+-	They are changed to accept an additional logical parameter.
+	-	If set to Yes, then these actions get carried out silently.
+	-	If set to No, the behavior is similar to previous wherein the configuration screen
+		is displayed to accept various parameters
+-	<Action>	: <Report Name>	: <Logical Value>
+-	E.g., Mail	: Trial Balance	: Yes which means all the required configurations like
+	SMTP Details, From Address, etc. are set sequentially within the Function before requesting
+	for this action.
+
+Last Modification -
+-	Altered on 23-01-2010
+
+Specification(s) -
+-	Select the ledgers first before clicking on print, export, email or upload button.
+*/
+
+[Collection: Smp Group Summary]
+
+	Use		: Group Summary
+	Delete	: Report
+	Add		: Report	: Smp Group Summary
+	Delete	: Trigger
+	Add		: Trigger	: Smp Group Name
+	Child Of: $$GroupSundryDebtors
+	Delete	: Collection: Primary
+	Add		: Collection: All Items
+
+[Report: Smp Group Name]    ;;Auto Report
+
+	Use     : Group Name
+	Local   : Line : Collection Variable : Local	: Field : Group Name : Delete	: Table
+	Local   : Line : Collection Variable : Local	: Field : Group Name : Add		: Table	: Smp Group Summary
+
+;; Common Report to display list of Ledgers under selected group
+
+[Report: Smp Group Summary]
+
+	Form			: Smp Group Summary
+
+[Form: Smp Group Summary]
+
+	Parts	: Smp Group Summary
+	Buttons	: Print Button, Export Button, Mail Button
+	Local	: Button	: Print Button	: Action	: CALL	: Smp Print Selected
+	Local	: Button	: Export Button	: Action	: CALL	: Smp Export Selected
+	Local	: Button	: Mail Button	: Action	: CALL	: Smp Mail Selected
+	Local	: Button	: Upload Button	: Action	: CALL	: Smp Upload Selected
+
+	Height	: 100% Page
+	Width	: 100% Page
+
+[Part: Smp Group Summary]
+
+	Lines	: Smp Group Summary Title, Smp Group Summary Details
+	Repeat	: Smp Group Summary Details	: Smp Group Ledgers
+	Scroll	: Vertical
+
+	[Line: Smp Group Summary Title]
+
+		Use		: Smp Group Summary Details
+
+		Local	: Field	: Default					: Type		: String
+		Local	: Field	: Default					: Style		: Normal
+		Local	: Field	: Smp Group Summary Name	: Set As	: "Name"
+		Local	: Field	: Smp Group Summary AmtDr	: Set As	: "Dr."
+		Local	: Field	: Smp Group Summary AmtCr	: Set As	: "Cr."
+		Border	: Thin Top Bottom
+
+	[Line: Smp Group Summary Details]
+
+		Fields		: Smp Group Summary Name
+		Right Fields: Smp Group Summary AmtDr, Smp Group Summary AmtCr
+
+		[Field: Smp Group Summary Name]
+
+			Use		: Name Field
+			Set As	: $Name
+
+		[Field: Smp Group Summary AmtDr]
+
+			Use		: Amount Forex Field
+			Set As	: if $$IsDr:$ClosingBalance then $ClosingBalance else 0
+
+		[Field: Smp Group Summary AmtCr]
+
+			Use		: Amount Forex Field
+			Set As	: if NOT $$IsDr:$ClosingBalance then $ClosingBalance else 0
+
+[Collection: Smp Group Ledgers]
+
+	Type		: Ledger
+	Child Of	: ##GroupName
+	Belongs To	: Yes
+	Fetch		: Name, ClosingBalance
+	Filter		: Smp All Debtors
+
+[System: Formula]
+
+	Smp All Debtors	: if $$IsSysNameEqual:AllItems:##GroupName Then $$IsLedOfGrp:$Name:$$GroupSundryDebtors else Yes
+
+[Collection: Smp GroupOutstandingLedgers]
+
+	Data Source	: Report			: Selected
+
+[Collection: Smp Par GroupOutstandingLedgers]
+
+	Data Source	: Parent Report		: Selected
+
+;;----------------------------------------------------
+;; Function to PRINT outstanding for Selected Ledgers
+;;----------------------------------------------------
+
+[Function: Smp Print Selected]
+
+	VARIABLE	: LedgerName 	: String
+	VARIABLE	: Count			: Number
+	VARIABLE	: ProgressCount	: Number
+
+;; Procedural Block
+
+	10	: SET 	: Count						: 0
+	20	: SET	: ProgressCount				: 1
+	30	: ALTER	: Smp Prn SVPrintConfiguration
+
+[Function: Smp Start Printing]
+
+;; Creating local formulae. These formulas are available only within the function
+
+	LOCAL FORMULA	: Subject			: ##LedgerName + "-(Bill-wise Details)"
+	LOCAL FORMULA	: TextForMsg		: $$String:##COUNT + " Ledgers Printed"
+
+	70	: START PROGRESS	: ($$NumItems:SmpParGroupOutstandingLedgers):"Printing":"Outstanding"
+	80	: WALK COLLECTION  	: Smp ParGroupOutstandingLedgers
+	85	:	LOG				: $Name
+	90	: 	SET				: LedgerName 			: $Name
+	100 : 	SET				: ExplodeFlag			: "Detailed"
+	120	: 	PRINT			: Ledger Outstandings	: TRUE ;; TRUE to suppress the configuration report
+	130	:   SHOW PROGRESS	: ##ProgressCount
+	140	:	INCREMENT		: ProgressCount
+	150	: 	INCREMENT		: Count
+	160	: END WALK
+	170	: END PROGRESS
+	180	: MSGBOX	: "***Status***" : @TextForMsg	: NO
+	190	: RETURN
+
+[Report: Smp Prn SVPrintConfiguration]
+
+	Use		: SVPrint Configuration
+	Auto	: No
+	Delete	: Form
+	Add		: Form	: Smp Prn SVPrintConfiguration
+
+[Form: Smp Prn SVPrintConfiguration]
+
+    BottomButton: Change Print Language, Change Preview, Change Titling, Change PageRange, Change PrePrinted, +
+                  Change PrintMode, ChangeCopies, Change Printer
+
+	Parts	: DSP PrintInfo, DSP TitleInfo, Empty
+	On		: Form Accept	: Yes	: CALL	: Smp Start Printing
+
+;;----------------------------------------------------
+;; Function to EXPORT outstanding for Selected Ledgers
+;;----------------------------------------------------
+
+[Function: Smp Export Selected]
+
+	VARIABLE	: LedgerName 	: String
+	VARIABLE	: Count			: Number
+	VARIABLE	: ProgressCount	: Number
+
+;; Creating local formulae. These formulas are available only within the function
+
+	LOCAL FORMULA	: Subject			: ##LedgerName + "-(Bill-wise Details)"
+	LOCAL FORMULA	: TextForMsg		: $$String:##COUNT + " Files Exported"
+
+;; Procedual Block
+
+	10	: SET 	: Count								: 0
+	20	: SET	: ProgressCount						: 1
+	30	: SET	: SVExportFormat					: $$SysName:Excel
+	40	: SET	: SVExcelExportUpdateBook 			: No
+	50	: SET	: SVExcelExportWithFormatting 		: Yes
+	60	: SET	: SVExcelExportWithColour			: Yes
+
+	70	: START PROGRESS	: ($$NumItems:SmpGroupOutstandingLedgers):"Exporting":"Outstanding"
+	80	: WALK COLLECTION  	: Smp GroupOutstandingLedgers
+	90	: 	SET				: LedgerName 			: $Name
+	100 : 	SET				: ExplodeFlag			: "Detailed"
+	110	: 	SET				: SVPrintFileName		: $$MakeExportName:##LedgerName:##SVExportFormat
+	120	: 	EXPORT 			: Ledger Outstandings	: TRUE ;; TRUE to suppress the configuration report
+	130	:   SHOW PROGRESS	: ##ProgressCount
+	140	:	INCREMENT		: ProgressCount
+	150	: 	INCREMENT		: Count
+	160	: END WALK
+	170	: END PROGRESS
+	180	: MSGBOX	: "***EXPORTING***" : @TextForMsg	: NO
+	190	: RETURN	
+
+;;----------------------------------------------------
+;; Function to EMail outstanding for Selected Ledgers
+;;----------------------------------------------------
+
+[Function: Smp Mail Selected]
+
+	VARIABLE		: LedgerName 		: String
+	VARIABLE		: Count				: Number
+	VARIABLE		: ProgressCount		: Number
+
+;; Procedural Block
+
+	00	: ALTER		: Smp Email Selected
+
+[Function: Smp Start Mailing]
+
+;; Creating local formulae. These formulas are available only within the function
+
+	LOCAL FORMULA	: TextForServerMsg	: "Provide \n E-Mail Server & From Address \n in F12:Emailing"
+	LOCAL FORMULA	: Subject			: ##LedgerName + "-(Bill-wise Details)"
+	LOCAL FORMULA	: TextForMsg		: $$String:##COUNT + " E-Mails has been sent"
+
+	10	: IF	: $$IsEmpty:##SVMailServer OR $$IsEmpty:##SVMailFromAddress
+	20	:	MSGBOX	:  "Warning !" : @TextForServerMsg
+	30	:	RETURN
+	40	: ELSE
+	50	: 	SET 	: Count				: 0
+	60	: 	SET		: ProgressCount		: 1
+	70	: 	SET		: SVExportFormat	: $$SysName:HTML
+	80	: 	START PROGRESS	: ($$NumItems:SmpParGroupOutstandingLedgers):"EMailing":"Outstanding"
+
+	90	: 	WALK COLLECTION : Smp ParGroupOutstandingLedgers
+	100	: 		SET	: LedgerName 			: $Name
+	110	: 		SET	: SVMailEmbedImage 		: @@AsAttach
+	120 : 		SET	: ExplodeFlag			: "Detailed"
+/*
+	Action	: SET	: Variable	: $$MakeMailName:<ToAddress>:<SMTP Sever name>:<From Address>:<CC Address>:<Subject>:<Username>:<Password>:<Use SSL>
+    Note Username and password is required only if Use SSL is set to True else ""
+*/
+	130	: 		SET	: SVPrintFileName		: $$MakeMailName:$Email:##SVMailServer:##SVMailFromAddress:"":@Subject:"":"":FALSE
+	140	: 		MAIL: Ledger Outstandings	: TRUE ;; TRUE to suppress the configuration report
+	150	:   	SHOW PROGRESS	: ##ProgressCount
+	160	:		INCREMENT		: ProgressCount
+	170	: 		INCREMENT		: Count
+	180	: 	END WALK
+
+	190	: 	END PROGRESS
+	200	: 	MSGBOX	: "***E-MAILING***" : @TextForMsg	: NO
+	210	: ENDIF
+	220	: RETURN
+
+[Report: Smp Email Selected]
+
+	Use		: Email Configuration
+	Form	: Email Configuration
+	Local	: Form	: Email Configuration	: On	: Form Accept	: Yes	: CALL	: Smp Start Mailing
+
+;;----------------------------------------------------
+;; Function to Upload outstanding for Selected Ledgers
+;;----------------------------------------------------
+
+[Function: Smp Upload Selected]
+
+	VARIABLE		: LedgerName 		: String
+	VARIABLE		: Count				: Number
+	VARIABLE		: ProgressCount		: Number
+
+;; Procedural Block
+
+	10	: SET 	: Count					: 0
+	20	: SET	: ProgressCount			: 1
+	65	: ALTER	: Smp Upl VCHDisplay Print Configuration
+
+[Function: Smp Start Uploading]
+
+;; Creating local formulae. These formulas are available only within the function
+
+	LOCAL FORMULA	: Subject			: ##LedgerName + "-(Bill-wise Details)"
+
+	LOCAL FORMULA	: TextForMsg		: $$String:##COUNT + " Files Uploaded"
+	LOCAL FORMULA	: SCFilePathName	: $$MakeExportName:##LedgerName:##SVExportFormat
+
+	80	: START PROGRESS	: ($$NumItems:SmpGroupOutstandingLedgers):"Uploading":"Outstanding"
+	90	: WALK COLLECTION  	: SmpGroupOutstandingLedgers
+	100	: 	SET		: LedgerName 			: $Name
+	110 : 	SET		: ExplodeFlag			: "Detailed"
+	120	: 	SET		: SVPrintFileName		: $$MakeFTPName:##SVFTPServer:##SVFTPUser:##SVFTPPassword:@SCFilePathName
+	130	: 	UPLOAD 	: Ledger Outstandings	: TRUE ;; TRUE to suppress the configuration report
+	140	:   SHOW PROGRESS	: ##ProgressCount
+	150	:	INCREMENT	: ProgressCount
+	160	: 	INCREMENT	: Count
+	170	: END WALK
+	180	: END PROGRESS
+	190	: MSGBOX	: "***UPLOADING***" : @TextForMsg	: NO
+	200	: RETURN
+
+[Report: Smp Upl VCHDisplay Print Configuration]
+
+	Use		: VCHDisplay Print Configuration
+	Delete	: Form
+	Add		: Form	: Smp UploadConfig
+	Local	: Form	: Default			: On		: Form Accept	: Yes	: CALL	: Smp Start Uploading
+	Local	: Field	: DSP UploadType	: Set As	: @@FtpUpload
+	Local	: Field	: DSP UploadType	: Delete	: Table
+	Local	: Field	: DSP UploadType	: Read Only	: Yes
+
+[Form: Smp UploadConfig]
+
+    Parts 	: DSP OutputTitle, DSP UploadInfo
+
+	Set 	: SVExportFormat		: if $$IsEmpty:##SVUploadFormat then $$SysName:XML else ##SVUploadFormat
+	Set		: SVExportLanguage		: If $$IsUnicodeSupported Then ##SVExportLanguage Else $$SysName:English 
+
+	Local	: Line	: Form SubTitle	: Delete	: Space Bottom
+	Local	: Line	: DSP FtpPath	: Invisible	: Yes
+	
+
+
+;; End of File

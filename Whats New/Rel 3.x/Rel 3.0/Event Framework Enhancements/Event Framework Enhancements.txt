@@ -1,0 +1,15 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Menu: Event Framework Enhancements]
+	
+	Key Item	: "Import Events"	: I : Call	: TSPL Smp ImportVouchers	: NOT $$IsEmpty:$$SelectedCmps AND NOT $$IsRemoteCompany AND ((NOT $$IsEmpty:$$SelectedCmps) AND $$Allow:Access:ImportData)
+	Key Item	: "Export Events"	: E : Call	: TSPL Smp ExportXMLFormat	: NOT $$IsEmpty:$$SelectedCmps AND NOT $$IsRemoteCompany
+
+    Control     : "Import Events"	: $$Allow:Create:Vouchers AND $$Allow:Access:ImportData
+
+;; Include Files
+
+[Include: Import Events.txt]
+[Include: Export Events.txt]
+
+;; End-of-File

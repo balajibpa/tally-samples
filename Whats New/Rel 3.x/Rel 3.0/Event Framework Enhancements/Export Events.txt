@@ -1,0 +1,66 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+-  	To demonstrate the usage of the Export Events 'Before Export', 'Export Object'
+& 'After Export'.
+-	This Report when Exported adds an Alias to each Ledger Object sequentially which
+is useful when accounting codes are mandatory.
+
+Syntax -
+-  	Form Level
+	On: Before Export	: <Logical Condition>	: <Action>	: <Action Parameters>
+	On: Export Object	: <Logical Condition>	: <Action>	: <Action Parameters>
+	On: After Export	: <Logical Condition>	: <Action>	: <Action Parameters>
+
+- 	Line Level
+	On: Export Object	: <Logical Condition>	: <Action>	: <Action Parameters>
+
+Updaton History -
+-	Created on 04/02/2011
+*/
+
+[Function: TSPL Smp ExportXMLFormat]
+	
+	Variable	: TSPL Smp ExportPath	: String
+
+	00	: MSGBOX	: "Export"	: "Export the Objects in XML Format and open the file to see the alias generated for ledgers"
+	10	: EXPORT	: TSPL Smp ExportXMLFormat
+
+[Report: TSPL Smp ExportXMLFormat]
+	
+	Use		: List of Accounts
+	Form	: TSPL Smp ExportXMLFormat
+		
+[Form: TSPL Smp ExportXMLFormat]
+	
+	Use		: List of Accounts
+	On      : Before Export : Yes   : Call  : TSPL SMP Export Start
+	
+;; The above event will be triggered before export
+
+	On      : After Export  : Yes   : Call  : TSPL SMP Export End
+	
+;; The above event will be triggered after export
+
+	Local 	: Part  : AccType Body : Local : Line : Default : On  : Export Object  : $$IsLedger  : Call  : TSPLSMPExportObject:$$Line
+	
+[Function: TSPL SMP ExportStart]
+	
+	00 	: MSGBOX	: "Status"		: "Starting Export"
+
+[Function: TSPL SMP ExportObject]
+	
+	Parameter 		: LineNo 		: Number
+	
+	10	: INSERT COLLECTION OBJECT	: Name
+	20  : SET VALUE : Name 		   	: "Led " + " - " + $Name + " - " + $$String:##LineNo
+
+;; The method "Name" (Alias name) of every ledger object will be set with 
+;; the new value before exporting the object.
+	
+[Function: TSPL SMP ExportEnd]
+
+	00 	: MSGBOX	: "Status"		: "Ending Export"
+
+;; End-of-File

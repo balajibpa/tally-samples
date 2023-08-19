@@ -1,0 +1,31 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	The objective of this program is to demonstrate the enhancement of Collection Attribute 'WalkEx' to evaluate the condition parameter 
+	for each source object.
+	
+Syntax -
+	Walk Ex: <Collection> [:Condition]
+	
+Last modification – 
+-	Created on 20/10/2016
+-	Updated on 07/11/2016
+*/
+
+[Report: TSPL Smp WalkEx]
+	
+	Use		: TSPL Smp ReWalkReCompute
+	Title	: "WalkEx enhancement"
+
+	Local	: Form	: Default	: Local	: Field	: Form SubTitle		: Info	: "Illustration for conditional WalkEx"
+
+	Local	: Form	: Default	: Local	: Field	: TSPL Smp Purpose	: Info	: "The condition parameter of the collection attribute 'WalkEx' is now enhanced to check "+
+			+ "the condition for every source object."
+																																		 
+	Local	: Form	: Default	: Local	: Field	: TSPL Smp Syntax	: Info	: "Walk Ex: <Collection> [:Condition]" 
+	Local	: Form	: Default	: Local	: Field	: TSPL Smp Example	: Info	: "This sample navigates/ walks to the cost centre allocations through ledger entries " +
+			+ "for accounting vouchers, inventory allocations for accounting vouchers with inventory details and accounting allocations for vouchers entered in " +
+			+ "invoice mode using parameter condition of the attribute 'WalkEx'."
+
+;; End of file

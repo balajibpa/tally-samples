@@ -1,0 +1,128 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	The objective of this program is to demonstrate the enhancement for procedural actions Increment and Decrement wherein multiple variables 
+are supported inline
+
+Syntax -
+	Increment :<Variable Name>[,<Variable Name>,...][:<Number Expression>]
+	Decrement :<Variable Name>[,<Variable Name>,...][:<Number Expression>]
+
+Last modification – 
+-	Created on 18/10/2016
+-	Updated on 07/11/2016
+*/
+
+[Report: TSPL Smp IncrDecr]
+	
+	Form	: TSPL Smp IncrDecr
+	Title	: "Actions Increment/ Decrement with inline multi-variable support"
+	Auto	: Yes
+
+[Form: TSPL Smp IncrDecr]
+	
+	Use		: TSPL SMP Illustration
+	Add		: Part	: TSPL Smp IncrDecr
+	
+	Local	: Field	: FormSubTitle		: Info		: "Illustration for action Increment/ Decrement"
+
+	Local	: Field	: TSPL Smp Purpose	: Info		: "The procedural actions 'Increment' and 'Decrement' are enhanced to accept inline multiple variables."
+	Local	: Field	: TSPL Smp Syntax	: Info		: "Increment :<Variable Name>[,<Variable Name>,...][:<Number Expression>]" + 
+			+$$NewLine + "Decrement :<Variable Name>[,<Variable Name>,...][:<Number Expression>]"
+
+	Local	: Field	: TSPL Smp Example	: Info		: "The below example demonstrates the extended syntax of actions 'Increment' and 'Decrement'"
+	
+[Part: TSPL Smp IncrDecr]
+	
+	Lines	: TSPL Smp IncrDecrText, TSPL Smp IncrDecrValueA, TSPL Smp IncrDecrValueB
+	Lines	: TSPL Smp OutputTitle, TSPL Smp IncrDecrBodyIncrOutput, TSPL Smp IncrDecrBodyDecrOutput
+	
+	[Line: TSPL Smp IncrDecrText]
+		
+		Field	: Info Field
+		Local	: Field	: Info Field	: Info		: "Enter values for field A & B."
+		
+	[Line: TSPL Smp IncrDecrValueA]
+		
+		Fields		: Medium Prompt, TSPL Smp IncrDecrValueA
+		Local: Field: Medium Prompt		: Info		: "Field A"
+		Space Top	: 1
+
+		[Field	: TSPL Smp IncrDecrValueA]
+			
+			Use			: Number Field
+			Set Always	: Yes
+			Set as		: 18
+			
+	[Line: TSPL Smp IncrDecrValueB]
+		
+		Fields		: Medium Prompt, TSPL Smp IncrDecrValueB
+		Local: Field: Medium Prompt			: Info		: "Field B"
+		
+		[Field: TSPL Smp IncrDecrValueB]
+			
+			Use			: Number Field
+			Set Always	: Yes
+			Set as		: 27
+	
+	[Line: TSPL Smp IncrDecrBodyIncrOutput]
+		
+		Fields		: Medium Prompt, TSPL Smp IncrDecrBodyIncrOutput
+		Local: Field: Medium Prompt			: Info		: "Incremented by 5"
+		
+		[Field: TSPL Smp IncrDecrBodyIncrOutput]
+			
+			Type		: String
+			Set Always	: Yes
+			Set as		: IF $$IsAnyEmpty:#TSPLSmpIncrDecrValueA:#TSPLSmpIncrDecrValueB Then "" Else $$TSPLSmpIncr
+			Read Only	: Yes
+			Width		: 100
+			Style		: Normal Bold
+			
+	[Line: TSPL Smp IncrDecrBodyDecrOutput]
+		
+		Fields		: Medium Prompt, TSPL Smp IncrDecrBodyDecrOutput
+		Local: Field: Medium Prompt		: Info		: "Decremented by 1"
+		
+		[Field: TSPL Smp IncrDecrBodyDecrOutput]
+			
+			Use			: TSPL Smp IncrDecrBodyIncrOutput
+			Set as		: If $$IsAnyEmpty:#TSPLSmpIncrDecrValueA:#TSPLSmpIncrDecrValueB Then "" Else $$TSPLSmpDecr
+				
+[Function: TSPLSmpIncr]
+	
+	Variable		: vNumVar1		: Number	: 1
+	Variable		: vNumVar2		: Number
+	Variable		: Incr			: String
+	
+	Returns			: String
+
+	10	: Set 		: vNumVar1		: #TSPLSmpIncrDecrValueA
+	20	: Set 		: vNumVar2		: #TSPLSmpIncrDecrValueB
+
+;; Increasing values of both variables by 5
+	30	: Increment	: vNumVar1, vNumVar2	: 5
+	40	: Set		: Incr			: "The value of A is "+ $$String:##vNumVar1 + " and B is "+ $$String:##vNumVar2
+	
+	50	: Return	: ##Incr
+
+[Function: TSPL Smp Decr]
+	
+	Variable		: vNumVar1		: Number	: 1
+	Variable		: vNumVar2		: Number
+	Variable		: Decr			: String	
+	
+	Returns			: String
+
+	10	: Set 		: vNumVar1		: #TSPLSmpIncrDecrValueA
+	20	: Set 		: vNumVar2		: #TSPLSmpIncrDecrValueB
+
+
+;; Decreasing values of both variables by 2
+	30	: Decrement	: vNumVar1, vNumVar2
+	40	: Set		: Decr			: "The value of A is "+ $$String:##vNumVar1 + " and B is "+ $$String:##vNumVar2
+	
+	50	: Return	: ##Decr
+	
+;; End of file

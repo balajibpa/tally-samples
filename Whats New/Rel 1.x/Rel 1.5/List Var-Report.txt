@@ -1,0 +1,129 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This code demonstrates the usage of List Var within Report
+-	These variables can retain multiple values of single data type 
+	within them.
+-	These values have a unique Key which helps to determine the 
+	required value.
+-	Scope of the List Variable exists within the Report in which
+	it is declared
+-	A List Variable is declared in a Report which is executed in
+	Alter Mode. A new UDF value is being displayed/altered 
+	corresponding to each Ledger.  The same values are stored in
+	List Variables sequentially against every ledger and on saving
+	the Form, all these values are being stored in the Ledger.
+
+Last modification – 
+-	Altered on 09/11/2009
+*/
+
+[Report: List Var in Rep]
+
+	Form			: List Var in Rep
+	List Variable	: List Var Rep	: String
+	Title			: "Example of List Variable usage at Report"
+	Fetch Object	: Ledger	: @@TSPLSmpAllLedgerList : LedListVar.* 	
+
+[Form: List Var in Rep]
+
+	Parts	: List Var in Rep Info, List Var in Rep
+	On		: Form Accept	: Yes	: CALL 	: Alter and Save Ledger
+	Width	: 100% Page
+
+[Part: List Var in Rep Info]
+
+	Lines	: List Var in Rep Info
+
+	[Line: List Var in Rep Info]
+
+		Fields	: Info Field
+		Local	: Field	: Info Field			: Info		: "Individual values are added to List Variables after each line and when user accepts this form, these values are saved to the corresponding Ledger from the List Variables"
+		Local	: Field	: Info Field			: FullWidth	: Yes
+		Local	: Field	: Info Field			: Align		: Centre
+		Local	: Field	: Info Field			: Border	: Thin Bottom
+		Local	: Field	: Info Field			: Style		: Small
+		SpaceBottom		: 1
+
+[Part: List Var in Rep]
+
+	Lines		: List Var in Rep Title, List Var in Rep
+	Repeat		: List Var in Rep	: Ledger
+	Scroll		: Vertical
+	CommonBorder: Yes
+
+	[Line: List Var in Rep Title]
+
+		Use		: List Var in Rep
+
+		Local	: Field : Default				: Type		: String
+		Local	: Field : Default				: Align		: Center
+		Local	: Field : Default				: Style		: Normal Bold
+
+		Local	: Field : List Var Ledger Name	: Info		: "Ledger Name"
+		Local	: Field : List Var in Rep Value	: Info		: "UDF Value in Ledger"
+		Border	: Thin Top Bottom
+
+	[Line: List Var in Rep]
+
+		Fields		: List Var Ledger Name
+		Right Fields: List Var in Rep Value
+
+		[Field: List Var Ledger Name]
+
+			Use				: Name Field
+			Set as			: $Name
+			Skip			: Yes
+;			Fetch Object	: Ledger	: #ListVarLedgerName	: LedListVar.* ;; Client Tally does not repond
+			
+		[Field: List Var in Rep Value]
+
+			Use		: Name Field
+			Key		: FieldAcceptandListVarStore
+;			Set as	: $LedListVar ;; This does not work in remote
+;			Set As	: $LedListVar[1].LedListVar ;; This does not work in remote
+			Set As	: $(Ledger,#ListVarLedgerName).LedListVar[1].LedListVar
+			Border	: Thin Left Right
+			
+
+[Key: FieldAcceptandListVarStore]
+
+	Key			: Enter
+	ActionList	: List Var Store, Field Accept
+
+	[Key: List Var Store]
+
+		Key		: Enter
+		Action	: CALL		: ListVarStore	: #ListVarLedgerName	: $$EditData
+
+[Function: List Var Store]
+
+	Parameter	: LName		: String
+	Parameter	: LValue	: String
+
+	01: List Add: List Var Rep	: ##LName	: ##LValue
+	02: LOG		: $$ListValue:ListVarRep:##LName
+
+[Function: Alter and Save Ledger]
+
+	Variable	: Temp Var	: String
+
+	00: SET FILE LOG ON
+	01: FOR IN : KeyVar : List Var Rep
+	02: 	SET				: Temp Var	: $$ListValue:ListVarRep:##KeyVar
+	03: 	LOG 			: "Key: " + ##KeyVar + " Value: " + ##TempVar
+	04:		Modify Object	: (Ledger, ##KeyVar).LedListVar[1].LedListVar : ##TempVar
+	05: END FOR
+	06: LOG : "-----------------------------------------------"
+	07: SET FILE LOG ON
+
+[System: UDF]
+
+	LedListVar	: String	: 1000
+
+[System : Formulae]
+	
+	TSPL Smp AllLedgerList 	: $$FullListEx:$$FetchSeparator:Ledger:$Name
+
+;; End-of-File

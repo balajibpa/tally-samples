@@ -1,0 +1,63 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+-  To persist the System Scope Variables in a user specified file and reload 
+the same.
+
+Capabilities Used -
+- 	Actions 'SAVE VARIABLE' & 'LOAD VARIABLE'
+	
+Syntax -
+- 	SAVE VARIABLE : <FileName> [:<Variable List>]
+- 	LOAD VARIABLE : <FileName> [:<Variable List>]
+
+Updation History -
+- 	Created on 03/02/2011
+*/
+
+;; Saving the System Scope Variables
+
+[Function: TSPL SMP SystemScopeSave]
+	
+	00	: ALTER			: TSPL Smp PV System Configuration
+
+/* The System Scope Variables SVSymbolInSign & SVInMillions will be peristed in 
+the User Specified file on execution of the action SAVE VARIABLE. */
+	10	: SAVE VARIABLE : "SLSystemScope.pvf" 	: SVSymbolInSign, SVInMillions
+	20 	: MSGBOX 		: "Status" 				: "System Variables SVSymbolInSign - " + ($$String:##SVSymbolInSign) + " & SVInMillions - "  + ($$String:##SVInMillions) + " Persisted in file"
+		 
+[Report: TSPL Smp PV System Configuration]
+	
+	Use		: System Configuration
+	Form	: System Configuration
+
+	Local	: Form	: Default		: On		: Form Accept	: Yes	: Form Accept
+
+	Local	: Field	: Default		: Skip		: Yes
+	Local	: Field	: SVSymbolInSign: Skip		: No
+	Local	: Field	: SVInMillions	: Skip		: No
+	Title	: "System Configuration"
+	
+;; Altering/Displaying the System Scope Variables
+
+[Report: TSPL SMP SystemScopeAlterSaved]
+
+	Use		: System Configuration
+	Form	: System Configuration
+
+	Local	: Field	: Default		: Skip		: Yes
+	Local	: Field	: SVSymbolInSign: Skip		: No
+	Local	: Field	: SVInMillions	: Skip		: No
+	Title	: "System Configuration"
+
+;; Load the saved System Scope Variables
+
+[Function: TSPL Smp SystemScopeLoad]
+	
+/* The System Scope Variables SVSymbolInSign & SVInMillions will be loaded from the 
+file on execution of the action LOAD VARIABLE */
+	00	: LOAD VARIABLE : "SLSystemScope.pvf"
+	10 	: MSGBOX 		: "Status" 				: "System Variables SVSymbolInSign - " + ($$String:##SVSymbolInSign) + " & SVInMillions - " + ($$String:##SVInMillions) + " loaded from the file"
+
+;; End-of-File

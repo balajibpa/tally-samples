@@ -1,0 +1,170 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This code demonstrates the usage of Global Action 'Zip'
+
+Syntax – 
+-	Zip		: <Target File>	: <Source Path>[ : <Password>[ : <Overwrite>[ : <Include Sub-directory[ : <Show Progress Bar>]]]]
+
+	Where 
+		<Target File> is the name of the Zip File to be created along with the Path. 
+
+		<Source Path> is the path which is to be zipped. It can be a folder or a filepath containing wildcard characters.
+
+		<Password> is the password assigned to the Target zipped file.
+
+		<Overwrite> is the Logical Flag to specify the behaviour if the Target File already exists. Specifying a Yes will 
+		overwrite the file and No will not overwrite the file.  If not specified, the default value is No.
+
+		<Include Sub-directory> is the Logical Flag to specify whether to include sub directories available in the specified 
+		source path or not if the path contains Wild Cards.  Specifying Yes will include all the Sub-Directories from the 
+		Source for Zipping.  If not specified, the default value is No.
+
+		<Show Progress Bar> is the Logical Flag to specify if Progress Bar needs to be shown during the Zipping Process.  
+		Specifying a Yes will show the Progress Bar and No will not show the Progess Bar. If not specified, the default value
+		is No.
+
+Last modification – 
+-	Created on 04/09/2013
+-	Altered on 17/09/2013
+*/
+
+[Report: TSPL Smp Zip Interface]
+	
+	Form		: TSPL Smp Zip Interface
+	Title		: "Global Action Zip Sample"
+	
+[Form: TSPL Smp Zip Interface]
+	
+	Parts		: Form SubTitle, TSPL Smp Zip Interface
+	Background	: Very Light Orange
+	Local: Field: Form SubTitle		: Info		: "Zip Folders/ Files using Global Action 'Zip'"
+	Height		: 20% Page
+	Width		: 100% Page
+	
+	On			: Form Accept		: Yes		: Call		: TSPL Smp Zip Global Action	: ##TSPLSmpTgtFile	: ##TSPLSmpSrcFile : ##TSPLSmpPwd : ##TSPLSmpOverwrite : ##TSPLSmpIncSubDir	: ##TSPLSmpProgressBar
+	
+[Part: TSPL Smp Zip Interface]
+	
+	Line		: TSPL Smp Zip Interface Info, TSPL Smp Zip Interface Details
+	Bottom Line	: TSPL Smp Zip Interface Syntax
+	
+	[Line: TSPL Smp Zip Interface Info]
+		
+		Use		: TSPL Smp Zip Interface Details
+
+		Local	: Field	: Default				: Skip		: Yes
+		Local	: Field	: Default				: Delete	: Tooltip
+		Local	: Field	: Default				: Style		: Normal Bold
+		Local	: Field	: Default				: Lines		: 0
+		Local	: Field	: Default				: Align		: Center
+		Local	: Field	: Default				: Type		: String
+		Local	: Field	: Default				: Delete	: Modifies
+		Local	: Field	: Default				: Color		: Royal Blue
+		
+		Local	: Field	: TSPL Smp Tgt File		: Set as 	: "Zip : Target File"
+		Local	: Field	: TSPL Smp Src Path 	: Set as	: ": Source File"
+		Local	: Field	: TSPL Smp Pwd			: Set as	: ": Password"
+		Local	: Field	: TSPL Smp Overwrite	: Set as	: ": Overwrite?"
+		Local	: Field	: TSPL Smp IncSubDir	: Set as	: ": Include Sub-directory?"
+		Local	: Field	: TSPL Smp ProgressBar	: Set as	: ": Show Progress Bar?"
+		
+		Border	: Thin Top Bottom
+
+	[Line: TSPL Smp Zip Interface Details]
+		
+		Fields			: TSPL Smp Tgt File, TSPL Smp Src Path
+		Right Fields	: TSPL Smp Pwd, TSPL Smp Overwrite, TSPL Smp Inc Sub Dir, TSPL Smp ProgressBar
+		
+		Local	: Field	: Default				: Align		: Center
+		Local	: Field	: Default				: Style		: Normal Bold
+
+		[Field: TSPL Smp Tgt File]
+			
+			Use			: Name Field
+			Modifies	: TSPLSmpTgtFile 		: Yes
+			Validate	: NOT $$IsEmpty:$$Value
+			Width		: 25% Page
+			Tooltip		: "Enter Target Zip File Path"
+
+		[Field: TSPL Smp Src Path]
+			
+			Use			: TSPL Smp Tgt File
+			Modifies	: TSPLSmpSrcFile 		: Yes
+			Tooltip		: "Enter Path of the Source Folder/ File to be zipped"
+
+		[Field: TSPL Smp Pwd]
+			
+			Use			: Name Field
+			Modifies	: TSPLSmpPwd 			: Yes
+			Case		: Normal
+			Width		: 12.5% Page
+			Tooltip		: "Enter Password of the Zip File, if required"
+
+		[Field: TSPL Smp Overwrite]
+			
+			Use			: Logical Field
+			Modifies	: TSPLSmpOverwrite 		: Yes
+			Width		: 12.5% Page
+			Tooltip		: "Do you want to overwrite the zip file, if exists?"
+
+		[Field: TSPL Smp Inc Sub Dir]
+
+			Use			: Logical Field
+			Modifies	: TSPLSmpIncSubDir 		: Yes
+			Width		: 12.5% Page
+			Tooltip		: "Do you want to include Sub Folders?"
+			
+		[Field: TSPL Smp ProgressBar]
+			
+			Use			: Logical Field
+			Modifies	: TSPLSmpProgressBar 	: Yes
+			Width		: 12.5% Page
+			Tooltip		: "Do you want to show Progress Bar?"
+
+	[Line: TSPL Smp Zip Interface Syntax]
+
+		Use		: TSPL Smp Zip Interface Info
+
+		Local	: Field	: Default				: Color		: Royal Blue
+		
+		Local	: Field	: TSPL Smp TgtFile		: Set as	: "ZIP : " + ##TSPLSmpTgtFile
+		Local	: Field	: TSPL Smp SrcPath 		: Set as	: " : " + ##TSPLSmpSrcFile
+		Local	: Field	: TSPL Smp Pwd			: Set as 	: " : " + ##TSPLSmpPwd
+		Local	: Field	: TSPL Smp Overwrite	: Set as	: " : " + $$String:##TSPLSmpOverwrite
+		Local	: Field	: TSPL Smp IncSubDir	: Set as	: " : " + $$String:##TSPLSmpIncSubDir
+		Local	: Field	: TSPL Smp ProgressBar	: Set as	: " : " + $$String:##TSPLSmpProgressBar
+		Space Top		: 1
+		Border			: Thin Top Bottom
+
+[Function: TSPL Smp Zip Global Action]
+	
+	Parameter	: Target File 	: String
+	Parameter	: Source File 	: String
+	Parameter	: Password	  	: String
+	Parameter	: Overwrite	  	: Logical
+	Parameter	: IncSubDir	  	: Logical
+	Parameter	: ProgressBar 	: Logical
+
+	Variable	: LastResult	: Logical
+
+;; Global Action 'Zip' is used to compress the Source Folder/ Files
+	00	: Zip	: ##TargetFile	: ##SourceFile	: ##Password	: ##Overwrite	: ##IncSubDir	: ##ProgressBar
+	10	: Set	: LastResult	: $$LastResult
+	20	: If	: ##LastResult
+	30	:	Msg Box	: "Status"	: "Zipped Files Successfully"
+	40	: Else	: 
+	50	:	Msg Box	: "Error"	: "Zipping Files Failed"
+	60	: End If
+
+[System: Variable]
+	
+	Variable	: TSPLSmpTgtFile 	: String 	: "C:\TallyLogFiles.Zip"
+	Variable	: TSPLSmpSrcFile 	: String 	: "*.Log"
+	Variable	: TSPLSmpPwd		: String 	: "Tally"
+	Variable	: TSPLSmpOverwrite	: Logical	: No
+	Variable	: TSPLSmpIncSubDir	: Logical 	: Yes
+	Variable	: TSPLSmpProgressBar: Logical	: Yes
+
+;; End-of-File

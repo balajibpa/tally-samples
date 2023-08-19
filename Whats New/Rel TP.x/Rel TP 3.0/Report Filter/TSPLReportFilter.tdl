@@ -1,0 +1,14 @@
+[Menu: TSPL Report Filter]
+	
+	Title		: "Report Filter"
+	
+	Key Item	: Custom Report Filter			: C : Display 	: TSPL Report Filter Capabilities
+	Item		: Blank	
+	
+	Key Item	: Default Report Filter			: D : Display 	: TSPL Default Report Filter Capabilities
+	Item		: Blank	
+	
+		
+
+[Include: CustomReportFilter.tdl]
+[Include: DefaultReportFilter.tdl]

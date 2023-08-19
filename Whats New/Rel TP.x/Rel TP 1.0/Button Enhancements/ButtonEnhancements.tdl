@@ -1,0 +1,12 @@
+;;Menu for Button enhancements
+
+[Menu: TSPL Button Enhancements]
+	
+	Title		: "Button Enhancements"
+	Item		: Blank
+	Key Item	: "Inline Buttons" 				: B : Display	: TSPL Custom InlineButton Illustration	
+
+
+[Include: Buttons.TDL]
+
+;;End of file

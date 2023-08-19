@@ -1,0 +1,49 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This TDL File contains sundry changes i.e., alterations to set value
+
+Last modification – 
+-	Altered on 22/04/2010
+
+Dependencies - 
+-	File(s) :- Compound Var Usage in Report Config.txt, Variables & Buttons.txt, 
+			   Functions.txt and UI Changes.txt
+*/
+
+[#Part: SSCFG Common]
+
+	Local	: Field		: SSShowAllItems	: Set As	: ##DSPShowAllItems
+	Local	: Field		: SSShowAlternate	: Set As	: ##DSPQtyAlternate
+	Local	: Field		: DSPInvNameStyle	: Set As	: ##DSPInvNameStyle
+
+[#Form: DSP Configure]
+
+	Local	: Field		: Default			: Set Always: Yes
+
+;; Stock Summary
+	Local	: Field		: SSShowQty			: Set As	: ##DSPShowQty
+	Local	: Field		: SSShowRate		: Set As	: ##DSPShowRate
+	Local	: Field		: SSShowValue		: Set As	: ##DSPShowValue
+	Local	: Field		: SSShowOpening		: Set As	: ##DSPShowOpening
+
+;; Trial Balance 
+	Local	: Field		: DSPShowOp			: Set As	: ##DSPShowOpening
+	Local	: Field		: DSPShowTrans		: Set As	: ##DSPShowTrans
+	Local	: Field		: DSPShowNett		: Set As	: ##DSPShowNett
+	Local	: Field		: DSPShowCl			: Set As	: ##DSPShowClosing
+	Local	: Field		: DSPShowPerc		: Set As	: ##DSPShowPerc
+	Local	: Field		: DSPSetScale		: Set As	: ##SVScaleFactor
+
+[#Line: SSShowCons]
+
+	Local: Field: Logical Field	: Set As	: ##ShowConsumption
+	AccessName	: "SmpConsGP"
+
+[#Line: SSShowTail]
+
+	Local: Field: Logical Field	: Set As	: ##DSPShowTail
+	AccessName	: "SmpShowTail"
+
+;; End-of-File

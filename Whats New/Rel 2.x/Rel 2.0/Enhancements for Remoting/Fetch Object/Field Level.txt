@@ -1,0 +1,88 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This code demonstrates the usage of Fetch Object at Field Level
+
+Last modification – 
+-	Altered on 28/07/2010
+*/
+
+[Report : TSPL Smp Field Level FO]
+	
+	Form	: TSPL Smp Field Level FO
+	Title	: $$LocaleString:"Field Level Fetch Object"
+	Variable: TSPL Smp LedName
+	
+[Form : TSPL Smp Field Level FO]
+	
+	Part	: Form SubTitle, TSPL Smp Field Level FO
+	Local	: Field	: Form SubTitle : Set as	: "To View Ledger Tax Classification"
+	Height	: 100% Screen
+	
+[Part : TSPL Smp Field Level FO]
+	
+	Lines	: TSPL Smp Field Level FO, TSPL Smp LedgerTaxName, TSPL Smp LedgerTaxFrom, TSPL Smp LedgerTaxTo, TSPL Smp LedgerTaxVATRate, TSPL Smp LedgerTaxType
+	
+	[Line : TSPL Smp Field Level FO]
+		
+		Fields	: TSPL Smp Field Level FO
+		
+		[Field : TSPL Smp Field Level FO]
+			
+			Use			: Name Field
+			Table		: TSPL Smp LedgersList
+			Set As		: "Sales @ 12.5%"
+			Show Table	: Always
+			Variable	: TSPL Smp LedName
+			Modifies	: TSPL Smp LedName	: Yes
+			Fetch Object: Ledger	: $$Value	: TaxClassificationName
+			TaxClassName: ($TaxClassificationName:Ledger:$$Value)	
+			Fetch Object: TaxClassification		: @TaxClassName		: Name, ClassificationFromDate, ClassificationToDate, RateofVAT, TaxType
+			
+	[Line : TSPL Smp LedgerTaxName]
+		
+		Field	: Medium Prompt, TSPL Smp LedgerTaxName
+		Local	: Field		: Medium Prompt	: Set as	: "Tax Classification :"
+		
+		[Field : TSPL Smp LedgerTaxName]
+			
+			Width		: 20
+			Set as		: ($TaxClassificationName:Ledger:##TSPLSmpLedName)
+			Set Always	: Yes
+			Skip		: Yes
+			
+	[Line : TSPL Smp LedgerTaxFrom]
+		
+		Use		: TSPL Smp LedgerTaxName
+		Local	: Field		: Medium Prompt				: Set as	: "From Date :"
+		Local	: Field		: TSPL Smp LedgerTaxName	: Set as	: $ClassificationFromDate:TaxClassification:($TaxClassificationName:Ledger:##TSPLSmpLedName)
+		
+	[Line : TSPL Smp LedgerTaxTo]
+		
+		Use		: TSPL Smp LedgerTaxName
+		Local	: Field		: Medium Prompt				: Set as	: "To Date :"
+		Local	: Field		: TSPL Smp LedgerTaxName	: Set as	: $ClassificationToDate:TaxClassification:($TaxClassificationName:Ledger:##TSPLSmpLedName)
+		
+	[Line : TSPL Smp LedgerTaxVATRate]
+		
+		Use		: TSPL Smp LedgerTaxName
+		Local	: Field		: Medium Prompt				: Set as	: "VAT Rate :"
+		Local	: Field		: TSPL Smp LedgerTaxName	: Set as	: $RateOfVAT:TaxClassification:($TaxClassificationName:Ledger:##TSPLSmpLedName)
+		
+	[Line : TSPL Smp LedgerTaxType]
+		
+		Use		: TSPL Smp LedgerTaxName
+		Local	: Field		: Medium Prompt				: Set as	: "Tax Type :"
+		Local	: Field		: TSPL Smp LedgerTaxName	: Set as	: $TaxType:TaxClassification:($TaxClassificationName:Ledger:##TSPLSmpLedName)
+
+[Collection : TSPL Smp LedgersList]
+	
+	Type	: Ledger
+	Fetch	: Name, TaxClassificationName
+	
+[Variable: TSPL Smp LedName]
+	
+	Type  : String
+	
+;; End of file

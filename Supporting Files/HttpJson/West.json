@@ -1,0 +1,165 @@
+{
+	"Branch": "West",
+	"Customer": [
+		{
+			"Name": "Dipen Ghetia",
+			"State": "Gujarat",
+			"Contact":
+			{
+				"OfficeNo": "079-66282789",
+				"Mobile": "990208391",
+				"Email": "dipen@gmail.com "
+			},
+			"Address": [
+				"C/o. Info Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		},
+		{
+			"Name": "Niyati Makadia",
+			"State": "Gujarat",
+			"Contact":
+			{
+				"OfficeNo": "079-66282559",
+				"Mobile": "990209867",
+				"Email": "niyu@gmail.com "
+			},
+			"Address": [
+				"C/o. Makadia Tech Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		},
+		{
+			"Name": "Rohan Mathew",
+			"State": "Goa",
+			"Contact":
+			{
+				"OfficeNo": "0832-66282909",
+				"Mobile": "990209819",
+				"Email": "mat@gmail.com "
+			},
+			"Address": [
+				"C/o. Mathews Infotech Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		},
+		{
+			"Name": "Shruti Agnihotri",
+			"State": "Maharashtra",
+			"Contact":
+			{
+				"OfficeNo": "022-66282989",
+				"Mobile": "990209819",
+				"Email": "sruthi@gmail.com "
+			},
+			"Address": [
+				"C/o. Agni Tech Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		},
+		{
+			"Name": "Rohit Pawar",
+			"State": "Maharashtra",
+			"Contact":
+			{
+				"OfficeNo": "022-66564909",
+				"Mobile": "990209819",
+				"Email": "pawar@gmail.com "
+			},
+			"Address": [
+				"C/o. Pawar Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		},
+		{
+			"Name": "Alisha",
+			"State": "Goa",
+			"Contact":
+			{
+				"OfficeNo": "0832-66282909",
+				"Mobile": "990209819",
+				"Email": "alisha@gmail.com "
+			},
+			"Address": [
+				"C/o. Alisha Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		},
+		{
+			"Name": "Munit Acharya",
+			"State": "Gujarat",
+			"Contact":
+			{
+				"OfficeNo": "079-66282909",
+				"Mobile": "990209819",
+				"Email": "muni@gmail.com "
+			},
+			"Address": [
+				"C/o. Acharya Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		},
+		{
+			"Name": "Tishna Desai",
+			"State": "Gujarat",
+			"Contact":
+			{
+				"OfficeNo": "079-66282909",
+				"Mobile": "990209819",
+				"Email": "tishi@gmail.com "
+			},
+			"Address": [
+				"C/o. Desai tech Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		},
+		{
+			"Name": "Devdutt",
+			"State": "Goa",
+			"Contact":
+			{
+				"OfficeNo": "0832-66282909",
+				"Mobile": "990209819",
+				"Email": "alisha@gmail.com "
+			},
+			"Address": [
+				"C/o. DD Tech Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		},
+		{
+			"Name": "Rahul Apte",
+			"State": "Maharashtra",
+			"Contact":
+			{
+				"OfficeNo": "022-66276459",
+				"Mobile": "990209807",
+				"Email": "apterahul@gmail.com "
+			},
+			"Address": [
+				"C/o. Apte Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		}
+	]
+}

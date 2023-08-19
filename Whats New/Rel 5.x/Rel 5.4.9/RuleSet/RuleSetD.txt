@@ -1,0 +1,15 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Menu	: TSPL Smp RuleSetD]
+	
+	Title		: $$LocaleString:"Rule Set - Diagonal"
+
+	Key Item	: Simple Rule		: S :	Display	: TSPL Smp SimpleRuleD 		: NOT $$IsEmpty:$$SelectedCmps
+	Key Item	: Walk on Yes		: Y :	Display	: TSPL Smp WalkOnYes 		: NOT $$IsEmpty:$$SelectedCmps
+	Key Item	: Walk on No		: N :	Display	: TSPL Smp WalkOnNo 		: NOT $$IsEmpty:$$SelectedCmps
+	Key Item	: RuleSet Filters	: F :	Display	: TSPL RuleSet Filters		: NOT $$IsEmpty:$$SelectedCmps
+	
+[Include	: Diagonal\SimpleRuleD.txt]
+[Include	: Diagonal\WalkonYes.txt]
+[Include	: Diagonal\WalkonNo.txt]
+[Include	: Diagonal\RuleSetFilter.txt]

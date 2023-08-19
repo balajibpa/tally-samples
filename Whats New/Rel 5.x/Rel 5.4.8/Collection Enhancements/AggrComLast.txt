@@ -1,0 +1,105 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	The objective of this program is to demonstrate the Keyword for the Aggregate Compute 'LAST' at Collection Level
+			
+Syntax -
+	Aggr Compute : Method Name: Last : <Expression>
+	
+Last modification – 
+-	Created on 20/10/2016
+-	Updated on 07/11/2016
+*/
+
+[Report	: TSPL SmpAggr Compute last]
+	
+	Form	: TSPL SmpAggr Compute last
+	Title	: "Aggr Compute with keyword Last"
+	
+[Form: TSPL SmpAggr Compute Last]
+	
+	Use		: TSPL SMP Illustration
+	Add		: Part	: TSPL SmpAggr Compute Last
+
+	Local	: Field	: Form SubTitle				: Set as	: "Illustration for Aggr Compute with the keyword Last"
+
+	Local	: Field	: TSPL Smp Purpose			: Info		: "A new aggregation keyword 'Last' is supported for the attribute Aggr Compute. This " +
+			+ "keyword fetches the value of the last object"
+																																						 
+	Local	: Field	: TSPL Smp Syntax			: Info		: "Aggr Compute : Method Name: Last : <Expression>" 
+	Local	: Field	: TSPL Smp Example			: Info		: "This sample demonstrates the usage of Aggr Compute with the keyword 'Last' for extracting " +
+			+ "party wise, stock item wise, last sales qty and rate"
+
+[Part: TSPL Smp Aggr Compute Last]
+	
+	Lines			: TSPL Smp Aggr Comp Last Title, TSPL Smp Aggr Comp Last Detail
+	Repeat			: TSPL Smp Aggr Comp Last Detail	: TSPL SMP LastSaleRate
+	Scroll			: Vertical
+	
+	Common Border	: Yes
+	
+	[Line: TSPL Smp Aggr Comp Last Title]
+		
+		Use		: TSPL Smp Aggr Comp Last Detail
+		
+		Local	: Field	: Default				: Style	: Normal Bold
+		Local	: Field	: Default				: Type	: String
+		Local	: Field	: Default				: Line	: 0
+		
+		Local	: Field	: TSPL Smp ParticularsT2: Align	: Center
+		Local	: Field	: TSPL Smp LastQty		: Align	: Center
+		Local	: Field	: TSPL Smp LastRate		: Align	: Center
+		
+		Local	: Field	: TSPL Smp ParticularsT1: Info	: "Party Name"
+		Local	: Field	: TSPL Smp ParticularsT2: Info	: "Item Name"
+		Local	: Field	: TSPL Smp LastQty		: Info	: "Last Sale Qty"
+		Local	: Field	: TSPL Smp LastRate		: Info	: "Last Sale Rate"
+		Border	: Thick Top Bottom
+		
+	[Line: TSPL Smp Aggr Comp Last Detail]
+		
+		Field		: TSPL Smp ParticularsT1
+		Right Field	: TSPL Smp ParticularsT2, TSPL Smp LastQty, TSPL Smp LastRate
+		Local		: Field	: Default	: Style	: Normal
+		
+		[Field: TSPL Smp ParticularsT1]
+			
+			Use		: Name Field
+			Set as	: $PName 
+			
+		[Field: TSPL Smp ParticularsT2]
+			
+			Use		: Name Field
+			Set as	: $IName
+			Border	: Thin Left
+			
+		[Field: TSPL Smp LastQty]
+			
+			Use		: Qty Field
+			Set as	: $LastQty
+			Border	: Thin Left Right
+			
+		[Field: TSPL Smp LastRate]
+			
+			Use		: Rate Field
+			Set as	: $LastRate
+			Width	: 15
+
+[Collection: TSPL SMP LastSaleRate]
+	
+	Title				: "List of Stock Items"
+
+    Source Collection	: TSPL SMP Vch Sales
+    Walk				: AllInventoryEntries
+
+    By					: IName		: $StockItemName
+	By					: PName		: $PartyLedgerName
+	
+;; The Keyword 'Last' extracts the value of the last Object across the Party and Stock Item
+	Aggr Compute		: LastRate	: LAST	: $Rate
+	Aggr Compute		: LastQty	: LAST	: $BilledQty
+	
+	Sort				: @@Default	: $PName, $IName		
+	
+;; End of file

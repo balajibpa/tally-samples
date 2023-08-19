@@ -1,0 +1,78 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This Code demonstrates the usage of new Interface Object Context changing 
+	function 'ReqOwner'
+
+Updation History – 
+-	Created on 20/04/2010
+*/
+
+[Function: ICCF ReqOwner]
+
+	Variable	: VarTest	: String	: "Original Function"
+
+	00	: Display	: ICCF ReqOwner
+
+[Report: ICCF ReqOwner]
+
+	Form		: ICCF ReqOwner
+	Variable	: VarTest: String	: "Report"
+	Title		: "ReqOwner"
+
+[Form: ICCF ReqOwner]
+
+	Parts		: Form SubTitle, ICCF ReqOwner
+	Local: Field: Form SubTitle	: Set As	: "Understanding Function ReqOwner"
+	Width		: 50% Page
+
+[Part: ICCF ReqOwner]
+
+	Lines		: ICCF ReqOwner Title, ICCF ReqOwner
+	CommonBorder: Yes
+	Border		: Thin Bottom
+
+	[Line: ICCF ReqOwner Title]
+
+		Use		: ICCF ReqOwner
+		Local	: Field : Default			: Align		: Centre
+		Local	: Field : Default			: Style		: Normal Bold
+
+		Local	: Field : ICCF ReqOwner1	: Set As	: "Report Value"
+		Local	: Field : ICCF ReqOwner2	: Set As	: "Requestor Function's Value"
+		Local	: Field : ICCF ReqOwner3	: Set As	: "Function Value"
+		Border	: Thin Top Bottom
+
+	[Line: ICCF ReqOwner]
+
+		Fields	: ICCF ReqOwner1, ICCF ReqOwner2, ICCF ReqOwner3
+		Local	: Field : Default			: Align		: Centre
+		Local	: Field : Default			: Style		: Normal
+
+		[Field: ICCF ReqOwner1]
+
+			Use			: Name Field
+			Set As		: ##VarTest
+
+		[Field: ICCF ReqOwner2]
+
+			Use			: Name Field
+			Set As		: $$ReqOwner:$$ReqOwner:$$ReqOwner:$$ReqOwner:$$ReqOwner:##VarTest
+			Border		: Thin Left Right
+
+		[Field: ICCF ReqOwner3]
+
+			Use			: Name Field
+			Set As		: $$ICCFReqOwnerFunction
+
+[Function: ICCF ReqOwner Function]
+
+	LocalFormula	: VarReqOwner	: $$ReqOwner:##VarTest
+	Variable		: VarTest		: String			: "Function invoked from Field"
+
+	00	: MSGBOX	: "Variable Value in Function"		: ##VarTest
+	10	: MSGBOX	: "Variable Value in Report"		: @VarReqOwner
+	20	: RETURN	: ##VarTest
+
+;; End-of-File

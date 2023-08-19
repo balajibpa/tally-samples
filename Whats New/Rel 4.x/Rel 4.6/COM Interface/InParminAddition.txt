@@ -1,0 +1,75 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+/*
+Objective(s) -
+-	This code demonstrates the ‘COM Interface’ capability that has been introduced to call a function available in external DLL/EXE.
+-	With this code, generic external DLLs can also be called to perform certain generic operations as programmed in the DLL.
+
+Syntax -
+-	[COM Interface: <COM Interface name>]
+         Project	: <Name of the Project/ Namespace>
+		 Class		: <Name of the Class>
+		 Interface	: <Name of the function to be invoked>
+		 Parameter	: <Parameter Name>		: <Data Type>[	: <Nature of Parameter>]
+		 Returns	: <Data Type>
+		 
+		 where 
+			Project accepts the name of the DLL Project or Namespace
+			Class accepts the name of the Class within the DLL Project specified above
+			Interface accepts the name of the Function within the Class specified under the Class attribute
+			Parameter is a list type attribute where it accepts multiple parameters as required by the corresponding DLL Function
+				and it accepts 3 parameter, viz., Parameter Name, Data Type of the Parameter and the Nature of Parameter which can be 
+				In if the Parameter is only an Input to the DLL Function, Out if the Parameter is only an Output Parameter and
+				InOut if the Parmaeter acts both as an Input as well as Output.
+		 		 
+-   Exec COM Interface: <COM Interface name> [: <Parameter 1> [: <Parameter 2>…… [:<Parameter N>]…]]
+
+		where
+			COM Interface Name is the Name of the COM Interface defined as per the Syntax above.
+			Parameter 1, 2, .... N are the optional Parameters accepted by the DLL Function being called
+				and they must correspond to the Parameters declared, i.e., they must be in the same order declared in the COM Interface
+				definition.  The Parameters can accept an expression provided it is not an Out or InOut Parameter.  If the Parameter is
+				an Out or InOut Parameter, the variable name must only be specified i.e, without prefixing a ##.
+
+Dependencies -
+-	Supporting file 'MathLib.dll' must be registered in the system.
+
+Last Modification -
+-	Created on 25-4-2013
+*/
+
+[Report: TSPL Smp InParminAddition]
+	
+	Form		: TSPL Smp InParminAddition
+	Title		: "Usage of 'In' Parameter"
+	
+[Form: TSPL Smp InParminAddition]
+	
+	Parts		: Form SubTitle, TSPL Smp InParminAddition
+	Local		: Field	: Form SubTitle		: Info		: "Addition of 9 to the Input Number using COM DLL"
+	No Confirm	: Yes
+	Width		: 50% Page
+	
+[Part: TSPL Smp InParminAddition]
+
+	Lines		: TSPL Smp InParminAddition
+	
+	[Line: TSPL Smp InParminAddition]
+		
+		Fields		: Medium Prompt, TSPL Smp InParminAdditionInput
+		Right Fields: Long Prompt, TSPL Smp InParminAdditionResult
+		Local		: Field	: Medium Prompt	: Info		: "Enter a Number :"
+		Local		: Field	: Long Prompt	: Info		: "Result (Addition with 9) :"
+		
+		[Field: TSPL Smp InParminAdditionInput]
+			
+			Use			: Number Field
+			
+		[Field: TSPL Smp InParminAdditionResult]
+			
+			Use			: Number Field
+			Inactive	: $$IsEmpty:#TSPLSmpInParminAdditionInput
+			Set as		: $$COMExecute:TSPLSmpAddition:#TSPLSmpInParminAdditionInput	;; COMExecute Function used as there is only In Parameter in the COM Interface
+			Set Always	: Yes
+			Read Only	: Yes
+			
+;; End-of-File

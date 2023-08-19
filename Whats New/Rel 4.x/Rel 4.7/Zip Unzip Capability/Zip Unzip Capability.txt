@@ -1,0 +1,28 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Menu: TSPL Smp Zip Unzip Actions]
+	
+	Title		: "Zip-Unzip  Actions"
+
+	Indent		: "Global Actions"
+	Item		: Blank
+
+	Key Item 	: "Zip Global Action"			: G : Alter	: TSPL Smp Zip Interface  
+	Key Item 	: "UnZip Global Action"			: L : Alter : TSPL Smp UnZip Interface
+
+	Item		: Blank
+	Indent		: "Procedural Actions"
+	Item		: Blank
+
+	Key Item 	: "Zip Procedural Actions"		: P : CALL	: TSPL Smp Zip Procedural Actions
+	Key Item 	: "UnZip Procedural Actions"	: R : CALL	: TSPL Smp Unzip Procedural Actions
+
+;; Include Files
+
+[Include: ZipGlobalAction.txt]
+[Include: UnzipGlobalAction.txt]
+
+[Include: ZipProceduralActions.txt]
+[Include: UnzipProceduralActions.txt]
+
+;; End-of-File

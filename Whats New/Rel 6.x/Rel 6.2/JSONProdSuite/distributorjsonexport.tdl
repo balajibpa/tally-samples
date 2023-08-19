@@ -1,0 +1,101 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+/*
+Objective(s) – 
+
+- This sample shows the productivity suite based JSON export
+
+Last modification – 
+-	Altered on 24/10/2017
+*/
+
+
+[Button: TSPL Distri Sales]
+ 
+     Title	 : $$LocaleString:"Send Distributor Sales"
+     Key	 : Alt+ D
+	 
+	 Action	 : Call: TSPLFunction ProdJson
+	
+;; Sets the SVExportFormat to JSON, thus the exported JSON file will be in utf - 16 encoding	
+[Function: TSPLFunction ProdJson]
+	
+	000: Set: SVExportFormat : $$SysName:JSON
+	005: Set: SVExportLanguage : $$SysName:JSON 
+	012: Modify Variables: TSPL Distributor Name
+	010: Set: SVPrintFileName : ".\Distributors\"+ ##SVDistributorName +"Export.json" 
+	015: Do If: (NOT $$IsEmpty:##SVDistributorName): Export:TSPL Json ColRepSupinSuite : Yes:Yes
+
+;; Report that takes the Distributor name  	
+[Report: TSPL Distributor Name]
+
+	Use     : Modify Variables
+	Title	: $$LocaleString:"Distributor Name" 
+    Local   : Part : Modify Variables 	: Lines	: TSPL Distributor Name
+    Local   : Field: MV Title         	: Info	: $$LocaleString:"Distributor Name"
+
+[Line: TSPL Distributor Name]
+
+	Fields  : TSPL Distributor Name Title, TSPL Distributor Name Info
+	
+	[Field: TSPL Distributor Name Title]
+	
+			Use    	 	: Medium Prompt
+			Info    	: "Distributor Name"
+	
+	[Field: TSPL Distributor Name Info]
+			
+			Use        : Name Field
+			Modifies   : SVDistributorName
+			Validate   : NOT $$IsEmpty:$$Value
+
+;; Report having the mapping details of Tally data for the tokens in the source document			
+[Report: TSPL Json ColRepSupinSuite]
+	
+
+[Form: TSPL Json ColRepSupinSuite]
+	
+	Resource: TSPL Json ColRepSupinSuite
+	
+    Map : DistributorId : ##SVDistributorName
+	Map : TotalSales 	: @@TSPLDistSales
+	
+	Map	: VchNum		: $VoucherNumber: TSPLSalesDNVchCollection
+	Map : Vchdt			: $Date
+	Map : VchType		: If ($$IsSales:$VoucherTypeName) then "Sales" else "Debit Note"
+	
+	Map	: StkName		: $StockItemName : AllInventoryEntries
+	Map	: Qty			: $BilledQty
+	Map	: unit			: ($(StockItem,$StockItemName).BaseUnits)
+
+[System: Formulae]
+	
+	TSPLDistSales : $$CollAmtTotal:TSPLSalesDNVchCollection:$Amount
+
+;;Resource that has the details of the JSON document template using which the data will be exported
+[Resource: TSPL Json ColRepSupinSuite]
+
+	Source			: sales.json
+	Resource Type	: JSON
+
+;; Lists the Sales and credit note vouchers	
+[Collection: TSPLSalesDNVchCollection]
+	
+	Collection: TSPLsalesVchCollection, TSPLDNVchCollection
+	
+
+[Collection: TSPLsalesVchCollection]
+	
+	Type: Vouchers : VoucherType 
+	Child Of: $$VchTypeSales
+	Fetch: VoucherNumber, Amount, Date,VoucherTypeName, All Inventory Entries.*
+	
+	
+[Collection: TSPLDNVchCollection]
+	
+	Type: Vouchers : VoucherType 
+	Child Of: $$VchTypeCreditNote
+	Fetch: VoucherNumber, Amount, Date,VoucherTypeName, All Inventory Entries.*
+	
+
+;;End Of File
+	

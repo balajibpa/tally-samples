@@ -1,0 +1,149 @@
+{
+	"Branch": "South",
+	"Customer": [
+		{
+			"Name": "Akshya Raman",
+			"State": "Tamil Nadu",
+			"Contact":
+			{
+				"OfficeNo": "044-66282789",
+				"Mobile": "990208391",
+				"Email": "Akshya@gmail.com "
+			},
+			"Address": [
+				"C/o. Raman Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		},
+		{
+			"Name": "Asha",
+			"State": "Karnataka",
+			"Contact":
+			{
+				"OfficeNo": "080-66282559",
+				"Mobile": "990209867",
+				"Email": "asha@gmail.com "
+			},
+			"Address": [
+				"C/o. Asha Tech Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		},
+		{
+			"Name": "Kavita iyer",
+			"State": "Kerala",
+			"Contact":
+			{
+				"OfficeNo": "0471-66282909",
+				"Mobile": "990209819",
+				"Email": "kavi@gmail.com "
+			},
+			"Address": [
+				"C/o. Tech India Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		},
+		{
+			"Name": "Karthigeyan",
+			"State": "Tamil Nadu",
+			"Contact":
+			{
+				"OfficeNo": "0422-66282989",
+				"Mobile": "990209819",
+				"Email": "Karti@gmail.com "
+			},
+			"Address": [
+				"C/o. Aratt Tech Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		},
+		{
+			"Name": "Anusha Ganesh",
+			"State": "Andhra Pradesh",
+			"Contact":
+			{
+				"OfficeNo": "040-66564909",
+				"Mobile": "990209819",
+				"Email": "anu@gmail.com "
+			},
+			"Address": [
+				"C/o. Ganesh Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		},
+		{
+			"Name": "Sindhu Ram",
+			"State": "Tamil Nadu",
+			"Contact":
+			{
+				"OfficeNo": "044-66282909",
+				"Mobile": "990209819",
+				"Email": "sind@gmail.com "
+			},
+			"Address": [
+				"C/o. Ram Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		},
+		{
+			"Name": "Shailesh Bhatt",
+			"State": "Karnataka",
+			"Contact":
+			{
+				"OfficeNo": "0821-66282909",
+				"Mobile": "990209819",
+				"Email": "shailesh@gmail.com "
+			},
+			"Address": [
+				"C/o. Technology Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		},
+		{
+			"Name": "Srinathan",
+			"State": "Tamil Nadu",
+			"Contact":
+			{
+				"OfficeNo": "044-66282909",
+				"Mobile": "990209819",
+				"Email": "sri@gmail.com "
+			},
+			"Address": [
+				"C/o. Nathan Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		},
+		{
+			"Name": "Vijay Raju",
+			"State": "Karnataka",
+			"Contact":
+			{
+				"OfficeNo": "080-66276459",
+				"Mobile": "990209807",
+				"Email": "vijay@gmail.com "
+			},
+			"Address": [
+				"C/o. Raju Solutions",
+				"Technology Street",
+				"Tech Info Park"
+			]
+
+		}
+	]
+}

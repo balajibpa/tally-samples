@@ -1,0 +1,52 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+-	This Sample TDL demonstrates the usage of Variable SVPrintOrientation
+
+Last Modification -
+-	Updated on 05-09-2012
+*/
+
+[Report: TSPL Smp VarSVPrintOrientation Extended]
+	
+	Form		: TSPL Smp VarSVPrintOrientation Frm1, TSPL Smp VarSVPrintOrientation Frm2
+		
+;; Local declaration for Variable SV Print Orientation is MANDATORY
+	Variable	: SV Print Orientation	: String
+	Title		: "Print Orientation Extended"
+	PrintSet	: ReportTitle	: "Print Orientation Extended"
+
+[Form: TSPL Smp VarSVPrintOrientation Frm1]
+	
+	Parts		: TSPL Smp VarSVPrintOrientation Pt
+	
+;; Print Orientation for Frm1 is set to 'Portrait'
+	Set Always	: SV Print Orientation	: "Portrait"
+	
+	[Part: TSPL Smp VarSVPrintOrientation Pt]
+	
+		Line	: TSPL Smp VarSVPrintOrientation Ln
+
+		[Line: TSPL Smp VarSVPrintOrientation Ln]
+			
+			Field	: TSPL Smp VarSVPrintOrientation Fld  ;;Name Field
+
+			[Field: TSPL Smp VarSVPrintOrientation Fld]
+				
+				Use	   		: Name Field
+				Set As 		: "This Field is invoked from Form 'TSPL Smp VarSVPrintOrientation Frm1' and Print Orientation for this Form is set to " + ##SVPrintOrientation
+				Width		: 100% Page
+				Lines		: 0
+				Align		: Center
+
+[Form: TSPL Smp VarSVPrintOrientation Frm2]
+	
+	Use			: TSPL Smp VarSVPrintOrientation Frm1
+	
+;; Print Orientation for Frm1 is set to 'Landscape'
+	Set Always	: SV Print Orientation	: "Landscape"
+	
+	Local		: Field	: TSPL Smp VarSVPrintOrientation Fld	: Set As : "This Field is invoked from the Form 'TSPL Smp VarSVPrintOrientation Frm2' and Print orientation is " + ##SVPrintOrientation
+		
+;; End-of-File

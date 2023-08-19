@@ -1,0 +1,120 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+;; XML Request for Method 2
+
+;<ENVELOPE>
+;	<HEADER>
+;		<VERSION>1</VERSION>
+;   	<TALLYREQUEST>Export</TALLYREQUEST>
+;   	<TYPE>Data</TYPE>
+;   	<ID>Sec XML Request2</ID>
+; 	</HEADER>
+;	<BODY>
+;		<DESC>
+;			<STATICVARIABLES>
+;       		<SVEXPORTFORMAT>$$SysName:XML</SVEXPORTFORMAT>
+;       		<EncString>Keshav</EncString>
+;   		</STATICVARIABLES>
+;		</DESC>
+;	</BODY>
+;</ENVELOPE>
+
+[Report: Sec XML Request2]
+
+	Form	: Sec XML Request
+	Variable: EncString	: String
+
+[Form: Sec XML Request]
+
+	Parts	: Sec XML Request
+
+[Part: Sec XML Request]
+
+	Lines	: Sec XML Req SerialNo, Sec XML Req EncString
+	Scroll	: Vertical
+	XMLTAG	: "TALLYLICENSEINFO"
+
+	[Line: Sec XML Req SerialNo]	;; Serial Number of Tally
+
+		Fields	: Name Field
+		Local	: Field	: Name Field	: Set As	: $$StrEnc:@@LicSlNo
+		Local	: Field	: Name Field	: XMLTAG	: "SerialNumber"
+
+	[Line: Sec XML Req EncString]	;; To Encrypt the received String
+
+		Fields	: Name Field
+		Local	: Field	: Name Field	: Set As	: $$StrEnc:##EncString
+		Local	: Field	: Name Field	: XMLTAG	: "EncryptedString"
+
+[System: Formula]
+
+	LicSlNo	: $$LicenseInfo:SerialNumber
+
+[Function: StrEnc]
+
+	Parameter	: pEncString	: String
+	Variable	: UniqueID		: String
+	Variable	: RemoveHyphen	: Logical
+
+	LocalFormula: Part Str 		: $$StringPart:##pEncString:##IteratorVar:2
+	LocalFormula: Part Str Bal	: $$StringPart:##pEncString:##IteratorVar:($$StringLength:##pEncString - ##IteratorVar)
+
+	00	: LOG		: ##pEncString
+	10	: SET		: pEncString	: $$StrReverse:##pEncString
+	15	: LOG		: ##pEncString
+	20	: SET		: UniqueID		: $$MakeUniqueID
+	25	: LOG		: ##UniqueID
+	30	: SET		: RemoveHyphen	: No
+	40	: FOR RANGE : IteratorVar	: Number	: 0 : ($$StringLength:##pEncString)	: 2
+	50	:	IF		: $$LoopIndex < 5
+	60	: 		SET	: UniqueID		: $$SplitID:##UniqueID:@PartStr:$$LoopIndex
+	70	:	ELSE	: 
+	80	:		SET	: UniqueID		: $$SplitID:##UniqueID:@PartStrBal:$$LoopIndex
+	90	:		BREAK
+	100	:	END IF
+	110	: END FOR
+	115	: LOG		: ##UniqueID
+	120	: SET		: RemoveHyphen	: Yes
+	130	: SET		: UniqueID		: $$SplitID:##UniqueID:"":0
+	135	: LOG		: ##UniqueID
+	140	: RETURN	: ##UniqueID
+
+[Function: StrReverse]
+
+	Parameter	: pStringtoReverse	: String
+	Variable	: ReverseString		: String
+
+	00	: FOR RANGE	: IteratorVar	: Number	: ($$StringLength:##pStringtoReverse - 1)	: 0	: 1
+	10	: 	SET		: ReverseString	: ##ReverseString + $$StringPart:##pStringToReverse:##IteratorVar:1
+	20	: END FOR
+	30	: RETURN	: ##ReverseString
+
+[Function: SplitID]
+
+	Parameter	: pStringtoSplit	: String
+	Parameter	: pStrConcatenate	: String
+	Parameter	: pCounter			: Number
+
+	Variable	: ConcatenatedStr	: String
+	Variable	: Counter			: Number
+
+	00	: SET		: Counter		: 0
+	10	: FOR TOKEN : TokenVar : ##pStringtoSplit : "-"
+	20	:	IF		: $$IsEmpty:##ConcatenatedStr
+	30	:		SET 	: ConcatenatedStr		: ##TokenVar
+	40	:	ELSE	: 
+	50	:		IF		: ##RemoveHyphen
+	60	:			SET 	: ConcatenatedStr		: ##ConcatenatedStr + ##TokenVar
+	70	:		ELSE	: 
+	80	:			SET 	: ConcatenatedStr		: ##ConcatenatedStr + "-" + ##TokenVar
+	90	:		END IF
+	100	:	END IF
+
+	110	:	INCREMENT	: Counter
+	120	:	IF	: ##Counter = ##pCounter
+	130	: 		SET		: ConcatenatedStr	: ##ConcatenatedStr + ##pStrConcatenate
+	140	:	END IF
+	150	: END FOR
+	160	: RETURN	: ##ConcatenatedStr
+
+;; End-of-File

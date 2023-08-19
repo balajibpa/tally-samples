@@ -1,0 +1,28 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Menu for Release 3
+*/
+
+
+[Menu: Release 3.x]
+
+	Indent		: "Release 3.x"
+	Item		: Blank
+	
+	Key Item	: "Rel 3.62"	: 2 : Menu	: Whats New in Rel 3.62	: NOT $$IsEmpty:$$SelectedCmps
+	Key Item	: "Rel 3.61"	: 1 : Menu	: Whats New in Rel 3.61	: NOT $$IsEmpty:$$SelectedCmps
+	Key Item	: "Rel 3.6"		: 6 : Menu	: Whats New in Rel 3.6	: NOT $$IsEmpty:$$SelectedCmps
+	Key Item	: "Rel 3.0"		: 3 : Menu	: Whats New in Rel 3.0	: NOT $$IsEmpty:$$SelectedCmps
+	
+	Item		: Blank
+
+;; Include Files
+
+[Include: Rel 3.62\Rel 3.62.txt]
+[Include: Rel 3.61\Rel 3.61.txt]
+[Include: Rel 3.6\Rel 3.6.txt]
+[Include: Rel 3.0\Rel 3.0.txt]
+
+
+;; End-of-File

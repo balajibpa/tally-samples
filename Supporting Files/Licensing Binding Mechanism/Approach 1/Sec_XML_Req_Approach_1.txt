@@ -1,0 +1,41 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+;; XML Request for Method 1
+
+;; Request for Tally SerialNumber
+
+;<ENVELOPE>
+;	<HEADER>
+;		<VERSION>1</VERSION>
+;		<TALLYREQUEST>EXPORT</TALLYREQUEST>
+;		<TYPE>FUNCTION</TYPE>
+;		<ID>$$LicenseInfo</ID>
+;	</HEADER>
+;	<BODY>
+;		<DESC>
+;			<FUNCPARAMLIST>
+;				<PARAM>SerialNumber</PARAM>
+;			</FUNCPARAMLIST>
+;		</DESC>
+;	</BODY>
+;</ENVELOPE>
+
+;; Request to check the Account ID
+
+;<ENVELOPE>
+;	<HEADER>
+;		<VERSION>1</VERSION>
+;		<TALLYREQUEST>EXPORT</TALLYREQUEST>
+;		<TYPE>FUNCTION</TYPE>
+;		<ID>$$LicenseInfo</ID>
+;	</HEADER>
+;	<BODY>
+;		<DESC>
+;			<FUNCPARAMLIST>
+;				<PARAM>AccountID</PARAM>
+;			</FUNCPARAMLIST>
+;		</DESC>
+;	</BODY>
+;</ENVELOPE>
+
+;; End-of-File

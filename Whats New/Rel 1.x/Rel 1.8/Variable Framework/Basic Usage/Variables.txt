@@ -1,0 +1,80 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+;; Demo TDLs for Simple List and Compound List
+
+[Menu: Simple List]
+
+	Indent	: "Storage and Retrieval"
+	Item	: Blank
+	Key Item: Key Based	List		: K : Alter		: LV List Values with Key
+	Key Item: Index Based List		: I : Alter		: LV List Values with Index
+	Key Item: Fill From Collection	: F : Call		: LV List Values From Collection
+	Key Item: Repeat WO Collection	: R : Display	: LV Repeat without Collection
+	Item	: Blank
+
+	Indent	: "Sorting"
+	Item	: Blank
+	Key Item: Key Based List Sort 	: S : Call		: LV List Sorting by Key
+	Key Item: Value Based List Sort : V : Call		: LV List Sorting by Value
+	Item	: Blank
+
+	Indent	: "Data Source"
+	Item	: Blank
+	Key Item: Building Coll from Var: C : Call		: LV Repeat Variable with Collection
+	Key Item: Variable in Table 	: T : Alter		: LV Variable in Table
+	Item	: Blank
+
+	Indent	: "General"
+	Item	: Blank
+	Key Item: Set/PrintSet			: P : Display	: LV Report Set with Dotted Notation
+	Key Item: Modifies				: M : Alter		: LV Modifies with Dotted Notation
+
+	Buttons	: Delete Simple List
+
+[Menu: Compound List]
+
+	Indent	: "Storage and Retrieval"
+	Item	: Blank
+	Key Item: Key/Index Based List	: K : Alter		: CV List Values
+	Key Item: Repeat WO Collection	: R : Display	: CV Repeat without Collection
+	Item	: Blank
+
+	Indent	: "Sorting"
+	Item	: Blank
+	Key Item: Key Based List Sort 	: S : Call		: CV List Sorting by Key
+	Key Item: Value Based List Sort : V : Call		: CV List Sorting by Value
+	Item	: Blank
+
+	Indent	: "Data Source"
+	Item	: Blank
+	Key Item: Building Coll from Var: C : Call		: CV Repeat Variable with Collection
+	Key Item: Variable in Table 	: T : Alter		: CV Variable in Table
+	Key Item: Variable Aggregation	: A : Alter		: CV Variable Aggregation
+	Item	: Blank
+
+	Indent	: "General"
+	Item	: Blank
+	Key Item: Set/PrintSet			: P : Display	: CV Report Set with Dotted Notation
+	Key Item: Modifies				: M : Alter		: CV Modifies with Dotted Notation
+	Key Item: Static Variable		: I : Call		: CV Static Variable
+
+	Buttons	: Delete Compound List
+
+[Button: Delete Simple List]
+
+	Key		: Alt + D
+	Action	: CALL	: LV Delete List Variables
+	Title	: "Delete List"
+
+[Button: Delete Compound List]
+
+	Key		: Alt + D
+	Action	: CALL	: CV Delete List Variables
+	Title	: "Delete List"
+
+;; Include Files
+
+[Include: Simple List.txt]
+[Include: Compound List.txt]
+
+;; End-of-File

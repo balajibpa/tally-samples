@@ -1,0 +1,143 @@
+/*	
+	Purpose   : 	To use Object Map in TallyPrime.
+	
+		Objective : 	Create a voucher by using Object Map.
+
+	Follow the steps given below : 
+
+		1. Call a function using button.
+		2. Execute the object map by using new object concept and action 'Execute object Map' and then create the target object.
+		3. Under Object Map set the date, ledger name, voucher type, party name, party ledger name etc.
+		4. Execute one more object Map for ledger entries, similarly create the new Object Map for all the required entries, call
+	       them together and set their respective method values.
+
+*/	
+
+[Report: TSPL Object Map Create Voucher]
+	
+	Title			: $$LocaleString:"Object Map Voucher Creation"
+	Form			: TSPL Object Map Create Voucher
+	
+[Form: TSPL Object Map Create Voucher]
+	
+	
+	Use				: TSPL SMP Illustration
+	
+	Add  			: Button		: Object Map Create Voucher                 ; Added button 
+	
+	Height			: 100% Screen
+	Width			: 100% Screen
+	
+	Local	: Part	: TSPL SMP Syntax		: Invisible	: Yes
+	Local	: Field	: FormSubTitle			: Info		: $$LocaleString:"Illustration for Object Map"
+		
+	Local	: Field	: TSPL Smp Purpose		: Indent	: 2
+	Local	: Field	: TSPL Smp Purpose		: Info		: $$NewLine + $$LocaleString:"Create a voucher using Object Map "
+	
+	Local	: Field	: TSPL SMP Example		: Info		: $$NewLine	+ "[Function: TSPL Object Map Create Voucher]" + $$NewLine + $$NewLine + +
+																			'01: New Object: Voucher' + $$NewLine + +
+																			'02: Execute object Map : TSPL Object Map Create Voucher'  + $$NewLine + +
+																			'03: Create Target ' + $$NewLine + $$NewLine + +
+																	  "[ObjectMap: TSPL Object Map Create Voucher]" + $$NewLine + $$NewLine + +
+																			'Set as		: Date				: ($$Date:"01-05-2022")	      : Yes' + $$NewLine + + 
+	                                                                        'Set as		: Effective Date	: ($$Date:"01-05-2022")	 	  : Yes' + $$NewLine + +
+	                                                                        'Set as		: VoucherTypeName   : $$VchTypeSales 		      : Yes' + $$NewLine + +
+	                                                                        'Set as 	: PartyName			: "Cash"				      : Yes' + $$NewLine + +
+	                                                                        'Set as		: PartyLedgerName   : "Cash"  				      : Yes' + $$NewLine + +	
+	                                                                        'Set as 	: IsInvoice 		: Yes'								 + $$NewLine + +
+	                                                                        'Set as		: Persistedview		: "Accounting Voucher View"'  		 + $$NewLine + $$Newline + +
+																			'Object Map	: TSPL Object Map PartyLedgerEntry      			  : Yes' + $$NewLine + +
+																			'Object Map	: TSPL Object Map SalesLedgerEntry                   : Yes' + $$NewLine + $$Newline + +
+																		" (As shown above, Set the method under Object Map definition for the 'Inventoryentries, Batchallocations and Accountallocations)" + $$NewLine + +
+																		" (For more details, Refer the sample code)"
+																	 
+																	
+																	 
+																		
+
+	Local	: Field	: TSPL SMP ExampleNote	: Info		: "Voucher creation using Object Map. To experience the same, click on the Button 'Create Voucher'"
+
+
+
+[Button: Object Map Create Voucher]
+	
+	Title  : $$LocaleString:"Create Voucher"
+	Key	   : F5
+	Action : Call: TSPL Object Map Create Voucher
+	
+
+[Function: TSPL Object Map Create Voucher]
+	
+	01: New Object			: Voucher
+	02: Execute Object Map  : TSPL Object Map Create Voucher
+	03: Create Target 
+	04: Msg Box				: "Voucher Created Sucessfully" : "Please go to Daybook and view created voucher on 01 May 2022"
+	05: Display				: Daybook
+		
+[ObjectMap: TSPL Object Map Create Voucher]
+	
+	Set as		: Date				: ($$Date:"01-05-2022")	            : Yes
+	Set as		: EffectiveDate		: ($$Date:"01-05-2022")	            : Yes
+	Set as		: VoucherTypeName   : $$VchTypeSales 		            : Yes
+	Set as 		: PartyName			: "Cash"				            : Yes
+	Set as		: PartyLedgerName   : "Cash"  				            : Yes	
+	Set as 		: IsInvoice 		: Yes
+	Set as		: PersistedView		: "Invoice Voucher View"			: Yes
+	Set as		: Narration 		: "Voucher Created via Object Map"	: Yes
+		
+	Object Map	: TSPL Object Map PartyLedgerEntry					    : Yes
+	Object Map	: TSPL Object Map SalesLedgerEntry						: Yes
+			
+[ObjectMap: TSPL Object Map PartyLedgerEntry]
+	
+	Insert Collection Object  		: AllLedgerEntries
+	
+	Set as		: LedgerName		: "Cash"				            : Yes
+	Set as		: IsDeemedPositive 	: Yes					            : Yes
+	Set as		: Amount			: -($$AsAmount:300)		            : Yes
+	Set as		: IsPartyLedger		: Yes					            : Yes
+	
+[ObjectMap: TSPL Object Map SalesLedgerEntry]
+	
+	Insert Collection Object  		: AllLedgerEntries
+	
+	Set as		: LedgerName		: "Sales"				            : Yes
+	Set as		: IsDeemedPositive 	: No					            : Yes
+	Set as		: Amount			: ($$AsAmount:300)		            : Yes
+	            
+	Object Map	: TSPL Object Map InventoryEntries				        : Yes
+	
+[ObjectMap: TSPL Object Map InventoryEntries]
+	
+	Insert Collection Object  		: InventoryAllocations
+	
+	Set as 		: StockitemName		: "Pen"   							: Yes
+	Set as		: IsDeemedPositive 	: No								: Yes
+	Set as 		: ActualQty    		: -($$TgtObject:$$AsQty:"3") 		: Yes
+	Set as 		: BilledQty  		: -($$TgtObject:$$AsQty:"3") 		: Yes
+	Set as 		: Rate				: ($$TgtObject:$$AsRate:"100")		: Yes
+	Set as 		: Amount	    	: ($$AsAmount:"300") 				: Yes
+		
+	Object Map	: TSPL Object Map Batch
+	
+[ObjectMap:  TSPL Object Map Batch]
+	
+	Insert Collection Object 		: Batch Allocations	
+	
+	Set as	 	: GodownName		: "Main Location"					: Yes	
+	Set as 	    : BatchName	   		: "Primary Batch"					: Yes
+	Set as      : ActualQty    		: ($$TgtObject:$$AsQty:"3") 		: Yes
+	Set as      : BilledQty    		: ($$TgtObject:$$AsQty:"3") 		: Yes
+	Set as      : Amount        	: ($$AsAmount:"300")				: Yes
+	
+	Object Map	: TSPL Object Map Acc All
+	
+[ObjectMap: TSPL Object Map Acc All]
+	
+	Insert Collection Object 		: Accounting Allocations
+		
+	Set as	: LedgerName  			: "Sales"	 						: Yes
+	Set as	: Amount 				: ($$AsAmount:"300") 				: Yes
+	Set as	: IsDeemedPositive  	: No								: Yes
+	
+; End of File

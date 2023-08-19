@@ -1,0 +1,71 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This Code demonstrates the usage of new Object Context Functions 
+	AccessObj with AccessName
+
+Last modification – 
+-	Altered on 09/11/2009
+*/
+
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Report: AccessObj]
+
+	Form		: AccessObj
+	Full Screen	: No
+	Fetch Object: Ledger		: "Cash"			: Name
+	Fetch Object: Group			: "Unsecured Loans"	: Name
+
+[Form: AccessObj]
+
+	Parts		: Form SubTitle, AccessObj1, AccessObj2, AccessObj3
+	Local: Field: Form SubTitle	: Info		: "Understanding Function AccessObj"
+	Width		: 50% Page
+
+[Part: AccessObj1]
+
+	Lines		: AccessObj
+	AccessName	: "Cash"
+	ObjectEx	: (Ledger, "Cash").
+
+	[Line: AccessObj]
+
+		Fields		: Medium Prompt, AccessObj
+		Local: Field: Medium Prompt		: Set As	: "Part - AccessObj 1"
+
+		[Field: AccessObj]
+
+			Use		: Name Field
+			Set As	: "AO1 - " + $Name
+
+[Part: AccessObj2]
+
+	Lines		: AccessObj
+	AccessName	: "Unsecured Loans"
+	ObjectEx	: (Group, "Unsecured Loans").
+	Local: Line	: AccessObj	: Local	: Field: Medium Prompt	: Set As	: "Part - AccessObj 2"
+	Local: Line	: AccessObj	: Local	: Field: AccessObj		: Set As	: "AO2 - " + $Name
+
+[Part: AccessObj3]
+
+	Lines		: AccessObj3
+	Space Top	: 1
+
+	[Line: AccessObj3]
+
+		Fields		: Medium Prompt, AO Part AccessObj1, AO Part AccessObj2
+		Local: Field: Medium Prompt		: Set As	: "Part AccessObj 1 & 2 :"
+
+		[Field: AO Part AccessObj1]
+
+			Use		: Name Field
+			Set As	: $$AccessObj:Part:"Cash":#AccessObj
+
+		[Field: AO Part AccessObj2]
+
+			Use		: Name Field
+			Set As	: $$AccessObj:Part:"Unsecured Loans":#AccessObj
+
+;; End-of-File

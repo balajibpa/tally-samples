@@ -1,0 +1,127 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s):-
+	- To print index page subsequent to Multi Account Ledger Printing
+	- To understand the event 'On After Print'
+
+Capabilities Used:-
+	- Event 'On After Print'
+	- List Variable
+	- Function 'PageNo'
+
+Syntax -
+	- On : <Event>		: <Logical Condition> : <Action>	: <Action Parameters>
+	- On : After Print	: <Logical Condition> : <Action>	: <Action Parameters>
+
+Updaion History:-
+	- Created on 20-4-2010
+*/
+
+[Function: All Ledgers with Index]	;; Function to print all Ledgers with Index Page
+
+	List Variable	: Index Page		: Number
+
+	Variable		: IsMultiPage		: Logical
+	Variable		: InNewPages    	: Logical
+	Variable		: DSPGodownName		: String
+	Variable		: StockItemName		: String
+	Variable		: IsAfterPrintDemo	: Logical	: Yes
+
+	00	: SET		: IsMultiPage		: Yes
+	01	: SET		: InNewPages    	: Yes
+
+	10	: PRINT 	: All Ledgers
+	20	: CALL		: Print Index Page
+	30	: LISTDELETE: Index Page
+
+[#Part: LEDVCH Print Common]
+
+	Option	: LEDVCH Print Common On After Print	: ##IsAfterPrintDemo
+
+	[!Part: LEDVCH Print Common OnAfterPrint]
+
+		Delete	: Option	: WithPeriod
+		Add		: Option  	: WithPeriod	: Yes
+
+[#Report: All Ledgers]	;; Altering the Report to initiate the function
+
+	Local	: Part	: LV Body		: Option: InNewPages	: $$SetIndexLV:#LedgerName
+	Local	: Line	: LV AccTitle	: On	: After Print	: Yes	: CALL	: SetIndexLV:#LedgerName
+	
+	[!Part: InNewPages]
+
+[Function: Set Index LV]	;; Setting Index Page to List Variable
+
+	Parameter	: PLedName	: String
+
+	10	: LIST ADD: Index Page	: ##PLedName	: $$PageNo
+
+[Function: Print Index Page]	;; Function to print Index Page if desired
+
+	00	: SET	: SVPrintRange	: "All"
+	05	: IF	: $$ListCount:IndexPage > 0
+	10	: 	PRINT	: Index Page	: Yes
+	20	: ENDIF
+
+;; Report to print Index Page
+
+[Report: Index Page]
+
+	Form		: Index Page
+
+[Form: Index Page]
+
+	Parts		: Index Opening, Index Page
+	Page Break	: DSP ClPageBreak, Index Opening
+
+[Part: Index Opening]
+
+    Parts   : DSP ReportTime, DSP CompanyName, DSP CompanyAddress, Form SubTitle, DSP PageNo, Index ColTitles
+	Vertical: Yes
+
+	Local	: Part	: DSP CompanyName	: Invisible : $$PageNo > 1
+	Local	: Part	: DSP CompanyAddress: Invisible : $$PageNo > 1
+
+	Local	: Field	: Form SubTitle		: Info		: "Table of Contents"
+	Local	: Field	: Form SubTitle		: WideSpaced: Yes
+
+	[Part: Index ColTitles]
+
+		Lines	: Index Title
+
+		[Line: Index Title]
+
+			Fields		: Index Page Led Name
+			Right Fields: Index Page No
+
+			Local: Field: Default				: Type		: String
+			Local: Field: Default				: Style		: Normal Bold
+
+			Local: Field: Index Page Led Name	: Set As	: "Particulars"
+			Local: Field: Index Page No			: Set As	: "Page No."
+			Border		: Thin Top Bottom
+
+[Part: Index Page]
+
+	Lines	: Index Page
+	Repeat	: Index Page
+	Set		: $$ListCount:IndexPage
+	Scroll	: Vertical
+
+	[Line: Index Page]
+
+		Fields		: Index Page Led Name
+		Right Fields: Index Page No
+
+		[Field: Index Page Led Name]
+
+			Use		: Name Field
+			Set As	: $$ListKey:IndexPage:$$Line
+
+		[Field: Index Page No]
+
+			Use		: Number Field
+			Set As	: ##IndexPage[$$Line]
+
+;; End-of-File

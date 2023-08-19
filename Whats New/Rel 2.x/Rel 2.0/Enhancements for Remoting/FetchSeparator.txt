@@ -1,0 +1,129 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This code demonstrates the usage of function $$FetchSeparator
+
+Last modification – 
+-	Altered on 28/07/2010
+*/
+
+;; Parent Report as Data Source
+
+[Report: TSPL Smp ReportFetchSeparator]
+
+	Form	: TSPL Smp Stock Item List
+	Title	: "Fetch Separator"
+	MultiObjects: TSPL Smp ReportSelectedItem
+
+[Form : TSPL Smp Stock Item List]
+	
+	Parts		: TSPL Smp Stock Item List
+	Width		: 100 % Screen
+	Background  : @@SV_REPACCOUNTS
+	Button		: TSPL Smp SelectedStock
+
+[Part: TSPL Smp Stock Item List]
+	
+	Lines	: TSPL Smp StockItemListT, TSPL Smp StockItemListD
+	Repeat	: TSPL Smp StockItemListD	: Stock Item
+	Scroll	: Vertical
+	
+	[Line: TSPL Smp StockItemListT]
+
+		Use		: TSPL Smp StockItemListD
+
+		Local	: Field	: TSPL Smp StockItemList: Set as: $$LocaleString:"Stock Item Name"
+		Border	: Thin Bottom
+		
+	[Line: TSPL Smp StockItemListD]
+		
+		Fields	: TSPL Smp StockItemList
+		
+		[Field: TSPL Smp StockItemList]
+
+			Use		: Name Field
+			Set as	: $Name
+
+;; Button Report
+
+[Button: TSPL Smp SelectedStock]
+
+	Title	: $$LocaleString:"Item Details"
+	Key		: ALT + S
+	Action	: Display	: TSPL Smp SelectedItem
+
+;; Button Report
+
+[Report: TSPL Smp SelectedItem]
+	
+	Title	: $$LocaleString:"Selected Item Details"
+	Form 	: TSPL Smp SelectedItem
+	
+	Fetch Object	: Stock Item	: @@TSPLSmpAllSelectedItemList	: Name, Parent, LastSalePrice ;; Required for Remoting
+
+[Form: TSPL Smp SelectedItem]
+	
+	Parts 			: TSPL Smp SelectedItem
+	Width			: 100% Screen
+	Background		: @@SV_RELEASEDORANGE
+	
+	Space Bottom	: 0% Screen
+	Space Top		: 0% Screen
+	Space Left		: 0% Screen
+	Space Right		: 0% Screen
+
+[Part: TSPL Smp SelectedItem]
+	
+	Lines		: TSPL Smp ItemTitle, TSPL Smp ItemDetails
+	Repeat		: TSPL Smp ItemDetails	: TSPL Smp ReportSelectedItem
+	Scroll		: Vertical
+
+	Common Border	: Yes
+	
+	[Line: TSPL Smp ItemTitle]
+		
+		Use		: TSPL Smp ItemDetails
+		
+		Local	: Field	: Default					: Align		: Centre
+		Local	: Field	: Default					: Type		: String
+		Local	: Field	: Default					: Style		: Normal bold
+		Local	: Field	: Default					: Lines		: 0
+		
+		Local	: Field	: TSPL Smp StkIName			: Set as 	: $$LocaleString:"Stock Item Name"
+		Local	: Field	: TSPL Smp StkParent		: Set as	: $$LocaleString:"Stock Group"
+		Local	: Field	: TSPL Smp StkLastSalePrice	: Set as	: $$LocaleString:"Last Sale Price"
+		
+		Border	: Thin Top Bottom
+	
+	[Line: TSPL Smp ItemDetails]
+		
+		Fields	: TSPL Smp StkIName, TSPL Smp StkParent, TSPL Smp StkLastSalePrice
+		
+		[Field: TSPL Smp StkIName]
+
+			Use		: Name Field
+			Set as	: $Name:StockItem:$Name
+			
+		[Field: TSPL Smp StkParent]
+			
+			Use		: Name Field
+			Set as	: if $$IsSysName:$Parent:StockItem:$Name then "" else $Parent:StockItem:$Name
+			Border	: Thin Left Right
+		
+		[Field: TSPL Smp StkLastSalePrice]
+
+			Width	: 20
+			Set as	: $LastSalePrice:StockItem:$Name
+
+[Collection: TSPL Smp ReportSelectedItem]
+	
+	Data Source	: Parent Report	: Selected Lines
+	Fetch		: Name, Parent, LastSalePrice
+	Client Only	: Yes
+	
+[System : Formulae]
+	
+	TSPL Smp AllSelectedItemList 	: $$FullListEx:$$FetchSeparator:TSPLSmpReportSelectedItem:$Name
+
+;; End of file

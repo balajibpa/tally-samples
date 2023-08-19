@@ -1,0 +1,163 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This code demonstrates the various formats & Input keywords of Time Data Type.
+
+- Input Keywords allowed
+	Now				>> This will set current Time
+	Midnight		>> This will set time as 0:00
+	Noon			>> This will set time as 12:00 pm
+	
+- Input Formats allowed i.e. for Attribute Format at Field
+	
+	12 hour			>> This would return time as 09:09 PM
+	24 hour			>> This would return time as 21:09
+	With Secs		>> This would return time with seconds based on hour clock i.e. 21:09:09
+	With MilliSecs	>> This would return time with Milliseconds based on hour clock i.e. 21:09:09:054
+	PrefixAMPM		>> By default in 12 hour clock AM or PM is sufixed. This would prefix AM or PM to the time value.
+
+- Default Format is '12 hour'
+
+Last updation -
+-	Altered on 18-09-2013
+*/
+
+;; Report to set a time format to display Time;;;;;
+
+[Report: TSPL Smp CDT Set Time Format]
+	
+	Title		: "Set Time Format"
+	Form		: TSPL Smp CDT Set Format
+			
+[Form: TSPL Smp CDT Set Format]
+	
+	Parts		: FormSubtitle, TSPL Smp CDT Set Format
+	No Confirm	: Yes
+	Local: Field: Form Subtitle			: Info		: "Select the Format to display Time"
+	On			: Form Accept			: Yes		: Alter		:  TSPL Smp CDT Time Val Set
+	Width		: 50% Page
+	
+[Part: TSPL Smp CDT Set Format]
+
+	Lines	: TSPL Smp CDT Set Format
+	
+	[Line: TSPL Smp CDT Set Format]
+		
+		Field			: Medium Prompt
+		Right Fields	: TSPL Smp CDT SetFormatField
+		Local	: Field	: Medium Prompt	: Info		: "Time Format :"
+		
+		[Field: TSPL Smp CDT SetFormatField]
+			
+			Use			: Name Field
+			Table		: TSPL Smp CDT TimeFormatTable
+			Show Table	: Always
+			Width		: 40% Page
+			Variable	: TSPL Smp CDT Format Var
+			Modifies	: TSPL Smp CDT Format Var	: Yes
+	
+;; Report to select Input Keywords ( or Define an Input Time Value);;;;;		
+
+[Report:  TSPL Smp CDT Time Val Set]
+	
+	Form 	: TSPL Smp CDT Val Set
+	Title   : "Time"
+
+[Form :  TSPL Smp CDT Val Set]
+	
+	Part	: FormSubtitle, TSPL Smp CDT MainPart 
+	Local	: Field	: FormSubtitle	: Info			: "Time Keywords & Formats"
+	Height	: 12% Page
+	Width	: 70% Page
+
+[Part: TSPL Smp CDT MainPart]
+	
+	Parts	: TSPL Smp CDT Set Input, TSPL Smp CDT Output
+	Border	: Thin Top Bottom
+	
+;;; Part to take input;;;
+
+[Part: TSPL Smp CDT Set Input]
+		
+	Lines	: TSPL Smp CDT InputKeywordLine, TSPL Smp CDTInputSet
+	Local	: Field	: Default		: Show Table	: Always
+
+	[Line: TSPL Smp CDT InputKeywordLine]
+		
+		Field	: Medium Prompt, TSPL Smp CDT SetInputKeywordField
+		Local	: Field	: Medium Prompt	: Info		: "Input Keyword :"
+
+		[Field: TSPL Smp CDT SetInputKeywordField]
+			
+			Use			: NameField
+			Table		: TSPL Smp CDT TimeInputKeywordTable
+			
+	[Line: TSPL Smp CDT InputSet]
+			
+		Field	: Medium Prompt, TSPL Smp CDT InputField
+		Local 	: Field	: Medium Prompt	: Info		: "Input Time Value :"
+		Local	: Field	: Medium Prompt	: Inactive 	: NOT (#TSPLSmpCDTSetInputKeywordField = "None")
+
+		[Field: TSPL Smp CDT InputField]
+			
+			Use			: Name Field
+;; Field of Type Time to store the inputs given by the user;;
+			Type		: Time
+;; Condition to make the field inactive if a keyword is selected by the user;;
+			Inactive	: NOT (#TSPLSmpCDTSetInputKeywordField = "None")
+			Width		: 30% Page
+
+;;;; Part to display the output;;;;
+
+[Part: TSPL Smp CDT Output]
+		
+	Line	: TSPL Smp CDT OutputField, TSPL Smp CDT Output Info
+	Border	: Thick Left
+	
+	[Line: TSPL Smp CDT OutputField]
+	
+		Fields	: Medium Prompt, TSPL Smp CDT Output Field
+		Local	: Field	: Medium Prompt : Set as	: "Time :"
+		Local	: Field	: Medium Prompt : Skip		: Yes	
+		
+		[Field: TSPL Smp CDT Output Field]
+			
+			Type		: Time
+;; Condition to set the value in the time field according to a input entered / keyword selected by the user;;
+			Set as		: If (#TSPLSmpCDTSetInputKeywordField != "None") then #TSPLSmpCDTSetInputKeywordField else #TSPLSmpCDTInputField
+			Style		: Normal Bold
+			Format		: ##TSPLSmpCDTFormatVar
+			Set Always	: Yes
+			Width		: 30% Page
+
+	[Line: TSPL Smp CDT Output Info]
+		
+		Field	: Medium Prompt, TSPL Smp CDT OutputFormat Info
+		Local	: Field	: Medium Prompt : Align 	: Center
+		Local	: Field	: Medium Prompt	: Info		: "The Format selected is : "
+		
+		[Field: TSPL Smp CDT OutputFormat Info]
+				
+			Use			: Name Field
+			Set as		: ##TSPLSmpCDTFormatVar
+			Skip		: Yes
+			Set Always	: Yes
+			Width		: 30% Page
+			
+;; Collection of all the formats available for a Time Data Type;;
+[Collection: TSPL Smp CDT TimeFormatTable]
+	
+	Title		: "Time Formats"
+	List Name	: "12 hour","24 hour","12 hour, With MilliSecs","24 hour, With MilliSecs", "12 hour,Prefix AMPM ", "12 hour, With MilliSecs, Prefix AMPM","24 hour, With MilliSecs, Prefix AMPM", "No Zero", "12 hour, With MilliSecs, Prefix AMPM, Separator: '/'", "24 hour, With MilliSecs, Prefix AMPM, Separator:'/'"
+
+[Collection: TSPL Smp CDT TimeInputKeywordTable]
+	
+	Title		: "Time Input Keywords"
+	List Name	: Now, Midnight, Noon,"None"
+	
+[System: Variable]
+	
+	Variable 	: TSPL Smp CDT Format Var 	: String
+
+;; End-of-File

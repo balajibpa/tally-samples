@@ -1,0 +1,17 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Menu: TSPL Smp Fetch Object]
+	
+	Title		: $$LocaleString:"Fetch Object"
+	
+	Key Item	: Form Level FO		: O	: Display	: TSPL Smp Form Level FO
+	Key Item	: Field Level FO	: I	: Alter		: TSPL Smp Field Level FO
+	Key Item	: Function Level FO	: U	: Display	: TSPL Smp Function Level FO
+
+;; Include Files
+	
+[Include : Form Level.txt]
+[Include : Field Level.txt]
+[Include : Function Level.txt]
+
+;; End-of-File

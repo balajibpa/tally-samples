@@ -1,0 +1,125 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+/*
+Objective(s) -
+-	This code demonstrates the ‘COM Interface’ capability that has been introduced to call a function available in external DLL/EXE.
+-	With this code, generic external DLLs can also be called to perform certain generic operations as programmed in the DLL.
+
+Syntax -
+-	[COM Interface: <COM Interface name>]
+         Project	: <Name of the Project/ Namespace>
+		 Class		: <Name of the Class>
+		 Interface	: <Name of the function to be invoked>
+		 Parameter	: <Parameter Name>		: <Data Type>[	: <Nature of Parameter>]
+		 Returns	: <Data Type>
+		 
+		 where 
+			Project accepts the name of the DLL Project or Namespace
+			Class accepts the name of the Class within the DLL Project specified above
+			Interface accepts the name of the Function within the Class specified under the Class attribute
+			Parameter is a list type attribute where it accepts multiple parameters as required by the corresponding DLL Function
+				and it accepts 3 parameter, viz., Parameter Name, Data Type of the Parameter and the Nature of Parameter which can be 
+				In if the Parameter is only an Input to the DLL Function, Out if the Parameter is only an Output Parameter and
+				InOut if the Parmaeter acts both as an Input as well as Output.
+		 		 
+-   Exec COM Interface: <COM Interface name> [: <Parameter 1> [: <Parameter 2>…… [:<Parameter N>]…]]
+
+		where
+			COM Interface Name is the Name of the COM Interface defined as per the Syntax above.
+			Parameter 1, 2, .... N are the optional Parameters accepted by the DLL Function being called
+				and they must correspond to the Parameters declared, i.e., they must be in the same order declared in the COM Interface
+				definition.  The Parameters can accept an expression provided it is not an Out or InOut Parameter.  If the Parameter is
+				an Out or InOut Parameter, the variable name must only be specified i.e, without prefixing a ##.
+
+Dependencies -
+-	Supporting file 'MathLib.dll' must be registered in the system.
+
+Last Modification -
+-	Created on 19-4-2013
+*/
+
+[COM Interface: TSPL Smp Addition]
+	
+	Project		: MathLib
+	Class		: MathClass
+	Interface	: Add
+	Parameters	: p1	: Number	: In
+	Returns		: Number
+
+[COM Interface: TSPL Smp Division]
+	
+	Project		: MathLib
+	Class		: MathClass
+	Interface	: Divide
+	Parameters	: p1	: Long	 	: In
+	Parameters	: p2	: Long 		: In
+	Parameters	: p3	: Long	 	: Out
+	Returns		: Long
+	
+[COM Interface: TSPL Smp AddDate]
+	
+	Project		: MathLib
+	Class		: MathClass
+	Interface	: DateFunc
+	Parameters	: p1	: Date 		: InOut
+	Returns		: Number
+
+[Function: TSPL Smp Execute COM Interfaces]
+	
+	Variable 	: InputNo  	: Number 	: 90
+
+	Variable 	: Dividend  : Number 	: 102
+	Variable 	: Divisor  	: Number 	: 5
+	Variable 	: Remainder	: Number
+
+	Variable    : OutputNo 	: Number  	: 10
+	
+	Variable 	: Date 		: Date		: "01-05-2013"
+	
+/*---- Addition operation performed by invoking the COM Interface for Addition ---*/
+	10	: Exec COM Interface		: TSPL Smp Addition		: ##InputNo
+	20	: Log		: "------------------------------------------"
+	30	: Log		: "Addition from COM DLL"
+	40	: Log		: "------------------------------------------"
+	50	: Log		: @StrInputNo + " + 9 = " + @StrLR
+	60	: Log		: "------------------------------------------"
+
+/*---- Division operation is performed by invoking the COM Interface Division ---*/
+	70	: Exec COM Interface		: TSPL Smp Division 	: ##Dividend : ##Divisor : Remainder
+	80	: Log		: "------------------------------------------"
+	90	: Log		: "Division from COM DLL"
+	100	: Log		: "------------------------------------------"
+	110	: Log		: @StrDividend + " / " + @StrDivisor + ", Quotient = " + @StrLR + ", Remainder = " + @StrRemainder
+
+/*---- Date Value is updated by invoking the COM Interface AddDate ---*/	
+	
+	120	: Log		: "------------------------------------------"
+	130	: Log		: "Input Date altered in DLL"
+	140	: Log		: "------------------------------------------"
+	150	: Log		: @StrDate + " + 40 = "
+	160	: Exec COM Interface		: TSPL Smp AddDate		: Date
+	170	: Log		: @StrDate
+	180	: Log		: "------------------------------------------"
+	
+/*--- Action $$COMExecute is used to execute the TSPL Smp Addition Interface---*/
+	190	: Log		: "Using ComExecute Function"
+	200	: Log		: "------------------------------------------"
+	210	: Log		: @StrOutputNo + " + 9 = " 
+	220	: Log		: @StrComExec
+	230	: Log		: "------------------------------------------"
+	240	: Exec Command	: "TDLFunc.Log"
+
+;; Following local formulae are written to convert Values into String for Logging
+
+	Local Formula	: StrInputNo	: $$String:##InputNo
+	Local Formula	: StrDividend	: $$String:##Dividend
+	Local Formula	: StrDivisor	: $$String:##Divisor
+	Local Formula	: StrQuotient	: $$String:##Quotient
+	Local Formula	: StrRemainder	: $$String:##Remainder
+	Local Formula	: StrOutputNo	: $$String:##OutputNo
+
+	Local Formula	: StrLR			: $$String:$$LastResult
+	Local Formula	: StrDate		: $$String:##Date
+	
+	Local Formula	: StrComExec	: $$COMExecute:TSPLSmpAddition:##OutputNo
+	
+;; End-of-File

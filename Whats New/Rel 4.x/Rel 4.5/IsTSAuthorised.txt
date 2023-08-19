@@ -1,0 +1,11 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Function: TSPL Smp IsTSAuthorised]
+	
+	00	: If		: $$IsTSAuthorised:##SVTallyServer 
+	10	:	Msg Box	: "Security Check" 	: "Tally Server Security \n is Enabled" 
+	20	: Else	: 
+	30	: 	Msg Box	: "Security Check"	: "Tally Server Security \n is not Enabled"
+	40	: End If
+	
+;; End-of-File 

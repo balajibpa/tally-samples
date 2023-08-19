@@ -1,0 +1,66 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Report: TSPL Smp SIC Error Report]
+
+	Form	: TSPL Smp SIC Error Report
+	Title	: "Import Status"
+
+[Form: TSPL Smp SIC Error Report]
+
+	Parts	: Form Subtitle, TSPL Smp SIC Error Report
+	Local	: Field	: Form SubTitle		: Info	: "Status of Stock Item import"
+
+[Part: TSPL Smp SIC Error Report]
+
+	Lines			: TSPL Smp SIC Error Title, TSPL Smp SIC Error Details
+	Repeat			: TSPL Smp SIC Error Details	: TSPL SMP SIC LOGVarColl Summ
+	Scroll			: Vertical
+	Common Border	: Yes
+
+	[Line: TSPL Smp SIC Error Title]
+
+		Use			: TSPL Smp SIC Error Details
+		Local: Field: Default					: Style		: Normal Bold
+		Local: Field: Default					: Align		: Centre
+
+		Local: Field: TSPL Smp SIC Error Item	: Set As	: "Particulars"
+		Local: Field: TSPL Smp SIC Error Status	: Set As	: "Status"
+		Border		: Thin Top Bottom
+
+	[Line: TSPL Smp SIC Error Details]
+
+		Fields		: TSPL Smp SIC Error Item
+		Right Fields: TSPL Smp SIC Error Status
+		Option		: TSPL Smp SIC Success	: $SICStatus CONTAINS "Imported Successfully" OR $SICStatus CONTAINS "Item already exists"
+
+		[!Line: TSPL Smp SIC Success]
+
+			Local	: Field	: Default	: Style	: Normal Italic
+
+		[Field: TSPL Smp SIC Error Item]
+
+			Use			: Name Field
+			Set As		: $SICStockItem
+			FullWidth	: Yes
+
+		[Field: TSPL Smp SIC Error Status]
+
+			Use			: Name Field
+			Set As		: $SICStatus
+			Border		: Thin Left
+			Width		: 50% Page
+
+[Collection: TSPL SMP SIC LOGVarColl]
+
+	Data Source			: Variable		: Item Import Status
+	
+[Collection: TSPL SMP SIC LOGVarColl Summ]
+
+	Source Collection	: TSPL SMP SIC LOGVarColl
+	By					: SICStockItem 	: $ItemName
+	By					: SICStatus		: $Status
+	Keep Source			: ().
+	Filter				: TSPL SMP NonEmpty Item
+	Client Only			: Yes
+
+;; End-of-File

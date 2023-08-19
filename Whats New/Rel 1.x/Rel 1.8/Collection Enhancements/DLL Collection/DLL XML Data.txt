@@ -1,0 +1,112 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This program contains the part describing XML Data with XML Tags which is referred
+	by other XML codes
+
+Last modification – 
+-	Altered on 19/04/2010
+*/
+
+[Part: DLL XML Data]
+
+	Lines 		: DLL XML Data, DLL XML Data 1, DLL XML Data 2, DLL XML Data3, DLL XML Data 4, DLL XML Data 5
+	Lines 		: DLL XML Data6, DLL XML Data 7, DLL XML Data8, DLL XML Data9, DLL XML Data10, DLL XML Data11
+	Lines 		: DLL XML Data 12, DLL XML Data 13, DLL XML Data 14
+	Border 		: Thin Cover
+	Space Left 	: 10
+
+	[Line: DLL XML Data]
+
+		Fields	: DLL XML Data
+		Local	: Field	: DLL XML Data	: Style 	: Normal Bold
+
+		[Field: DLL XML Data]
+
+			Set As 	: "XML Data Available in DLL"
+
+	[Line: DLL XML Data1]
+
+		SpaceTop: 1
+		Fields 	: DLL XML Data
+		Local	: Field		: DLL XML Data	: Set as	: "<ItemList>"
+
+	[Line: DLL XML Data2]
+
+		Fields 	: DLL XML Data
+		Local	: Field		: DLL XML Data	: Set as	: "<Item>"
+		Local	: Field		: DLL XML Data	: Indent	: 10
+
+	[Line: DLL XML Data3]
+
+		Fields 	: DLL XML Data
+		Local	: Field		: DLL XML Data	: Set as	: "<Name>Kissan Jam</Name>"
+		Local	: Field		: DLL XML Data	: Indent	: 10
+
+	[Line: DLL XML Data4]
+
+		Fields 	: DLL XML Data
+		Local	: Field		: DLL XML Data	: Set as	: "<Quantity>500gms</Quantity>"
+		Local	: Field		: DLL XML Data	: Indent	: 10
+
+	[Line: DLL XML Data5]
+
+		Fields 	: DLL XML Data
+		Local	: Field		: DLL XML Data	: Set as	: "</Item>"
+		Local	: Field		: DLL XML Data	: Indent	: 10
+
+	[Line: DLL XML Data6]
+
+		Fields 	: DLL XML Data
+		Local	: Field		: DLL XML Data	: Set as	: "<Item>"
+		Local	: Field		: DLL XML Data	: Indent	: 10
+
+	[Line: DLL XML Data7]
+
+		Fields 	: DLL XML Data
+		Local	: Field		: DLL XML Data	: Set as	: "<Name>Tomato Ketchup</Name>"
+		Local	: Field		: DLL XML Data	: Indent	: 10
+
+	[Line: DLL XML Data8]
+
+		Fields 	: DLL XML Data
+		Local	: Field		: DLL XML Data	: Set as	: "<Quantity>1 kg</Quantity>"
+		Local	: Field		: DLL XML Data	: Indent	: 10
+
+	[Line: DLL XML Data9]
+
+		Fields 	: DLL XML Data
+		Local	: Field		: DLL XML Data	: Set as	: "</Item>"
+		Local	: Field		: DLL XML Data	: Indent	: 10
+
+	[Line: DLL XML Data10]
+
+		Fields 	: DLL XML Data
+		Local	: Field		: DLL XML Data	: Set as	: "<Item>"
+		Local	: Field		: DLL XML Data	: Indent	: 10
+
+	[Line: DLL XML Data11]
+
+		Fields 	: DLL XML Data
+		Local	: Field		: DLL XML Data	: Set as	: "<Name>Maggie</Name>"
+		Local	: Field		: DLL XML Data	: Indent	: 10
+
+	[Line: DLL XML Data12]
+
+		Fields 	: DLL XML Data
+		Local	: Field		: DLL XML Data	: Set as	: "<Quantity>1 kg</Quantity>"
+		Local	: Field		: DLL XML Data	: Indent	: 10
+
+	[Line: DLL XML Data13]
+
+		Fields 	: DLL XML Data
+		Local	: Field		: DLL XML Data	: Set as	: "</Item>"
+		Local	: Field		: DLL XML Data	: Indent	: 10
+
+	[Line: DLL XML Data14]
+
+		Fields 	: DLL XML Data
+		Local	: Field		: DLL XML Data	: Set as	: "</ItemList>"
+
+;; End-of-File

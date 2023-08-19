@@ -1,0 +1,22 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Menu: Whats New in Rel 6.0]
+
+	Indent		: "Button Enhancements"
+	Item		: Blank
+	Key Item	: "Action Ex" 		 		: A : Display	: TSPL ActionEx Rep
+	Item		: Blank
+
+	Indent		: "General Enhancements"
+	Item		: Blank
+	Key Item	: "System Action - Do If"		   : D : Display: TSPL Do If Rep
+	Key Item	: "Pre-processor directive - INUSE" : U : Display: TSPL INUSE Rep
+	
+
+
+[Include: actionex.tdl]
+[Include: doif.tdl]
+[Include: inuse.tdl]
+
+
+;; EOF

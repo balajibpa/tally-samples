@@ -1,0 +1,123 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s):-
+-	To copy the content from one variable (Source) to another variable (Destination).
+
+Capabilities Used:-
+- 	Action 'COPY VARIABLE'
+
+Syntax -
+- 	COPY VARIABLE	: <Destination Variable> : <Source Variable>
+
+Updation History:-
+- 	Created on 12-8-2010
+*/
+
+[Report: TSPL Smp CopyVar]
+	
+	Form	: TSPL Smp CopyVar
+	
+[Form: TSPL Smp CopyVar]
+	
+	Part	: Form SubTitle, TSPL Smp CopyVar
+	Buttons	: TSPL Smp Simplevar, TSPL Smp Compoundvar, TSLPL Smp ListVar
+	Width	: 50% Page
+	Local	: Field : Form SubTitle	: Info	: "Copy Variable"
+	Local	: Field : Form SubTitle	: Width	: 50% Page
+	
+[Part: TSPL Smp CopyVar]
+	
+	Lines	: TSPL Smp CopyVar
+	
+	[Line: TSPL Smp CopyVar]
+		
+		Fields	: TSPL Smp CopyVar
+		
+		[Field: TSPL Smp CopyVar]
+			
+			Use		: Name Field
+			Set as 	: "Click on the Buttons to Copy Variables"
+			Align 	: Centre
+			Width   : 70
+			Max		: 70
+		
+[Function: TSPL Smp SimpleVarCopy]
+	
+	VARIABLE : TSPL Smp Employee1 : String : "Employee1"
+	VARIABLE : TSPL Smp Employee2 : String : 
+
+;; Action COPY VARIABLE copies the source variable contents to destination variable
+	10 : COPY VARIABLE 	: TSPL Smp Employee2 	: TSPL Smp Employee1 
+	20 : LOG 			: "Source"+"-"+##TSPLSMPEmployee1  
+	30 : LOG 			: "Destination"+"-"+##TSPLSMPEmployee2
+	40 : EXEC COMMAND 	: "TDLFunc.Log"
+
+[Function: TSPL Smp CompoundVarCopy]
+	
+	VARIABLE : TSPL Smp Employee1,TSPL Smp Employee2
+
+	10 : COPY VARIABLE 	: TSPLSMPEmployee2 : TSPLSMPEmployee1
+	20 : LOG 			: "Source Employee Name"+"-"+##TSPLSMPEmployee1.EmpName
+	30 : LOG 			: "Source Designation"+"-"+##TSPLSMPEmployee1.Designation	
+	40 : LOG 			: "Destination Employee Name"+"-"+##TSPLSMPEmployee2.EmpName
+	50 : LOG 			: "Destination Designation"+"-"+##TSPLSMPEmployee2.Designation	
+	60 : EXEC COMMAND 	: "TDLFunc.Log"
+
+[Function: TSPL Smp ListVarCopy]
+
+	LIST VARIABLE 		: TSPL Smp Employee1, TSPL Smp Employee2
+	
+;; Action 'List Fill' fills the values of the list variables with the Employees Names
+	10  : LIST FILL 	: TSPL Smp Employee1 : Employees : $Name : $Name
+	20  : LIST FILL 	: TSPL Smp Employee2 : Employees : $Name : $Designation	: Designation
+
+	30  : COPY VARIABLE : TSPL Smp Employee2 : TSPL Smp Employee1
+
+	40  : LOG 		: "Source Variable - TSPL Smp Employee1"
+	50  : FOR IN : KEY VAR : TSPL Smp Employee1
+	60  : 	LOG 	: "Employee Name"+"-"+$$LISTVALUE:TSPLSMPEmployee1:##KEYVAR:EmpName 
+	70  : 	LOG 	: "Designation"+"-"+$$LISTVALUE:TSPLSMPEmployee1:##KEYVAR:Designation 
+	80  : END FOR
+	90  : LOG 		: "Destination Variable - TSPL Smp Employee2"
+
+	100 : FOR IN : KEY VAR : TSPLSMPEmployee2
+	110 : 	LOG 	: "Employee Name"+"-"+$$LISTVALUE:TSPLSMPEmployee2:##KEYVAR:EmpName 
+	120 : 	LOG 	: "Designation"+"-"+$$LISTVALUE:TSPLSMPEmployee2:##KEYVAR:Designation 
+	130 : END FOR
+
+	140 : EXEC COMMAND 	: "TDLFunc.Log"
+
+;;Button Definitions
+
+[Button: TSPL Smp Simplevar]
+	
+	Title   : "Copy Simple Var"
+	Key		: Alt + S
+	Action  : CALL 			: TSPL Smp SimpleVarCopy
+	
+[Button: TSPL Smp Compoundvar]
+	
+	Title 	: "Copy Compound Var"	
+	Key   	: Alt + V
+	Action	: CALL 			: TSPL Smp CompoundVarCopy
+
+[Button: TSLPL Smp ListVar]
+	
+	Title   : "Copy List Var"
+	Key		: Alt + L
+	Action  : CALL 			: TSPL Smp ListVarCopy
+	
+;;Variable Definitions
+
+[Variable: TSPL Smp Employee1]	;; Compound Variable declared
+	
+	Variable : EmpName  	: String : "Praveen"
+	Variable : Designation	: String : "Manager"
+	
+[Variable: TSPL Smp Employee2]
+	
+	Variable : EmpName  	: String 
+	Variable : Designation	: String 
+
+;; End-of-File

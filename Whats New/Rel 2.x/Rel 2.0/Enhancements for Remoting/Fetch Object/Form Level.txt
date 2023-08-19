@@ -1,0 +1,124 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This code demonstrates the usage of Fetch Object at Form Level
+
+Last modification – 
+-	Altered on 28/07/2010
+*/
+
+[Report: TSPL Smp Form Level FO]
+	
+	Form 	: TSPL Smp Form Level FO
+	Title	: $$LocaleString:"Form Level Fetch Object"
+	
+[Form: TSPL Smp Form Level FO]
+	
+	Parts		: TSPL Smp FLFOMasterList
+
+	Button		: TSPL Smp BalButton
+	Background	: @@SV_REPINVENTORY
+	Width		: 100% Screen
+	
+	Option		: TSPL Smp OPMaster		: NOT ##TSPLSmpStkBalance
+	Option		: TSPL Smp ClMaster		: ##TSPLSmpStkBalance
+	
+	Space Bottom: 0% Screen
+	Space Top	: 0% Screen
+	Space Left	: 0% Screen
+	Space Right	: 0% Screen
+	
+	[!Form : TSPL Smp OPMaster]
+		
+		Fetch Object	: Stock Item	: @@TSPLSmpAllItem	: Name, OpeningBalance
+
+	[!Form : TSPL Smp ClMaster]
+		
+		Fetch Object	: Stock Item	: @@TSPLSmpAllItem	: Name, ClosingBalance
+		
+[Part: TSPL Smp FLFOMasterList]
+	
+	Lines			: TSPL Smp FLFOMaster Title1, TSPL Smp FLFOMaster Title2, TSPL Smp FLFOMaster Details
+	Repeat			: TSPL Smp FLFOMaster Details : TSPL Smp ItemList
+	Scroll			: Vertical
+	Common Border	: Yes
+	
+	[Line : TSPL Smp FLFOMaster Title1]
+		
+		Use		: TSPL Smp FLFOMaster Details
+		
+		Local	: Field	: Default					: Align		: Centre
+		Local	: Field : Default					: Style		: Normal Bold
+		Local	: Field	: Default					: Type		: String
+		
+		Local	: Field	: TSPL Smp FLFOMasterName	: Set as 	: "Particulars"
+		Local	: Field	: TSPL Smp FLFOMasterBal	: Set as 	: "Opening"
+		Local	: Field	: TSPL Smp FLFOMasterBal	: Option 	: TSPL Smp FLFOMasterClBal	: ##TSPLSmpStkBalance
+	
+		[!Field : TSPL Smp FLFOMasterClBal]
+			
+			Set as 		: "Closing"
+
+	[Line : TSPL Smp FLFOMaster Title2]
+		
+		Use		: TSPL Smp FLFOMaster Details
+		
+		Local	: Field	: Default					: Align		: Centre
+		Local	: Field : Default					: Style		: Normal Bold
+		Local	: Field	: Default					: Type		: String
+		
+		Local	: Field	: TSPL Smp FLFOMasterName	: Set as 	: " "
+		Local	: Field	: TSPL Smp FLFOMasterBal	: Set as 	: "Balance"
+		
+		Border	: Thin Bottom
+		
+		[Line : TSPL Smp FLFOMaster Details]
+			
+			Field		: TSPL Smp FLFOMasterName
+			Right Field	: TSPL Smp FLFOMasterBal
+			
+			[Field : TSPL Smp FLFOMasterName]
+				
+				Use		: Name Field
+				Set as	: $Name
+			
+			[Field : TSPL Smp FLFOMasterBal]
+				
+				Use		: Qty Field
+				Set as	: If NOT ##TSPLSmpStkBalance then $OpeningBalance:StockItem:$Name else $ClosingBalance:StockItem:$Name
+				Border	: Thin Left
+				Width	: 20% Page
+
+;; Button
+
+[Button : TSPL Smp BalButton]
+	
+	Title	: "Balance"
+	Action	: SET	: TSPL Smp StkBalance	: NOT ##TSPLSmpStkBalance
+	Key		: Alt + B
+
+;; Collection
+
+[Collection	: TSPL Smp ItemList]
+	
+	Type	: StockItem
+	Fetch	: Name, OpeningBalance, ClosingBalance
+
+;; System Formula
+
+[System : Formulae]
+	
+	TSPL Smp All Item	: $$FullListEx:$$FetchSeparator:TSPLSmpItemList:$Name
+	
+;; Variables
+
+[Variable : TSPL Smp StkBalance]
+	
+	Type	: Logical
+	
+[System : Variables]
+	
+	TSPL Smp StkBalance : NO
+	
+;; End of file

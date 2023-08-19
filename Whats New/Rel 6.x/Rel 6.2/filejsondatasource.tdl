@@ -1,0 +1,199 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+/*
+Objective(s) – 
+- This code demonstrates the reading data from JSON file and creating pricelists of stockitems.
+- To help read data provided in JSON file format, a new data source 'FileJSON' is introduced"
+- in the collection. The collection is also enhanced to read a specific fragment of data in the JSON file with the attribute 'JSON Object Path'
+- These are similar to data source 'FileXML', collection attribute 'XMLObjectPath'
+- In this example, a a json file containing data in the following format is read from the first stockitems tag and using the
+- data, pricelists for the stock item is created.
+{
+     "Stockitems": [
+          {
+               "StockItem": "Crackers - rocket", 
+               "Unit": "nos", 
+               "Pricelist": [
+                    {
+                         "Price Level Name": "Diwali offer 1", 
+                         "Price Date": "1-Apr-2017",
+						 "Pricelevellist":[
+						                  {
+										  "Disc":"25",
+										  "Ending" :"150",
+										  "Rates":"20",
+										  "Starting":"0"
+										  
+										  },
+										  {
+										  "Disc":"30",
+										  "Ending" :"300",
+										  "Rates":"15",
+										  "Starting":"150"
+										  }
+						 ]
+                    } 
+                    
+               ]
+          }  
+              		  
+     ]
+}
+
+Last modification – 
+-	Altered on 24/10/2017
+*/
+
+
+[Report: TSPL FileJSON]
+
+	Title	: $$LocaleString:"Reading JSON File"
+	Form	: TSPL FileJSON
+
+[Form: TSPL FileJSON]
+
+	Use		: TSPL SMP Illustration
+	
+	Height	: 70% Screen
+	Width	: 70% Screen
+	
+	Local   : Part	: TSPL SMP Illustration : Add	: Part: TSPL SMP ExampleExecution
+	
+	Local	: Field	: FormSubTitle		: Info		: $$LocaleString:"Illustration for reading a Json file and importing objects"
+	
+	Local	: Field	: TSPL Smp Purpose	: Indent	: 2
+	Local	: Field	: TSPL Smp Purpose	: Info		: $$LocaleString:" To help read data provided in JSON file format, a new data source 'FileJSON' is introduced "+
+	+"in the collection. The collection is also enhanced to read a specific fragment of data in the JSON file with the attribute 'JSON Object Path'"+
+	+"These are similar to data source 'FileXML', collection attribute 'XMLObjectPath' "
+				
+	Local	: Field	: TSPL Smp Syntax	: Indent	: 2
+	Local	: Field	: TSPL Smp Syntax	: Info		: "[Collection: <Collection Name>]"+
+			+$$NewLine+ "       DataSource : File JSON : <File path>"+
+			+$$NewLine+ " 		    JSON Object Path : <Start-node> : <Path-to-start-node>"+
+			+$$NewLine+ "<File Path> : JSON file name including its path. "+
+			+$$NewLine+ "If only a specific data fragment is required to be extracted from the Json file the collection attribute JSON Object Path is used."+
+				
+	Local	: Field	: TSPL SMP Example	: Indent: 2
+	Local	: Field	: TSPL SMP Example	: Info: $$LocaleString:"[Collection: TSPL Stock Item Price List]"+
+			+$$NewLine+"    Data Source		: File JSON: 'stockitempricelist.json'"+
+			+$$NewLine+"    JSON Object Path: 'Stockitems:1' "    +
+			+$$NewLine+$$LocaleString:"Here from the json file mentioned, the data fragment from first stockitems tag is  " +
+			+$$LocaleString:"obtained in the collection"+
+				
+	Local	: Field	: TSPL SMP ExampleExec: Info: $$LocaleString:"Click on the Create PriceLists to experience the creation of objects by reading data from Json file. " +
+			+$$LocaleString:"Make sure that the company has price levels enabled"
+	Local	: Field	: TSPL SMP ExampleNote: Info:"(The file 'stockitempricelist.json' is available in the folder 'Supporting Files' of Samples folder. Make sure this is copied to the Tally.ERP 9 location from where the samples are executed.)"
+	Buttons	: TSPLCreatePriceLists 
+
+
+
+
+[Button: TSPL Create Price Lists]
+ 
+     Title	 : $$LocaleString:"Create PriceLists"
+     Key	 : Alt+ L
+	 
+	 Action	 : Call: TSPL Create Price Lists
+
+;; This function walks the collection with JSON file details and creates the pricelists for the stock items
+
+[Function: TSPL Create Price Lists]
+	
+	Variable		: PriceLevel		: String
+	Variable		: PriceLevelDate	: Date
+	Variable		: StockItem			: String
+	Variable		: Unit				: String
+	Variable		: Count				: Number
+
+	ListVariable	: AllReportStock	: String
+	List Variable	: StartingFrom		: Number
+	List Variable	: EndingAt			: Number
+	List Variable	: Discount			: Number
+	List Variable	: Rate				: Number
+	
+	001: Walk Collection: TSPL Stock Item Price List
+	005: 	Set: StockItem: $StockItem
+	010: 	Set: Unit: $Unit
+	
+	015: 	Walk Collection: Pricelist
+	020: 		Set: PriceLevel : $PriceLevelName
+	025: 		Set: PriceLevelDate : $PriceDate
+	030: 		SET 	: Count	: 1		
+	
+	035: 		WALK COLLECTION	: Pricelevellist
+	040: 			LIST ADD	: StartingFrom	: ##Count	: $Starting	
+	045: 			LIST ADD	: EndingAt		: ##Count	: $Ending
+	050: 			LIST ADD	: Discount		: ##Count	: $Disc
+	055: 			LIST ADD	: Rate			: ##Count	: $Rates
+	060: 			INCR		: Count
+	065: 		END WALK
+	
+	070: 		Do If: NOT($$IsobjectExists:StockItem:##StockItem): Call: TSPL Create StockItems
+	075: 		Do If: ($$IsobjectExists:StockItem:##StockItem): Call: TSPLUpdatePriceListToStockItem
+	080: 		LIST DELETE	: StartingFrom
+	085: 		LIST DELETE	: EndingAt
+	090: 		LIST DELETE	: Discount
+	100:		LIST DELETE : Rate
+	105: 	End Walk
+	
+	110: End Walk
+	115: Do If: $$LastResult: Msg Box: "Success!" : "Pricelists successfuly created."
+	120: Do If: $$LastResult: CALL  : Price List Stock Groups
+
+;; Creates the stock items if npt present in the company data	
+[Function: TSPL Create StockItems]
+	
+	01	: NEW OBJECT	: StockItem
+	02	: SET VALUE		: Name			: ##StockItem
+	03	: Do If: NOT ($$IsobjectExists:Unit:##Unit): Call: TSPL Create Units
+	04	: SET VALUE		: Base Units		: ##Unit
+	05	: CREATE TARGET
+
+;;Creates the units if not present in the company data
+[Function: TSPL Create Units]
+	
+	01  : New Object	: Unit
+	02	:	Set Value	: IsSimpleUnit				: Yes
+	03	: 	Set Value	: Symbol					: ##Unit
+	04	: CREATE TARGET
+	
+;; updates the stock item object with the pricelist info
+[Function: TSPLUpdatePriceListToStockItem]
+
+	Object	: Stock Item	: ##StockItem
+	
+	01: SET TARGET
+	10: SET TARGET
+	11: INSERT COLLECTION OBJECT	: Full Price List
+	12: DO If: NOT ($$IsValidPriceLevel:##PriceLevel ): Call:TSPL Update Cmp Price Level
+	13: 	SET VALUE	: PriceLevel	: ##PriceLevel
+	14: 	SET VALUE	: Date			: ##PriceLevelDate
+	15: 	FOR IN		: ListKey	: StartingFrom
+	20: 		INSERT COLLECTION OBJECT	: Price Level List
+	21: 		SET VALUE	: StartingFrom	: $$AsQty:($$ListValue:StartingFrom:##ListKey)
+	22: 		SET VALUE	: EndingAt		: $$AsQty:($$ListValue:EndingAt:##ListKey)
+	23: 		SET VALUE	: Discount		: $$ListValue:Discount:##ListKey
+	24: 		SET VALUE	: Rate			: $$AsRate:($$ListValue:Rate:##ListKey)
+	25: 		SET TARGET	: ..
+	26: 	END FOR
+	28: SET TARGET	: ..
+	30: ACCEPT ALTER
+	
+;; Creates the price levels in the company if not present	
+[Function: TSPL Update Cmp Price Level]
+
+	Object: Company : ##SVCurrentCompany
+	
+	01: SET TARGET
+	02: 	Set Value: UsePriceLevels : Yes
+	03:  	Insert Collection Object: Price Level
+	04: 		Set Value: Price Level : ##PriceLevel
+	05: 	Set Target: ..
+	06: ACCEPT ALTER	
+
+;; Collection has the details of the json file and the data fragment to be extracted
+[Collection: TSPL Stock Item Price List]
+	
+	Data Source		: File JSON: "stockitempricelist.json"
+	JSON Object Path: "Stockitems:1"
+	
+;;End Of File

@@ -1,0 +1,28 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Menu: TSPL Smp Import Enhancements]
+	
+    Title       : $$LocaleString:"Manual Import of Data"
+	Indent		: "Import of Data"
+	Item		: Blank
+    Key Item    : @@locMasters			: M : Call      : TSPL Smp All Masters			: (NOT $$IsEmpty:$$SelectedCmps) AND $$Allow:Access:ImportData
+	Key Item    : @@locVouchers         : V : Call    	: TSPL Smp Vouchers				: (NOT $$IsEmpty:$$SelectedCmps) AND $$Allow:Access:ImportData
+	Item		: Blank
+
+	Indent		: "Reports"
+	Item		: Blank
+    Key Item    : "List of Accounts"	: L : Display	: List Of Accounts				: (NOT $$IsEmpty:$$SelectedCmps)
+    Key Item    : "Daybook"				: D : Display	: Daybook						: (NOT $$IsEmpty:$$SelectedCmps)
+	
+	Item		: Blank
+    Key Item    : @@locQuit				: Q
+
+    Control     : @@locMasters          : ($$Allow:Create:AccountsMasters OR $$Allow:Create:InventoryMasters) AND $$Allow:Access:ImportData
+    Control     : @@locVouchers         : $$Allow:Create:Vouchers AND $$Allow:Access:ImportData
+
+;; Include Files
+
+[Include: ImportOfData.txt]
+[Include: Response Report.txt]
+
+;; End-of-File

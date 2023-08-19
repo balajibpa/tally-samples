@@ -1,0 +1,79 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+- This sample TDL demonstrates the newly introduced Qualifiers & Keywords of Date data type
+
+- Default Format is 'dd-mmm-yyyy'
+
+- Input Keywords allowed
+	Today			>> This returns current date 
+	Tomorrow		>> This returns tomorrow's date
+	Yesterday(Yday)	>> This returns y's date
+	Month			>> This will return current month's beginning date
+	Week			>> This will set the date as the current week’s beginning 
+	Year			>> This will set the date as the 1-jan of the current year
+	
+-  Date Qualifiers 
+	This, Prev, Next & last. Different combinations of keywords can be used with the qualifiers. For eg: Last Year etc.
+	
+- Input Formats allowed i.e. for Attribute Format at Field
+	Long Date		>> This will return date in 'day, dd mmm, yyyy' Format
+	Short Date 		>> This will return date in 'dd-m-yy' Format
+	Universal Date  >> This will return date in 'dd-mmm-yyyy' Format
+	Similarly, 'Month Beginning' & 'Month Ending' formats can be used as well. 
+	
+	Last modification -
+-	Altered on 
+*/
+	
+[Report: TSPL Smp CDT Set Date Format]
+	
+	Title	: "Set Date Format"
+	Form	: TSPL Smp CDT Set Date Format
+	
+[Form: TSPL Smp CDT Set Date Format]
+	
+	Use		: TSPL Smp CDT Set Format
+	Local	: Field		: Form Subtitle			  : Info	: "Set Date Format in which you want to display date"	
+	Local	: Line		: TSPL Smp CDT Set Format : Local 	: Field	: Medium Prompt					: Info		: "Date Format :"
+	Local	: Line		: TSPL Smp CDT Set Format : Local 	: Field	: TSPL Smp CDT SetFormatField	: Delete	: Table
+	Local	: Line		: TSPL Smp CDT Set Format : Local 	: Field	: TSPL Smp CDT SetFormatField	: Add		: Table	: TSPL Smp CDT DateFormatTable
+	Delete	: On		
+	Add		: On		: Form Accept	: Yes	: Alter		: TSPL Smp CDT Date Val Set 
+	
+[Collection: TSPL Smp CDT DateFormatTable]
+	
+	Title		: "Date Formats"
+	List Name	: "Short Date", "Long Date", "Universal Date", "Month Beginning", "Month Ending", "Short Date, Separator:'/'"
+
+;; Report to select Input Keywords ( or Define an Input Date Value);;;;;	
+	
+[Report	: TSPL Smp CDT Date Val Set]
+	
+	Form 	: TSPL Smp CDT Date Val Set
+	Title   : "Date"
+
+[Form :  TSPL Smp CDT Date Val Set]
+	
+	Use		: TSPL Smp CDT Val Set
+	Local	: Field	: FormSubtitle					: Info	: "Date Keywords & Formats"
+	Local	: Line	: TSPL Smp CDT InputKeywordLine : Local	: Field	: TSPL Smp CDT Set InputKeywordField: Delete	: Table
+	Local	: Line	: TSPL Smp CDT InputKeywordLine : Local	: Field	: TSPL Smp CDT Set InputKeywordField: Add		: Table		:  TSPL Smp CDT DateInputKeywordTable
+	Local	: Line	: TSPL Smp CDT InputSet			: Local	: Field	: Medium Prompt				 		: Info		: "Input Date Value :"
+	Local	: Line	: TSPL Smp CDT InputSet			: Local	: Field	: TSPL Smp CDT InputField 			: Delete	: Type
+	Local	: Line	: TSPL Smp CDT InputSet			: Local	: Field	: TSPL Smp CDT InputField 			: Add		: Type		: Date
+	Local	: Line	: TSPL Smp CDT OutputField		: Local	: Field	: Medium Prompt						: Setas		: "Date :"
+	Local	: Line	: TSPL Smp CDT OutputField		: Local	: Field	: TSPL Smp CDT Output Field			: Delete	: Type
+	Local	: Line	: TSPL Smp CDT OutputField		: Local	: Field	: TSPL Smp CDT Output Field			: Add		: Type		: Date
+
+;; Collection of all the combinations of Date Keywords & Qualifiers available for Date Data Type;;
+
+[Collection: TSPL Smp CDT DateInputKeywordTable]
+		
+	Title		: "List of Date Input Keywords"
+	List Name	: Today, Tomorrow, Yesterday, Month, Week, Year, "Financial Year", "This Week", "Prev Week", "Next Week", "Last Week", "This Month", "Prev Month", "Next Month", "Last Month", "This Year", "Prev Year", "Next Year", "Last Year", "This Financial Year", "Prev Financial Year", "Next Financial Year", "Last Financial Year", None
+	Format		: $Name, 30
+
+;; End-of-File;;
+	

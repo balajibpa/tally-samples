@@ -1,0 +1,22 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Menu: Enhancements For Remoting]
+	
+	Key Item	: Fetch Object		: O	: Menu				: TSPL Smp Fetch Object
+	Key Item	: Modifies			: D	: Alter				: TSPL Smp Report Modifies
+	Key Item	: Fetch Separator	: F : Display			: TSPL Smp Report Fetch Separator
+	Key Item	: Parm Var			: P : Display			: TSPL Smp Groups and Ledgers
+	Key Item	: Fetch Values		: V : Display Collection: Stock Item Report Association
+	Key Item	: Multi Objects	 	: M : Alter 			: TSPL Smp Multi Objects
+
+	Title		: "Changes for Remoting"
+
+;; Include Files
+
+[Include: Fetch Object\Fetch Object.txt]
+[Include: Modifies.txt]
+[Include: FetchSeparator.txt]
+[Include: Parm Var.txt]
+[Include: MultiObjects.txt]
+
+;; End-of-File

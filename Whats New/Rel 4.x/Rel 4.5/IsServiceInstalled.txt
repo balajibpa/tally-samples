@@ -1,0 +1,11 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Function: TSPL Smp IsServiceInstalled]
+	
+	00	: If		: $$IsServiceInstalled:"AppMgmt"
+	10	:	Msg Box	: "Service Check" 	: "The Current Service \n is installed" 
+	20	: Else	: 
+	30	: 	Msg Box	: "Service Check "	: "The Current Service \n is not Installed"
+	40	: End If
+	
+;; End-of-File

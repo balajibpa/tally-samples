@@ -1,0 +1,85 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This code demonstrates the usage of 'Parm Var' at Collection Definition
+
+Syntax -
+-	[Collection: <Collection Name>]
+	
+		Parm Var	: <Variable Name>	: <Data Type>	: <Formula>
+
+Last modification – 
+-	Creation on 06/08/2010
+*/
+
+[Report: TSPL Smp Groups and Ledgers]
+
+	Use		: DSP Template
+	Form	: TSPL Smp Groups and Ledgers
+	Local	: Collection	: Default		: Fetch	: Name, Closing Balance
+	Title	: "Gorups and Ledgers"
+
+[Form: TSPL Smp Groups and Ledgers]
+
+	Use		: DSP Template
+	Parts	: TSPL Smp Groups and Ledgers
+	SET		: ExplodeFlag : YES
+
+[Part: TSPL Smp Groups and Ledgers]
+
+	Lines	: TSPL Smp Groups and Ledgers
+	Repeat	: TSPL Smp Groups and Ledgers	: TSPL Smp List of Groups
+	Scroll	: Vertical
+
+	[Line: TSPL Smp Groups and Ledgers]
+
+		Fields		: TSPL Smp GAL Particulars
+		Right Fields: TSPL Smp GAL ClosBal
+
+		Explode		: TSPL Smp List of Ledgers	: ##ExplodeFlag
+
+		[Field: TSPL Smp GAL Particulars]
+
+			Use		: Name Field
+			Set As	: $Name
+
+		[Field: TSPL Smp GAL ClosBal]
+
+			Use		: Amount Forex Field
+			Set As	: $ClosingBalance
+
+	[Part: TSPL Smp List of Ledgers]
+
+		Lines	: TSPL Smp List of Ledgers
+		Repeat	: TSPL Smp List of Ledgers	: TSPL Smp List of Ledgers
+
+		[Line: TSPL Smp List of Ledgers]
+
+			Fields		: TSPL Smp GAL Particulars
+			Right Fields: TSPL Smp GAL ClosBal
+			Local: Field: Default					: Style	: Normal Italic
+			Local: Field: TSPL Smp GAL Particulars	: Indent: 2
+
+[Collection: TSPL Smp List of Groups]
+
+	Use			: List of Groups
+	Filter		: TSPL Smp Zero CB
+
+[Collection: TSPL Smp List of Ledgers]
+
+	Type		: Ledger
+	Child Of	: ##ParmLedName
+
+;; Without Parm Var, Client side Application will not be able to communicate the 
+;; Ledgers belonging to current group since $Name is known to the client 
+;; requestor context whereas when request is sent to server, $Name cannot be evaluated
+;; at the server as there is no object context available at the Server.
+	Parm Var	: ParmLedName	: String	: $Name
+	Filter		: TSPL Smp Zero CB
+
+[System: Formula]
+
+	TSPL Smp Zero CB	: $ClosingBalance > 0
+
+;; End-of-File

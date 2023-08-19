@@ -1,0 +1,133 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+
+Objective(s) 
+- This code demonstrates to display a trigger report using a display collection and make this report available on the browser
+- A TDL Object helps to make this report available on browser. Once the object is defined, use the object in a predefined collection
+- called List of Custom Browser Reports
+
+- A new Report attribute called Date Picker Type is introduced in Release 6.6.1 to bring the period change button in browser.
+- It accepts the values Range, Day, or None.
+
+Last modification 
+-	Altered on 27/04/2020
+
+*/
+
+
+[Collection: TSPL Smp SD Group Summary]
+	
+	Use			: Group Summary
+
+	Title				: $$LocaleString:"SD Groups"
+	Replace	: Report	: TSPL Smp SD Group Summary
+	Replace : Trigger	: TSPL Smp SD Group Name
+	Delete	: Collection: Primary
+	Child Of			: $$GroupSundryDebtors
+	Belongs To			: Yes
+	Align 				: Centre
+	
+/*When you access trigger report on browser using Display collection the trigger report with only one field is supported.
+ If a trigger report involves selecting two values, such reports are not supported in the the browser. For example, certain reports may get 
+ triggered when you select the Stock Item as well as Batch Name.The variable used in the display collection should be explicitly 
+ specified at the report level (report specified in report attribute of collection)to establish a link between the trigger report
+ and the report being displayed because, in browser the report will inherit only those variables specified in the report directly.
+ Refer the report [Report: TSPL Smp SD Group Summary] where variable: GroupName is explicitly mentioned*/
+	
+[Report: TSPL Smp SD Group Name]
+	
+	Use     	: Group Name
+	Local: Line : Collection Variable : Local	: Field : Group Name : Delete	: Table
+	Local: Line : Collection Variable : Local	: Field : Group Name : Add		: Table	: TSPL Smp SD Group Summary
+
+	Title		: "Sundry Debtors Groups"
+	
+;; Common Report to display list of Ledgers under selected group
+
+[Report: TSPL Smp SD Group Summary]
+	
+	Title				: "Trigger Report - Sundry Debtors Summary"
+	Form				: TSPL Smp Group Summary
+	
+	;;Variable is explicitly mentioned in the report
+	
+	Variable          	: GroupName, SVFromDate, SVToDate
+	
+	
+[Form: TSPL Smp Group Summary]
+	
+	Use					: DSP Template
+
+	Parts				: DD TB Period, TSPL Smp Group Summary
+	Buttons				: Print Button, Export Button, Mail Button, Upload Button, F2 Change Period
+
+[Part: TSPL Smp Group Summary]
+
+	Lines				: TSPL Smp Group Summary Title, TSPL Smp Group Summary Details
+	Repeat				: TSPL Smp Group Summary Details	: TSPL Smp Group Ledgers
+	Scroll				: Vertical
+
+	[Line: TSPL Smp Group Summary Title]
+
+		Use				: TSPL Smp Group Summary Details
+
+		Local	: Field	: Default						: Type		: String
+		Local	: Field	: Default						: Style		: Normal
+		Local	: Field	: TSPL Smp Group Summary Name	: Set As	: "Name"
+		Local	: Field	: TSPL Smp Group Summary AmtDr	: Set As	: "Dr."
+		Local	: Field	: TSPL Smp Group Summary AmtCr	: Set As	: "Cr."
+		Local	: Field	: Default						: Style		: Normal Bold	
+		Border			: Thin Top Bottom
+
+	[Line: TSPL Smp Group Summary Details]
+
+		Fields			: TSPL Smp Group Summary Name
+		Right Fields	: TSPL Smp Group Summary AmtDr, TSPL Smp Group Summary AmtCr
+
+		[Field: TSPL Smp Group Summary Name]
+
+			Use			: Name Field
+			Variable	: LedgerName
+			Full Width	: Yes
+			Set As		: $Name
+			Display		: Ledger Vouchers
+
+		[Field: TSPL Smp Group Summary AmtDr]
+
+			Use			: Amount Forex Field
+			Set As		: if $$IsDr:$ClosingBalance then $ClosingBalance else 0
+
+		[Field: TSPL Smp Group Summary AmtCr]
+
+			Use			: Amount Forex Field
+			Set As		: if NOT $$IsDr:$ClosingBalance then $ClosingBalance else 0
+
+[Collection: TSPL Smp Group Ledgers]
+
+	Type				: Ledger
+	Child Of			: ##GroupName
+	Belongs To			: Yes
+	Fetch				: Name, ClosingBalance
+	Filter				: TSPL Smp All Debtors
+
+[System: Formula]
+
+	TSPL Smp All Debtors: if $$IsSysNameEqual:AllItems:##GroupName Then $$IsLedOfGrp:$Name:$$GroupSundryDebtors else Yes
+	
+;;Any objects under this collection will be listed in the browser reports
+
+
+[#Collection: List of Custom Browser Reports]
+     
+   Add	: Object		: TSPL Group Summary Coll
+   
+[Object: TSPL Group Summary Coll]
+	
+	Name        		: "Customized Trigger Report - SD Group Summary" 
+    IsCollection    	: True
+    DefinitionName     	: "TSPL Smp SD Group Summary"       
+    IsAccessAvailable 	: $$Allow:Display:GroupSummary     
+    IsFeatureEnabled   	: $$IsAccountingOn or $$IsInventoryOn 
+	
+;; End-of-File

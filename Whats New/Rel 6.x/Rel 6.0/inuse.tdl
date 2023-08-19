@@ -1,0 +1,121 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- This sample introduces to the concept of preprocessor directives and the preprocessor directice 'Inuse' introduced in 6.0
+- This PPD is helpful in marking dynamically used definitions within any definition, so that when a TDL project is compiled with its analyse
+- option set in its properties, the dynamically used definitions are also analysed to check for errors/warnings. 
+- A Demo of the use of 'Inuse' in the project inuse.tpj is also available in the samples folder. 
+- This sample invokes this project in TD9 to compile and see the use.
+
+Last modification – 
+-	Altered on 21/06/2017
+*/
+
+[Report: TSPL INUSE Rep]
+	
+	Title	: $$LocaleString:"INUSE illustration"
+	
+[Form: TSPL INUSE Rep]
+	
+	Use		: TSPL SMP Illustration
+	
+	Height	: 100% Screen
+	Width	: 100% Screen
+	
+	Button	: TSPL SMP InUseDemo
+	
+	Local	: Field	: FormSubTitle		: Info		:$$LocaleString:"Illustration of pre-processor directive 'Inuse'"
+	
+	Local	: Field	: TSPL Smp Purpose	: Info		: $$LocaleString:"       When a TDL project is compiled in TD9 with 'Analyse' option set in its properties, the analyser validates the entire code in detail and identifies errors, warnings and remarks. +
+	The analyser can only identify errors which doesn't involve dynamicity (like user intervention or a condition check based on local user settings etc)." 
+	
+	Local	: Part	: TSPL SMP Illustration	: Add	: Part: After: TSPL SMP Purpose: TSPL SMP PurposeINUSEExample
+	Local   : Part	: TSPL SMP Illustration : Add	: Part: TSPL SMP ExampleExecution
+	Local	: Field	: TSPL Smp Syntax		: Info	: "   [Source Desc Type : Source Desc Name]"+$$NewLine+"<INUSE:<Desc Type1>:<Desc Name>,<Desc Name>...>"+$$NewLine+"<INUSE:<Desc Type2>:<Desc Name>,..>"
+	
+	Local	: Part	: TSPL SMP Example	: Local	: Line	: TSPL SMP ExampleNote: Invisible: Yes
+	Local	: Field	: TSPL SMP Example:Info: "   [Report: TSPL Code with Inuse]"+$$NewLine+"<INUSE:Collection:TSPLCollwithInuse>"+$$NewLine+
+	                                     +"Since INUSE is specified at the report level, the analyser can understand the collection 'TSPL Code with Inuse' is used. Therefore, when this TDL file is compiled, it doesnt throw the warning of unused definition collection 'TSPL Coll with Inuse'"
+	Local	: Field	: TSPL SMP ExampleExec: Info: " Click the button 'Inuse Demo' to invoke Tally.Developer 9 with the inuse project loaded.+
+	This project has a file in which pre processor directive inuse is used. Compile the project to experience the use of 'INUSE'."
+	Local   : Part: TSPL SMP ExampleExecution : Add: Line: After: TSPL SMP ExampleExec:TSPL SMP ExampleNote 
+	Local	: Field	: TSPL SMP ExampleNote: Info:"(The project 'Inuse' is available in the folder 'Supporting Files' of Samples folder)"
+
+[Part: TSPL SMP PurposeINUSEExample]
+	
+	Lines: TSPL SMP PurposeINUSEExample1 Title, TSPL SMP PurposeINUSEExample1, Empty
+		
+	[Line: TSPL SMP PurposeINUSEExample1 Title]
+		
+		Field: Long Prompt
+		Local: Field: Long Prompt : Set as: $$LocaleString:"Example - Dynamic use of collection"
+		Local: Field: Long Prompt : Style: Small Bold
+		Indent		: 2
+
+	[Line: TSPL SMP PurposeINUSEExample1]
+		
+		Fields	: TSPL SMP PurposeINUSEExample1
+		Indent	: 3
+		
+		[Field: TSPL SMP PurposeINUSEExample1]
+			
+			Use		: Info Field
+			Width	: 100% Page
+			Lines	: 0
+			Info	: "[Report: TSPL Code with Inuse]" +$$NewLine+ "   Variable: TSPLInuseVar"+ $$NewLine+ "   Repeat: TSPLInuseVar" + $$NewLine+
+			           +  "   Set: DSPRepeatCollection : 'TSPL Coll with Inuse'" +$$NewLine+ "[Variable: TSPLInuseVar]" + $$NewLine+ "   Type    : String"+
+					  + $$NewLine+ "   Repeat  : ##DSPRepeatCollection" +$$NewLine+ "[Collection: TSPL Coll with Inuse]" +$$Newline + "   ......"+
+					  + $$NewLine +"The collection 'TSPL Coll with Inuse' is indirectly referenced here." + $$newLine+
+					 +"Since the Analyser cannot understand that collection 'TSPL Coll with Inuse' is used(as it is set as a string value), when this TDL file is compiled, it will throw a warning of 'TSPL Coll with Inuse' being a unused definition. In case, the collection has any errors, since the collection is treated as unused, the analyser doesnt analyse the collection for errors. So, to provide hints to the analyser about dynamically used definitions, the preprocessor directive INUSE is introduced"
+			Full Width	: Yes
+	
+
+[Button: TSPL SMP InUseDemo]
+	
+	Title: $$LocaleString:"Inuse Demo"
+	Key	 : Ctrl + I
+	
+	Action: Execute: TSPL SMP InUseDemo
+	
+;; Gets the TD9 location which is used to invoke the same with the inuse project
+
+[Report: TSPL SMP InUseDemo]
+	
+	Form: TSPL SMP InUseDemo
+	
+[Form: TSPL SMP InUseDemo]
+	
+	Part: TSPL SMP InUseDemo
+	Width: 60% Screen
+	
+	Option: Small Size Form
+	On: Form Accept: Yes: Call: TSPL SMP InUseDemo
+	
+[Part: TSPL SMP InUseDemo]
+	
+	Line: TSPL SMP InUseDemo
+	
+	[Line: TSPL SMP InUseDemo]
+		
+		Field: Long Prompt, TSPL SMP InUseDemo
+		Local: Field: Long Prompt	: Set as: $$LocaleString:"Enter Tally.Developer 9 exe path excluding the file name,\nfor instance, C:\Tally.Developer9"
+		Local: Field: Long Prompt	: Lines : 0
+		Local: Field: Long Prompt	: Width	: 50
+		
+		[Field: TSPL SMP InUseDemo]
+			
+			Use			: Name Field
+			Full Width	: Yes			
+
+;; This function invokes TD9 with Inuse project	
+
+[Function: TSPL SMP InUseDemo]
+	
+	Variable	: InUseProjPath		: String
+	
+	000: Set	: InUseProjPath		: "'/PROJECT:" + #TSPLSMPInUseDemo + "\Samples\Supporting Files\InUse\InUse.tpj" + "' '/FILE:" + #TSPLSMPInUseDemo + "\Samples\Supporting Files\InUse\CodewithInUse.TDL'"
+
+	020: Exec Command: (#TSPLSMPInUseDemo + "\tallydeveloper.exe")	: ##InUseProjPath
+
+;;EOF

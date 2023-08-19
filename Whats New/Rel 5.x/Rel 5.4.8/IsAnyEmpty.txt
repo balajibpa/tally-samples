@@ -1,0 +1,85 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) - 
+-	The objective of this program is to demonstrate the usage of IsAnyEmpty that would reduce the code complexity and usage of multiple IsEmpty
+
+Syntax -
+	$$IsAnyEmpty:<Expression 1>[:<Expression 2>[:.....[:<Expression n>]]]
+
+Last modification - 
+-	Created on 18/10/2016
+	Updated on 07/11/2016
+*/
+
+[Report: TSPL Smp IsAnyEmpty]
+		
+	Form		: TSPL Smp IsAnyEmpty
+	Title		: "Function IsAnyEmpty"
+
+[Form: TSPL Smp IsAnyEmpty]
+	
+	Use			: TSPL SMP Illustration
+	Add			: Part	: TSPL Smp IsAnyEmpty, TSPL Smp IsAnyEmptyOutput
+	
+	Local		: Field	: FormSubTitle		: Info		: "Illustration for function IsAnyEmpty"
+	Local		: Field	: TSPL Smp Purpose	: Info		: "The function accepts multiple parameters separated by colon and returns true " +
+			+ "if an expression is evaluated to empty. Once a parameter expression is evaluated to true, further parameters are not evaluated, " +
+			+ "thereby optimizing the performance. Hence, we need to ensure that the sequence of parameters is such that higher the probability " +
+			+ "of an expression being empty, earlier in the order they should be placed for optimal performance."
+			
+	Local		: Field	: TSPL Smp Syntax	: Info		: "$$IsAnyEmpty:<Expression 1>[:<Expression 2>[:.....[:<Expression n>]]]"
+	Local		: Field	: TSPL Smp Example	: Info		: "The below example validates whether any of the given field is empty or not " +
+			+ "by using the function $$IsAnyEmpty with the parameter as field values, i.e. $$IsAnyEmpty:#Name:#Age:#JoinDate"
+		
+[Part: TSPL Smp IsAnyEmpty]
+	
+	Lines	: TSPL Smp Name, TSPL Smp Age, TSPL Smp JDate
+
+	[Line: TSPL Smp Name]
+		
+		Field	: Medium Prompt, TSPL Smp Name
+		Local	: Field	: Medium Prompt		: Set as	: "Enter name"
+		
+		[Field: TSPL Smp Name]
+			
+			Use		: Name Field
+			
+	[Line: TSPL Smp Age]
+		
+		Field	: Medium Prompt, TSPL Smp Age
+		Local	: Field	: Medium Prompt		: Set as	: "Enter age"
+		
+		[Field	: TSPL Smp Age]
+			
+			Use		: Number Field
+			Format	: "NoZero"
+			
+	[Line: TSPL Smp JDate]
+		
+		Field	: Medium Prompt, TSPL Smp JDate
+		Local	: Field	: Medium Prompt	: Set as	: "Enter date of joining"
+		
+		[Field: TSPL Smp JDate]
+			
+			Use			: Uni Date Field
+			Set Always	: Yes
+			
+[Part: TSPL Smp IsAnyEmptyOutput]
+	
+	Lines	: TSPL Smp OutputTitle, TSPL Smp IsAnyEmptyOutput
+	
+	[Line: TSPL Smp IsAnyEmptyOutput]
+		
+		Field	: TSPL Smp IsAnyEmptyOutput
+		
+		[Field: TSPL Smp IsAnyEmptyOutput]
+			
+			Use			: Name Field
+			Set as		: If $$IsAnyEmpty:#TSPLSmpName:#TSPLSmpAge:#TSPLSmpJDate then "One or more fields are empty !!!" Else "There are no empty values !!!"
+			Width		: 0
+			Case		: Normal
+			Set Always	: Yes
+			Read Only	: Yes
+			
+;; End of file

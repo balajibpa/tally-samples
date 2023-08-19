@@ -1,0 +1,105 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+-	This code demonstrates the usage of Function RandomNumber
+
+Syntax -
+- 	$$RandomNumber[:<MinRange>[:<MaxRange>]]
+
+Where both Min Range and Max rage or optional.  In absence of Max Range, 2147483647 is considerd
+In absence of Min Range, 0 is considered
+
+Updation History -
+-	Created on 08-06-2012
+*/
+
+;; Logical variable to Refresh the Form by click of a Button
+
+[Variable : TSPL Smp RefreshFlag]
+
+	Type	: Logical
+
+;; Click of a Button will refresh the Form so that a new Random Number will be generated
+
+[Button: TSPL Smp Generate RN]
+
+	Title 	: "Refresh"
+	Key	  	: F5
+	Action	: SET 	: TSPLSmpRefreshFlag : NOT ##TSPLSmpRefreshFlag
+
+[Report: TSPL Smp Random Number]
+
+	Form	: TSPL Smp Random Number
+	Title	: "Usage of Function 'RandomNumber'"
+	Variable: TSPL Smp Refresh Flag
+	
+[Form: TSPL Smp Random Number]
+	
+	Parts	: TSPL Smp Info, TSPL Smp Random Number
+	Local	: Part	: TSPL Smp Info	: Local	: Line	: Info	: Local	: Field	: Info Field	: Info	: "Usage of Function RandomNumber"
+	
+	Option	: TSPL Smp Refresh 	: ##TSPLSmpRefreshFlag  OR NOT ##TSPLSmpRefreshFlag
+	
+	Button	: TSPL Smp Generate RN
+	
+	[!Form: TSPL Smp Refresh]
+		
+
+[Part: TSPL Smp Random Number]
+	
+	Lines	:  TSPL Smp Random Number Title, TSPL Smp Random Number Details
+	
+	[Line: TSPL Smp Random Number Title]
+		
+		Use		: TSPL Smp Random Number Details
+
+		Local	: Field	: Default	: Align	: Centre
+		Local	: Field	: Default	: Style	: Normal Bold
+		Local	: Field : Default   : Color : Black
+
+		Local	: Field	: TSPL Smp Random Number						: Set As	: "$$RandomNumber"
+		Local	: Field	: TSPL Smp Random Number with MinRange			: Set As	: "$$RandomNumber:999999"
+		Local	: Field	: TSPL Smp Random Number with Min and Max range	: Set As	: "$$RandomNumber:9:9999"
+		Border	: Thin Top Bottom
+	
+	[Line: TSPL Smp Random Number Details]
+		
+		Fields	: TSPL Smp Random Number, TSPL Smp Random Number with MinRange
+		Fields	: TSPL Smp Random Number with Min and Max range
+		Border	: Thin Bottom
+
+		Local	: Field	: Default	: Align	: Centre
+		Local	: Field : Default   : Color : Blue
+		Local	: Field	: Default	: Style	: Normal
+		
+		[Field: TSPL Smp Random Number]
+			
+			Use		: Name Field
+			
+;; The below syntax returns Random Number
+
+			Set As	: $$RandomNumber
+			Width	: 35% Page
+			Tooltip	: "Click on the Random Number Button to generate another Random Number"
+		
+		[Field: TSPL Smp Random Number with MinRange]
+			
+			Use		: Name Field
+
+;; The below syntax returns Random Numbers greater than equals to 999999
+			Set As	: $$RandomNumber:999999
+			Border	: Thin Left
+			Width	: 35% Page
+			Tooltip	: "Click on the Random Number Button to generate another Random Number"
+
+		[Field: TSPL Smp Random Number with Min and Max range]
+			
+			Use		: Name Field
+;; The below syntax returns Random Number between 9 and 9999
+			Set As	: $$RandomNumber:9:9999
+			Border	: Thin Left Right
+			Width	: 30% Page
+			Tooltip	: "Click on the Random Number Button to generate another Random Number"
+
+;; End-of-File

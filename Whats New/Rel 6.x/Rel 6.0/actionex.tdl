@@ -1,0 +1,128 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- This code demonstrates the use of the Button/Key attribute ActionEx.
+- ActionEx executes the action statements one after the other in the order of specification if unique labels are given else
+- if same labels are given, then the action of the last label will be executed.
+- In this example, the application of actionex to execute multiple actions to get user Input, set the SVVoucher Type based on the user selection of accounting voucher type +
+- and display appropriate accounting voucher creation screen is shown
+
+Last modification – 
+-	Altered on 17/06/2017
+*/
+
+[Report: TSPL ActionEx Rep]
+
+	Title	: $$LocaleString:"Action Ex illustration"
+	Form	: TSPL ActionEx Rep
+
+[Form: TSPL ActionEx Rep]
+
+	Use		: TSPL SMP Illustration
+	
+	Height	: 80% Screen
+	Width	: 80% Screen
+	
+	Local   : Part	: TSPL SMP Illustration : Add	: Part: TSPL SMP ExampleExecution
+	
+	Local	: Field	: FormSubTitle		: Info		: $$LocaleString:"Illustration for button/key attribute ActionEx"
+	
+	Local	: Field	: TSPL Smp Purpose	: Indent	: 2
+	Local	: Field	: TSPL Smp Purpose	: Info		: $$LocaleString:"  'Action Ex' is an triple list Button/Key attribute introduced to enhance the " +
+	            + "multi-action support by allowing the specification of multiple actions."
+				
+	Local	: Field	: TSPL Smp Syntax	: Indent	: 2
+	Local	: Field	: TSPL Smp Syntax	: Info		: "[Button : Button Name]"+
+			+$$NewLine+ "       Action Ex : <Label> : <Action Keyword> : <Action Parameters>"+
+			+$$NewLine+ " OR"+
+			+$$NewLine+ "[Button : Button Name]"+
+			+$$NewLine+ "       <Label> : <Action Keyword> : <Action Parameters>" 
+				
+	Local	: Field	: TSPL SMP Example	: Indent: 2
+	Local	: Field	: TSPL SMP Example	: Info: $$LocaleString:"[Button: TSPL Create Acc Vouchers]"+
+			+$$NewLine+"    ....."+
+			+$$NewLine+"    ActionEx: Set Var	: Modify Variables: TSPL Vch Types "    +
+			+$$NewLine+"    ActionEx: PmntVar : Do If:  (##TSPLVchTypes = 'Payment') : Set: SvVoucherType : 'Payment'"+
+			+$$NewLine+"    ActionEx: RcptVar : Do If:  (##TSPLVchTypes = 'Receipt') : Set: SvVoucherType : 'Receipt'"+
+			+$$NewLine+"    ActionEx: AccVch 	: Create Collection: TSPL Company AccVouchers"+
+			+$$NewLine+$$LocaleString:"Here, the modify variables action is executed first, which modifies the variable 'TSPL Vch Types' on user input. " +
+			+$$NewLine+$$LocaleString:"Then, based on the Do If condition evaluation, the statement that evaluates to True sets the value of SVVoucherType variable."+
+			+$$NewLine+$$LocaleString:"Then, Create Collection action is executed, which displays the appropriate voucher creation screen based on the value of 'SVVoucherType'"
+				
+	Local	: Line	: TSPL SMP ExampleNote: Invisible: Yes
+				
+	Local	: Field	: TSPL SMP ExampleExec: Info: $$LocaleString:"Click on the Create Acc Vch button to experience the behavior of 'ActionEx'. " +
+			+$$LocaleString:"It allows to create accounting vouchers of selected type."
+	Buttons	: TSPLCreateAccVouchers
+
+
+[Button: TSPL Create Acc Vouchers]
+ 
+     Title	 : $$LocaleString:"Create Acc Vch"
+     Key	 : Alt+ C
+	 
+	 ;;Here, the modify variables action is executed first, which modifies the variable 'TSPL Vch Types' on user input. 
+	 ;;Then, based on the Do If condition evaluation, the statement that evaluates to True sets the value of SVVoucherType variable.
+	 ;;Then, Create Collection action is executed, which displays the appropriate voucher creation screen based on the value of 'SVVoucherType'
+	 
+	 ActionEx: Set Var	: Modify Variables: TSPL Vch Types
+	 ActionEx: PmntVar 	: Do If:  (##TSPLVchTypes = "Payment") : Set: SvVoucherType : "Payment"
+	 
+	 ActionEx: RcptVar 	: Do If:  (##TSPLVchTypes = "Receipt") : Set: SvVoucherType : "Receipt"
+	 
+	 ActionEx: ContraVar: Do If:  (##TSPLVchTypes = "Contra")  : Set: SvVoucherType : "Contra"
+	 
+	 ActionEx: JrnlVar 	: Do If:  (##TSPLVchTypes = "Journal") : Set: SvVoucherType : "Journal"
+     ActionEx: AccVch 	: Create Collection: TSPL Company AccVouchers
+	 
+[Collection: TSPL Company AccVouchers]
+	
+	Type        : Voucher
+    Child of    : ##SVCurrentDate
+    Report      : TSPL Accounting Voucher
+    Filter      : NotPayrollVoucherFilter
+	
+[Report: TSPL Accounting Voucher]
+	
+	Use	: Accounting Voucher	
+	Form: Accounting Voucher
+
+	Local: Form:Accounting Voucher:Delete:Buttons : Contra Button, Payment Button, Receipt Button
+    Local: Form:Accounting Voucher:Delete:Buttons : Journal Button, Sales Button, CNoteButton, Purchase Button, DNoteButton
+	Local: Form:Accounting Voucher:Delete:Buttons : RevJrnlButton, Memo Button
+	
+[System: Variables]
+	
+	Variable: TSPL Vch Types: String
+	
+
+[Report: TSPL Vch Types]
+	
+	Use		: Modify Variables
+	
+	Set		: TSPL Vch Types	: ""
+	Local	: Field	: MV Title: Info : $$LocaleString:"Select Vch Type"
+	Local	: Part	: Modify Variables: Add: Line: TSPL Vch Types
+	
+	
+	[Line: TSPL Vch Types]
+		
+		Fields: Medium Prompt, TSPL Vch Types
+		Local: Field: Medium Prompt	: Set as: $$LocaleString:"Acc Vch Type"
+		
+		[Field: TSPL Vch Types]
+			
+			Use			: Namefield
+			Table		: TSPLAccVchTypes
+			Modifies	: TSPL Vch Types : Yes
+			Show Table	: Always
+			
+
+[Table: TSPL AccVch Types]
+	
+	Title    : $$LocaleString:"Acc Vch Types"
+	List Name: $$LocaleString:"Payment", $$LocaleString:"Receipt", $$LocaleString:"Journal", $$LocaleString:"Contra"
+		
+
+;;EOF

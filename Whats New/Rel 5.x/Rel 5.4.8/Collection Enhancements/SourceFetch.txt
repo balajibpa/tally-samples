@@ -1,0 +1,121 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+/*
+Objective(s) – 
+- 	The objective of this program is to demonstrate the new attribute Source Fetch which allows you to 
+	fetch value of the method from Source Object
+-	A source collection with a Walk or Walk Ex will evaluate this. In which case, while default Fetch, Compute 
+	are evaluated at the 'Walked' object context, Source fetch fetches from Source Collection object context
+	
+Syntax -
+
+	Source Fetch: MethodSyntax, ...
+
+Method Syntax: Method name / dotted notation identifying a method, collections to be fetched. 
+This is same as the parameter used for Fetch attribute
+	
+Last modification – 
+-	Created on 21/10/2016
+-	Updated on 07/11/2016
+
+*/
+
+[Report: TSPL SMP SourceFetch]
+	
+	Form	: TSPL SMP SourceFetch
+	Title	: "Illustration for Source Fetch"
+	
+[Form: TSPL SMP SourceFetch]
+
+	Use		: TSPL SMP Illustration
+	Add		: Part	: TSPL SMP SourceFetch
+
+	Local	: Field	: Form SubTitle		: Info		: "Illustration for Source Fetch"
+
+	Local	: Field	: TSPL Smp Purpose	: Info		: "Attribute 'Source Fetch' is introduced to fetch the methods from the source object. This is supported " +
+			+ "only in summary collections walked over sub-objects." + $$Newline + "This enables the developers to directly access the methods from the source "+
+			+ "object instead of having to introduce source vars, which reduces the code complexity."
+	Local	: Field	: TSPL Smp Syntax	: Info		: "Source Fetch: MethodSyntax, ..."
+
+	Local	: Field	: TSPL Smp Example	: Info		: "The below sample demonstrates the usage of collection attribute 'Source Fetch' where the method 'Amount' " +
+			+ "is fetched from the voucher object."
+
+[Part: TSPL SMP SourceFetch]
+	
+	Line			: TSPL SMP SourceFetchTitle, TSPL SMP SourceFetch
+	Repeat			: TSPL SMP SourceFetch			: TSPL SMP Invwise Batchwise Sales
+	Scroll			: Vertical
+	Common Border	: Yes
+
+	[Line: TSPL SMP SourceFetchTitle]
+		
+		Use		: TSPL SMP SourceFetch
+		
+		Local	: Field	: Default					: Style		: Normal Bold
+		Local	: Field	: Default					: Align		: Center
+		Local	: Field	: Default					: Lines		: 0
+
+		Local	: Field	: TSPL SMP VchDate			: Info		: "Voucher Date"
+		Local	: Field	: TSPL SMP VchNumber		: Info		: "Voucher Number"
+		Local	: Field	: TSPL SMP VchType			: Info		: "Voucher Type"
+		Local	: Field	: TSPL SMP BName			: Info		: "Batch Name"
+		Local	: Field	: TSPL SMP BAmount			: Info		: "Batch Amount"
+		Local	: Field	: TSPL SMP VchAmount		: Info		: "Voucher Amount"
+		
+		Border	: Thin Top Bottom
+
+	[Line: TSPL SMP SourceFetch]
+		
+		Field		: TSPL SMP VchDate, TSPL SMP VchNumber, TSPL SMP VchType, TSPL SMP BName
+		Right Field	: TSPL SMP BAmount, TSPL SMP VchAmount
+		Local: Field: Default	: Style		: Normal
+		
+		[Field: TSPL SMP VchDate]
+
+			Use		: Uni Date Field
+			Set as	: $Date
+			Width	: 8
+			Align	: Left
+
+		[Field: TSPL SMP VchNumber]
+
+			Use		: Name Field
+			Border	: Thin Left
+			Set as	: $VoucherNumber
+
+		[Field: TSPL SMP VchType]
+
+			Use		: Name Field
+			Border	: Thin Left
+			Set as	: $VoucherTypeName
+
+		[Field: TSPL SMP BName]
+
+			Use		: Name Field
+			Border	: Thin Left
+			Set as	: $BName
+			
+		[Field: TSPL SMP BAmount]
+
+			Use		: Amount Field
+			Border	: Thin Left
+			Set as	: $BAmt
+			
+		[Field: TSPL SMP VchAmount]
+			
+			Use		: Amount Field
+			Border	: Thin Left
+			Set as	: $Amount		;; This is fetched from the Source Object using Attribute Source Fetch
+			
+[Collection: TSPL SMP Invwise Batchwise Sales]
+	
+    Source Collection   : TSPL SMP Vch Sales
+
+    Walk          		: AllInventoryEntries, Batch Allocations
+	
+	Source Fetch		: Date, VoucherNumber, VoucherTypeName, Amount	;; This will fetch Amount Method from the Source Object Voucher
+	
+	By					: MasterID		: $().MasterID
+	By					: BName			: $BatchName
+	Aggr Compute		: BAmt			: Sum	: $Amount
+
+;; End of file

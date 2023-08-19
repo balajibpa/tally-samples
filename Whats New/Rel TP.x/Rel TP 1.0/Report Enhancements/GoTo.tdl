@@ -1,0 +1,47 @@
+;;Program to add custom report in Go To
+
+[Report: TSPL Custom Go To Report Illustration]
+
+	Title			: $$LocaleString:"Adding Customised Reports in Go To"
+	Form			: TSPL Custom Go To Report Illustration
+	
+[Form: TSPL Custom Go To Report Illustration]
+	
+	Use				: TSPL SMP Illustration
+		
+	Height			: 100% Screen
+	Width			: 100% Screen
+	
+	Local	: Part	: TSPL SMP Syntax		: Invisible	: Yes
+	Local	: Field	: FormSubTitle			: Info		: $$LocaleString:"Illustration for Adding Customised Reports in Go To"
+		
+	Local	: Field	: TSPL Smp Purpose		: Indent	: 2
+	Local	: Field	: TSPL Smp Purpose		: Info		: $$LocaleString:"Most of the default reports are available in Go To. Hence, it is good to add Customised reports as part of Go To." + +
+															$$LocaleString:"The below mentioned code describes an approach for adding a Customised report in Go To."
+			
+	
+	Local	: Field	: TSPL SMP Example		: Info		: $$NewLine	+ "[#Table: GT CommonReports]" + $$NewLine + $$NewLine + +
+														"Add	: Object	: At End	: GT PartyContactDetails"  + $$NewLine   +  $$NewLine + +
+															"[Object	: GT PartyContactDetails]"  + $$NewLine + $$NewLine + +
+														"Use				: Go To Report Obj" + $$NewLine + +
+														'Name			: $$LocaleString:"Party Contact Details"'  + $$NewLine ++
+														"Current Report	: TSPL Smp Party Contact Details"
+	
+	Local	: Field	: TSPL SMP ExampleNote	: Info		: "The report 'Party Contact Details' has been added in Go To under the 'Common Reports'" 	
+
+;;The code for adding a Customised report in Go To
+[#Table: GT CommonReports]
+	
+	Add	: Object	: At End	: GT PartyContactDetails
+
+[Object	: GT PartyContactDetails]
+
+	Use				: Go To Report Obj
+
+	Action	: Goto Action		: Display Current Report
+	Action	: Display Action	: Display Current Report
+	Name			: $$LocaleString:"Party Contact Details"
+	Current Report	: TSPL Smp Party Contact Details
+
+
+;;End of File

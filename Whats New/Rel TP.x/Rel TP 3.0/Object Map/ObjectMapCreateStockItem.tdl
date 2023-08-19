@@ -1,0 +1,130 @@
+/*
+
+	How to use Object Map in TallyPrime?
+	
+	1. Create a Stock Item using Object Map.
+	
+	2. Follow the steps given below to achieve the same.
+
+		a. On form accept call the function 
+		b. From the function execute the Object Map
+		c. Under Object Map set values of Stock Item and Parent name
+    
+*/
+
+[Report: TSPL Object Map Stock Item Creation]
+	
+	Title			: $$LocaleString:"Stock Item Creation using Object Map"
+	Form			: TSPL Object Map Stock Item Creation
+	
+[Form: TSPL Object Map Stock Item Creation]
+	
+	
+	Use				: TSPL SMP Illustration
+	
+	Add				: Button		: Object Map								;; Added Button
+
+	Height			: 100% Screen
+	Width			: 100% Screen
+	
+	Local	: Part	: TSPL SMP Syntax		: Invisible	: Yes
+	Local	: Field	: FormSubTitle			: Info		: $$LocaleString:"Illustration for Object Map"
+		
+	Local	: Field	: TSPL Smp Purpose		: Indent	: 2
+	Local	: Field	: TSPL Smp Purpose		: Info		: $$NewLine + $$LocaleString:"Create a Stock Item by using Object Map." + +
+														  $$LocaleString:"On Form Accept, call the function '[Function: Object Map Function]'" + $$NewLine + $$NewLine + +
+														  $$LocaleString:"From this function level call the Object Map '[Object Map : TSPL Object Map Stock Item Creation]' and set the UDF values under it."
+			
+	
+	Local	: Field	: TSPL SMP Example		: Info		: $$NewLine	+ "[Form: TSPL Object Map]" 					 + $$NewLine + $$NewLine + +
+																		'On: Form Accept: Yes: Call : Object Map Function ' + $$NewLine + $$NewLine + +
+																	  "[Function: Object Map Function]" 		 + $$NewLine + $$NewLine + +
+																		'01: New Object: Stock Item' 	 		+ $$NewLine + +
+																		'02: Execute Object Map :  TSPL Object Map Stock Item Creation' + $$NewLine + +
+																		'03: Create Target' 				 	 + $$NewLine + +
+																		'04: Do If: $$LastResult = "Yes" : Msg Box: "Success" : "Stock Item created"' 		 + $$NewLine + +
+																		'05: Do If: $$LastResult = "No"  : Msg Box: "Remark"  : "Stock Item already exist" ' + $$NewLine + $$NewLine + +
+																	  "[Object Map :  TSPL Object Map Stock Item Creation]" + $$NewLine + $$NewLine + +
+																		'Set as: Name 	: $Stock ItemNameUDF'	 + $$NewLine + +
+																		'Set as: Parent	: $ParentNameUDF' 
+																	  
+					
+	Local	: Field	: TSPL SMP ExampleNote	: Info		: "Create a Stock Item via form accept using using Object Map. To experience the same, click on the Button 'Create Stock Item'"
+
+
+[Button: Object Map]
+	
+	Title  : $$LocaleString:"Create Stock Item"
+	Key	   : F5
+	Action : Alter: TSPL ObjectMap
+	
+
+
+
+		
+[Report: TSPL ObjectMap]
+			
+	Form	: TSPL Object Map
+	Object	: Stock Item
+	
+[Form: TSPL Object Map]
+				
+	Part  : Form Sub Title, TSPL Object Map Stock Item Creation part
+	Local : Field	: FormSubTitle	: Info		: "Create Stock Item"
+	Width : 20% Page
+	
+	On	  :  Form Accept	: Yes	: Call		: Object Map Function 
+	
+[Function: Object Map Function]
+	
+	01: New Object: Stock Item
+	02: Execute Object Map :  TSPL Object Map Stock Item Creation
+	03: Create Target
+	04: Do If: $$LastResult = "Yes" : Msg Box: "Success" : "Stock Item created"
+	05: Do If: $$LastResult = "No"  : Msg Box: "Remark"  : "Stock Item already exist" 
+	
+[Object Map :  TSPL Object Map Stock Item Creation]
+	
+	Set as	: Name 			: $StockItemNameUDF			; Used as storages at '[Field: TSPL Object Map Stock Item Field]'
+	Set as	: Parent		: $ParentNameUDF			; Used as storages at '[Field: TSPL Object Map Parent Field]'
+
+[Part: TSPL Object Map Stock Item Creation part] 												
+		
+	Line: TSPL Object Map Stock Item Name Line, TSPL Object Map Parent Name Line
+		
+	[Line: TSPL Object Map Stock Item Name Line]
+			
+		Field: Long Prompt, TSPL Object Map Stock Item Field
+		
+		Local	: Field	: Long Prompt : Info	: "Stock Item Name"
+		
+		[Field: TSPL Object Map Stock Item Field]
+			
+				Use		: Name Field
+				Storage : StockItemNameUDF
+				
+	[Line: TSPL Object Map Parent Name Line]
+		
+		Field: Long Prompt, TSPL Object Map Parent Field
+		
+		Local	: Field : Long Prompt : Info : "Parent Name "
+		
+		[Field: TSPL Object Map Parent Field]
+			
+			Use			: Name Field
+			Storage		: ParentNameUDF
+			Table		: Object Map Parent Collection, Primary
+			Show Table	: Always
+
+[Collection: Object Map Parent Collection]
+		
+	Title	: "List of Stock Group"
+	Type	: Stock Group
+	Align	: Center
+	Fetch	: Name, Parent
+
+[System: UDF]
+		
+	StockItemNameUDF	: String	: 9006
+	ParentNameUDF		: String    : 9007
+	

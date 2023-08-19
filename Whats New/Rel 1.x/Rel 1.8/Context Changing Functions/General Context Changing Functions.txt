@@ -1,0 +1,227 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s):-
+- 	To understand various Data Object Context changing Functions
+- 	Functions Owner, BaseOwner, PrevObj, NextObj, FirstObj, LastObj,
+	ReportObject
+
+Syntax -
+- 	$$Owner:<Expression>
+- 	$$BaseOwner:<Expression>
+- 	$$PrevObj:<Expression>
+- 	$$NextObj:<Expression>
+- 	$$FirstObj:<Expression>
+- 	$$LastObj:<Expression>
+- 	$$ReportObject:<Expression>
+
+	where TDL Expression can be any combination of Variables, Formulae, Methods of
+	an Object, Constants, Fields, etc.
+
+Updaion History:-
+- 	Created on 20-4-2010
+*/
+
+[Report: Data Context Changing Functions]
+
+	Use		: DSP Template
+	Form    : Data Context Changing Functions
+	Title   : "Data Context Changing Functions"
+	Set     : ExplodeFlag       : Yes
+	
+[Form: Data Context Changing Functions]
+
+	Use     : DSP Template
+	Height  : 100% Page
+	Width   : 100% Page
+	Parts   : Form SubTitle, Data Context Changing Functions
+	Local	: Field	: Form SubTitle		: Info	: "Understanding Basic Data Object Context Changing Functions using Partywise Voucher Details Report"
+
+[Part: Data Context Changing Functions]
+
+	Lines       : DCCF Object Title1, DCCF Object Details
+	Repeat      : DCCF Object Details	: DCCF Ledgers
+	Scroll   	: Vertical
+	CommonBorder: Yes
+
+	[Line: DCCF Object Title1]
+	
+		Fields      : DCCF Fld1, DCCF Fld2, DCCF Fld3, DCCF Fld4, DCCF Fld5, DCCF Fld6, DCCF Fld7, DCCF Fld8, DCCF Fld9
+        Local: Field: Default   : Align	: Center
+        Local: Field: Default   : Lines	: 0
+
+    	Local: Field: DCCF Fld1 : Set as: "Particulars"
+    	Local: Field: DCCF Fld2 : Set as: "$$Owner"
+    	Local: Field: DCCF Fld3 : Set as: "$$Owner:$$Owner"
+    	Local: Field: DCCF Fld4 : Set as: "$$BaseOwner"
+    	Local: Field: DCCF Fld5 : Set as: "$$PrevObj"
+    	Local: Field: DCCF Fld6	: Set as: "$$NextObj"
+    	Local: Field: DCCF Fld7 : Set as: "$$FirstObj"
+    	Local: Field: DCCF Fld8	: Set as: "$$LastObj"
+    	Local: Field: DCCF Fld9	: Set as: "$$ReportObject"
+    	Border      : Thin Top Bottom
+
+	[Line: DCCF Object Details]
+	
+		Fields      : DCCF Fld1, DCCF Fld2, DCCF Fld3, DCCF Fld4, DCCF Fld5, DCCF Fld6, DCCF Fld7, DCCF Fld8, DCCF Fld9
+		Explode     : DCCF VoucherDetails	: ##ExplodeFlag
+		Border      : Double Top: $$Line > 1
+		Local:Field : DCCF Fld1 : Display 	: Ledger Vouchers
+		Local:Field : DCCF Fld1	: Variable	: LedgerName
+
+		[Field: DCCF Fld1]
+		
+			Use     : Name Field
+			Set as  : $Name
+			Width   : @@DCCFWidth% Screen
+
+		[Field: DCCF Fld2]
+		
+			Use     : Name Field
+			Set as  : $$Owner:$Name
+			Border  : Thin Left
+			Width   : (@@DCCFWidth + 5) % Screen
+
+		[Field: DCCF Fld3]
+		
+			Use     : Name Field
+			Set as  : $$Owner:$$Owner:$Name
+			Border  : Thin Left
+			Width   : @@DCCFWidth% Screen
+
+		[Field: DCCF Fld4]
+		
+			Use     : Name Field
+			Set as  : $$BaseOwner:$Name
+			Border  : Thin Left
+			Width   : @@DCCFWidth% Screen
+
+		[Field: DCCF Fld5]
+		
+			Use     : Name Field
+			Set as  : $$PrevObj:$Name
+			Border  : Thin Left
+			Width   : @@DCCFWidth% Screen
+
+		[Field: DCCF Fld6]
+		
+			Use     : Name Field
+			Set as  : $$NextObj:$Name
+			Border  : Thin Left 
+			Width   : @@DCCFWidth% Screen
+		
+		[Field: DCCF Fld7]
+		
+			Use     : Name Field
+			Set as  : $$FirstObj:$Name
+			Border  : Thin Left
+			Width   : @@DCCFWidth% Screen
+
+		[Field: DCCF Fld8]
+		
+			Use     : Name Field
+			Set as  : $$LastObj:$Name
+			Border  : Thin Left 
+			Width   : @@DCCFWidth% Screen
+
+		[Field: DCCF Fld9]
+		
+			Use     : Name Field
+			Set as  : $$ReportObject:$Name
+			Border  : Thin Left 
+			Width   : @@DCCFWidth% Screen
+
+	[Part: DCCF VoucherDetails]
+	
+		Lines   : DCCF VoucherDetails
+		Repeat  : DCCF VoucherDetails: DCCF LedVouchers
+
+		[Line : DCCF VoucherDetails]
+		
+    		Fields      : DCCF Fld1, DCCF Fld2, DCCF Fld3, DCCF Fld4, DCCF Fld5, DCCF Fld6, DCCF Fld7, DCCF Fld8, DCCF Fld9
+			Local: Field: DCCF Fld1	: Set as    : "Voucher : " + $VoucherTypeName + "/" +  $VoucherNumber
+    		Local: Field: DCCF Fld1	: Alter     : Voucher
+			Local: Field: DCCF Fld1	: Space Left: 1
+			Local: Field: Default   : Style     : Small
+			Explode     : DCCF InvEntries		: ##ExplodeFlag
+			Option      : AlterOnEnter
+
+	[Part: DCCF InvEntries]
+	
+		Lines   : DCCF InvEntries
+		Repeat  : DCCF InvEntries 	: Inventory Entries
+		Local   : Field: Default    : Color     : Blue
+
+		[Line: DCCF InvEntries]
+
+    		Fields      : DCCF Fld1, DCCF Fld2, DCCF Fld3, DCCF Fld4, DCCF Fld5, DCCF Fld6, DCCF Fld7, DCCF Fld8, DCCF Fld9
+    		Local: Field: DCCF Fld1	: Set As	: $Name
+    		Local: Field: DCCF Fld1	: Delete    : Display
+			Local: Field: DCCF Fld1	: Space Left: 2
+			Local: Field: Default   : Style     : Small Italic
+			Explode     : DCCF BatchEntries		: ##ExplodeFlag
+
+	[Part: DCCF BatchEntries]
+	
+		Lines   : DCCF BatchEntries
+		Repeat  : DCCF BatchEntries	: Batch Allocations
+		Scroll  : Vertical
+        Local   : Field: Default    : Color     : Deep Grey
+                
+		[Line: DCCF BatchEntries]
+		
+    		Fields      : DCCF Fld1, DCCF Fld2, DCCF Fld3, DCCF Fld4, DCCF Fld5, DCCF Fld6, DCCF Fld7, DCCF Fld8, DCCF Fld9
+    		Local: Field: DCCF Fld1	: Set As	: $Name
+    		Local: Field: DCCF Fld1	: Delete    : Display
+			Local: Field: DCCF Fld1	: Space Left: 3
+			Local: Field: Default   : Style     : Tiny Bold
+
+;; Object Modifications
+
+[#Object: Voucher]
+
+	Name        : $VoucherNumber
+
+[#Object: Inventory Entry]
+
+	Name        : $StockItemName
+
+[#Object: Batch Allocations]
+
+	Name        : $BatchName
+	
+;; Collection Definition
+
+[Collection: DCCF Purchase Vouchers]
+
+	Type		: Vouchers	: Voucher Type
+	Child Of	: $$VchTypePurchase
+	BelongsTo   : Yes
+	Fetch		: *, *.*, Name, InventoryEntries.Name, InventoryEntries.BatchAllocations.Name
+
+[Collection: DCCF Sales Vouchers]
+
+	Type		: Vouchers	: Voucher Type
+	Child Of	: $$VchTypeSales
+	BelongsTo   : Yes
+	Fetch		: *, *.*, Name, InventoryEntries.Name, InventoryEntries.BatchAllocations.Name
+
+[Collection: DCCF Ledgers]
+
+	Source Collection	: DCCF Purchase Vouchers, DCCF Sales Vouchers
+	By					: Name			: $PartyLedgerName
+
+[Collection: DCCF LedVouchers]
+
+	Type        : Vouchers  : Ledger
+	Childof     : ##LedVar
+	Filter		: IsSalesorPurchase
+	Parm Var	: Led Var	: String	: $Name
+	Fetch		: *, *.*, Name, InventoryEntries.Name, InventoryEntries.BatchAllocations.Name
+
+[System: Formula]
+
+	DCCF Width 			: 20
+	IsSalesorPurchase	: $$IsSales:$VoucherTypeName OR $$IsPurchase:$VoucherTypeName
+    
+;; End-of-File

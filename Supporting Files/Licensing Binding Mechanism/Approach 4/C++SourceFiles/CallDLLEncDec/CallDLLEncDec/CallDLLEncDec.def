@@ -1,0 +1,4 @@
+LIBRARY	"CallCDllTest"
+	EncryptData
+	DecryptData
+	DecryptStr

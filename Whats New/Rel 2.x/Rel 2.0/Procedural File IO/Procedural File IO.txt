@@ -1,0 +1,38 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Menu for Procedural File I/O Enhancements
+*/
+
+[Menu: Procedural File IO]
+
+	Indent		: "Basic Usage-Text"
+	Item		: Blank
+	Key Item	: File Creation - Text 	: T : Call 		: TSPL Smp Write Ledgers to Text
+	Key Item	: File Read - Text 		: E : Call 		: TSPL Smp Read Ledgers from Text
+	Item		: Blank
+
+	Indent		: "Basic Usage-Excel"
+	Item		: Blank
+	Key Item 	: File Creation - Excel : X : CALL		: TSPL Smp Write Ledgers to Excel
+	Key Item	: File Read - Excel 	: R : Call 		: TSPL Smp Read Ledgers from Excel
+	Item		: Blank
+
+;	Option		: TSPL Smp Procedural File IO NonRemote	: NOT $$IsRemoteCompany
+;
+;	[!Menu: TSPL Smp Procedural File IO NonRemote]
+
+		Add		: Indent	: "Use Case - Stock Item Import"
+		Add		: Item		: Blank
+		Add		: Key Item	: Import Stock Items	: I : Execute	: TSPL Smp Import Config
+
+;; Include Files
+
+;; Basic Usage
+[Include: Basic Usage\Text File IO.txt]
+[Include: Basic Usage\Excel File IO.txt]
+
+;; Use Case
+[Include: Import Stock Items\Import Stock Items using File IO.txt]
+
+;; End-of-File

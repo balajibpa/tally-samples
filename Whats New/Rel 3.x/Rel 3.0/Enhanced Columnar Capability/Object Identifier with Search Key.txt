@@ -1,0 +1,33 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This program demonstrates the usage of Search Key for identifying the Line 
+Objects
+-	The report uses the same Itemwise Partywise Sales Report and the default Line 
+removal behavior using Alt + R/Alt + U has become possible by assigning an unique
+Object Identifier using Search Key
+
+Syntax -
+-	Usage of Collection Attribute Search Key as a unique object identifier 
+to remove/Unremove Lines
+
+	Search Key : Method-Name [+ Method-Name ....]
+
+Updation History – 
+-	Created on 03/02/2011
+*/ 
+
+[Report: TSPL Smp CFBK Rep Search Key]
+	
+	Use		: TSPL Smp CFBK Rep
+	
+;; The below Search Key with the Collection 'TSPL Smp Stock Item' sets Method 'IName'
+;; as the Object Identifier
+	Local	: Collection	: TSPL Smp Stock Item		: Search Key	: $IName
+	Title	: "Object Identifier with Search Key"
+
+	Local	: Form	: TSPL Smp CFBK Rep	: Local	: Part	: TSPL Smp Info	: Local	: Line	: Info	: Local	: Field	: Info Field	: Info	: "Aggregated Objects where no identifier is available in Line Object, using Search Key as Stock Item, the object identifier is introduced such that Remove/Unremove Lines will work in this Report"
+	Local	: Part	: TSPL Smp Info		: Local	: Line	: Info	: Local	: Field	: Info Field	: Lines	: 0
+	
+;; End-of-File

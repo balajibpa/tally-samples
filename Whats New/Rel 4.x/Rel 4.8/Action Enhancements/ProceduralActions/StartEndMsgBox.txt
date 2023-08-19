@@ -1,0 +1,74 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s):-
+	- To display an asynchronous Message Box till all the operations between the Start and End Msg Box Block are performed
+	- To create 300 ledgers in the current company
+
+Capabilities Used:-
+	- Asynchronous Message Box Actions - Start & End Msg Box
+
+Syntax -
+	START MSG BOX: <Title Expression> : <Message Expression>
+			<Action 1>
+			<Action 2>
+			       :
+			       :
+			<Action n>
+	END MSG BOX
+
+Updation History:-
+	- Created on 14-2-2014
+*/
+
+[Function: TSPL Smp Async MsgBox Actions]
+	
+	Parameter		: pMessage		: String	: "This Message Box will appear until the Action End Msg Box is encountered"
+	Parameter		: pLogString	: String	: "Ledger Creation using Async Message Box Actions started"
+	Parameter		: pNoOfObjects	: Number	: 300
+
+	Variable		: Counter		: Number
+	Returns			: Number	
+
+	Local Formula	: LedgerName	: "Ledger " + ($$String:##Counter)
+
+;; Procedural Action - Start Msg Box to display the Asynchronous Message Box
+	00: Call		: TSPL Smp Log Date and Time: ##pLogString
+ 	10: Start Msg Box		: "Status"     		: ##pMessage
+	20: 	Start Progress	: ##pNoOfObjects	: ##SVCurrentCompany 		: "Creating Ledgers" : "Please wait"
+	30: 		While		: ##Counter < ##pNoOfObjects
+	40:				If		: $$IsEmpty:$Name:Ledger:@LedgerName
+	50: 				New Object		: Ledger
+	60:				Else	: 
+	70: 				New Object		: Ledger	: @LedgerName
+	80:				End If
+	90:						Set Value	: Name		: @LedgerName
+	100:					Set Value	: Parent	: "Sundry Debtors"
+	110:				Save Target
+	120:				Increment		: Counter
+	130:				Show Progress	: ##Counter
+	140:			End While
+	150:		End Progress
+ 	160: End Msg Box
+;; Procedural Action - End Msg Box to end the Message Box on completion of Ledger Updation
+	170: Call		: TSPL Smp Log Date and Time	: "Ledger Creation ended"
+
+[Function: TSPL Smp Log Date and Time]
+	
+	Parameter		: pLogString	: String
+
+	00: Log			: ##pLogString + @@TSPLSmpSystemDateTime
+	10: If	: ##pLogString Contains "ended"
+	20: 	Log		: "-----------------------------"
+	30: End If
+
+[System: Formula]
+	
+	TSPL Smp System Date	: $$SysInfo:SystemDate
+	TSPL Smp System DateStr	: $$String:@@TSPLSmpSystemDate
+	TSPL Smp System Time	: $$SysInfo:SystemTimeHMS
+	
+	TSPL Smp SystemDateTime	: " on " + @@TSPLSmpSystemDateStr + " at " + @@TSPLSmpSystemTime
+	
+	
+;; End-of-File

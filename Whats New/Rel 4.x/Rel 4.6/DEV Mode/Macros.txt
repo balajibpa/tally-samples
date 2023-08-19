@@ -1,0 +1,116 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+/*
+Objective(s) -
+-	This code demonstrates various Actions pertaining to Macro Key Recording.
+- 	This code also gives an insight/technique on how to play/ replay these Macro Keys from the file Macros.log
+
+Syntax -
+-	<Application Path>\Tally.exe /DevMode
+
+Dependencies -
+-	Exe must be open with Command Line Parameter /DevMode
+
+Last Modification -
+-	Created on 19-4-2013
+*/
+
+[Menu: TSPL Smp Key Recording]
+	
+	Use		: TSPL Smp DevMode Common Menus
+	
+	Add		: Buttons			: TSPL Smp Start Recording, TSPL Smp Stop Recording, TSPL Smp Pause Recording, TSPL Smp Resume Recording
+	Add		: Buttons			: TSPL Smp Dump Recording, TSPL Smp Replay Recording, TSPL Smp Record Status
+	Title	: "Key Recording"
+
+/*--- This button is used to start the Macro Key recording--- */	
+
+[Button: TSPL Smp Start Recording]
+	
+	Title	: "Start Rec"
+	Key		: Alt + S
+	Action	: Start Recording	: "BSView"
+	
+/*--- This button is used to stop the Macro Key recording--- */	
+
+[Button: TSPL Smp Stop Recording]
+
+	Title	: "Stop Rec"
+	Key		: Alt + T
+	Action	: Call				: TSPL Smp Stop Recording
+	
+/*--- This button is used to pause the Macro Key recording--- */	
+
+[Button: TSPL Smp Pause Recording]
+	
+	Title	: "Pause Rec"
+	Key		: Alt + P
+	Action	: Pause Recording
+	
+/*--- This button is used to resume the paused Macro Key recording--- */
+	
+[Button: TSPL Smp Resume Recording]
+	
+	Title	: "Resume"
+	Key		: Alt + R
+	Action	: Resume Recording
+	
+/*--- This button is used to dump the Macro Key recording--- */	
+
+[Button	: TSPL Smp Dump Recording]
+	
+	Title	: "Dump"
+	Key		: Alt + D
+	Action	: Dump Recording	: "BSView"	: ~
+
+/*--- This button is used to replay the recorded Macro Key---*/
+
+[Button: TSPL Smp Replay Recording]
+	
+	Title	: "Replay"
+	Key		: Alt + L
+	Action	: Call		: TSPL Smp Macro Playback
+	
+[Button: TSPL Smp Record Status]
+	
+	Title	: "Recorder Status"
+	Key		: Ctrl + R
+	Action	: Call		: TSPL Smp Recorder Status
+
+[Function: TSPL Smp Stop Recording]
+	
+	00	: If	: ($$RecorderStatus = "Started" OR $$RecorderStatus = "Paused")
+	10	:	Stop Recording
+	20	: 	Msg Box		: "Status"		: $$RecorderStatus + " Recording"
+	30	: Endif
+
+[Function: TSPL Smp Macro Playback]
+	
+;; This Function is written to replay only the first macro, ie., the first line item from the Macros.Log File
+	
+	Variable	: Macroline : String
+	
+	Local Formula: ReadMacroKeys :($$StringWordEx:##MacroLine:"~t":Last)
+	
+	0000 : If	: $$IsFileExists:"Macros.log"
+	0010 : 	Open File	: "Macros.log"  : TEXT
+
+	0020 : 	Set 	: Macroline : $$FileRead
+	
+	0040 : 	If	: $$IsEmpty:@ReadMacroKeys
+	0050 : 		Return
+	0060 : 	End If
+
+	0080 : 	For Token  	: Key 	: @ReadMacroKeys : ','
+	0030 : 		Trigger Key    	: ##Key					;; To trigger or enter a key as if an operator is pressing a key
+	0090 : 	End For
+	0100 : Else
+	0110 : 	Msg Box		: "Status"	: "Macro has not been dumped.  Please dump and try again"
+	0120 : End If
+
+[Function: TSPL Smp Recorder Status]
+	
+	0000	: Log	: "------------------Recorder Status------------------"
+	0010	: Log	: "The recorder status is " + $$RecorderStatus
+	0020	: Log	: "---------------------------------------------------"
+
+;; End of file

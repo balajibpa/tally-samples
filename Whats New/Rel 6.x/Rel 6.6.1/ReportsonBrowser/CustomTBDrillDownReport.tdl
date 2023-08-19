@@ -1,0 +1,58 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+-	This code demonstrates how to display a drill down report on the browser and the usage of the function 
+-	$$InBrowserPeriodChange. You can view your customized drill-down report in the browser if you have used
+-   the attribute Display under Field definition to acheive the drill down. If you have used field level 
+-   variables in your drilled down report then make the variable as Volatile. 
+
+Syntax -
+-	$$InBrowserPeriodChange
+ 
+
+Last modification -
+-	Altered on 27-04-2020
+*/
+
+[Report: TSPL Smp DD Trial Balance]
+	
+/*	You can view your customized drill-down report in the browser if you have used the attribute Display under Field definition to acheive the drill down. 
+    In this sample code the attribute Display is used in the field [Field: DD TB Name Field].
+	
+	Similarly if you have used field level variables in your drilled down report then make the variable as Volatile as browser will
+	not be able to recognise when you use field level variable in the report.
+ */
+	
+	Use			: DD Trial Balance
+	Title		: $$LocaleString:"Customized Trial Balance"
+	
+	Variable	: SVFromDate, SVToDate
+	
+	
+	Set			: SVFromDate	: $$MonthStart:##SVCurrentDate
+	Set			: SVToDate		: $$MonthEnd:##SVCurrentDate
+	
+	;;You can use the function $$InBrowserPeriodChange to check if the report is being displayed 
+	;;in the browser after changing the period of the report.
+	
+	Option		: TSPL DD TB PeriodChange	: $$InBrowserPeriodChange
+	
+[!Report: TSPL DD TB PeriodChange]
+
+	Set	: SVFromDate 	:##SVFromDate
+	Set	: SVToDate		:##SVToDate	
+
+[#Collection: List of Custom Browser Reports]
+     
+	Add 	: Object		: TSPL Drill Down Trial Balance
+	
+[Object: TSPL Drill Down Trial Balance]
+	
+	Name        		: "Customized Drill Down Report - Trial Balance" 
+    IsCollection    	: False
+    DefinitionName     	: "TSPL Smp DD Trial Balance"       
+    IsAccessAvailable 	: $$Allow:Display:TrialBalance    
+    IsFeatureEnabled   	: $$IsAccountingOn or $$IsInventoryOn 
+	
+;;End-of-File

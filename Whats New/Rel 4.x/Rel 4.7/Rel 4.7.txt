@@ -1,0 +1,26 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Menu: Whats New in Rel 4.7]
+
+	Key Item	: "Developer Mode Changes"				: D : Menu		: TSPL Smp Developer Mode Changes			: $$InDeveloperMode
+	Item		: Blank
+	Key Item	: "Event Enhancement - NatLangQuery"	: E : Display	: TSPL Smp NLQ Event						: NOT $$IsEmpty:$$SelectedCmps
+	Item		: Blank
+	Key Item	: "Action Enhancement - Zip/ Unzip"		: A : Menu		: TSPL Smp Zip Unzip Actions				: NOT $$IsEmpty:$$SelectedCmps
+	Item		: Blank
+	Key Item	: "Columnar Editing Capabilities" 		: C : Menu		: TSPL Smp Columnar Editing Capabilities	: NOT $$IsEmpty:$$SelectedCmps
+	Item		: Blank
+	Key Item	: "Data Types Introduced - Calendar"	: D : Menu		: TSPL Smp Data Types Introduced			: NOT $$IsEmpty:$$SelectedCmps
+	Item		: Blank
+
+	Control     : "Developer Mode Changes"      		: $$InDeveloperMode
+
+;; Include Files
+
+[Include: DevModeChanges\DevModeChanges.txt]
+[Include: NatLangQuery\NatLangQuery.txt]
+[Include: Zip Unzip Capability\Zip Unzip Capability.txt]
+[Include: Columnar Editing Capabilities\Columnar Editing Capabilities.txt]
+[Include: Calendar Data Types\Calendar Data Types.txt]
+
+;; End-of-File

@@ -1,0 +1,26 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+-	This Sample TDL demonstrates the usage of Action Execute TDL which associates the TDL File
+programmatically to Tally and performs the actions specified
+
+Syntax -
+-   Execute TDL  : <TDL/TCP File Path>[ : <Keep TDL Loaded Logical Flag> : <Action> : <Action Parameters>]
+
+Last Modification -
+-	Updated on 01-06-2012
+*/
+
+[Function: TSPL Smp Execute TDL]
+	
+	00	: MSGBOX		: "Attention"	: "Please observe the Title of the Report"
+
+;; The following action Execute TDL associates the TDL file "Definitions to be Executed.tdl", executes the
+;; Action Display and subsequently unloads the file as the logical flag KeepTDLLoaded is disabled
+	05	: EXECUTE TDL	: "Definitions to be Executed.tdl"	: No	: Display	: Balance Sheet
+
+;; The Balance Sheet Title will now display the default Title
+	10	: Display		: Balance Sheet
+
+;; End-of-File

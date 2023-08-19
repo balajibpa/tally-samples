@@ -1,0 +1,103 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	The objective of this program is to demonstrate the usage of function CollSrcObj, which allows evaluating the expression in the context of Source 
+	object while walking sub-objects
+
+Syntax -
+	$$CollSrcObj:<Expression>
+
+Last modification – 
+-	Created on 18/10/2016
+-	Updated on 07/11/2016
+*/
+
+[Report: TSPL Smp CollSrcObj]
+	
+	Form	: TSPL Smp CollSrcObj
+	Variable: SVFromDate, SVToDate
+	Set		: SVFromDate	: $$MonthStart:##SVCurrentDate
+	Set		: SVToDate		: $$MonthEnd:##SVCurrentDate
+	Title	: "Function CollSrcObj"
+	
+[Form: TSPL Smp CollSrcObj]
+
+	Use		: TSPL SMP Illustration
+	Add		: Part	: TSPL Smp ReportPeriod, TSPL Smp CollSrcObj
+	Button	: Change Period
+
+	Local	: Field	: Form SubTitle		: Set as	: "Illustration for CollSrcObj"
+
+	Local	: Field	: TSPL Smp Purpose	: Info		: "Function 'CollSrcObj' is introduced to evaluate the parameter expression in the context of the " + 
+			+ "source object. Prior to this, the approach followed was by introducing a source variable to extract method from source context and used " +
+			+ "for computing. Now the function 'CollSrcObj' enables us to achieve the same in single line thereby reducing code complexity."
+			
+	Local	: Field	: TSPL Smp Syntax	: Info		: "$$CollSrcObj:<Expression>"
+	Local	: Field	: TSPL Smp Example	: Info		: "This sample demonstrates the usage of function $$CollSrcObj" + $$NewLine + "Method 'OpeningBalance' " + 
+			+ "is evaluated in the context of ledger as $$CollSrcObj is prefixed."
+
+[Part: TSPL Smp CollSrcObj]
+	
+	Line			: TSPL Smp CollSrcObj Title, TSPL Smp CollSrcObj Det
+	Repeat			: TSPL Smp CollSrcObj Det		: TSPL SMP_CollSrcObj_Extract_Coll
+	Scroll			: Vertical
+	Common Border	: Yes
+
+	[Line: TSPL Smp CollSrcObj Title]
+		
+		Use		: TSPL Smp CollSrcObj Det
+		
+		Local	: Field		: Default				: Type	: String
+		Local	: Field		: Default				: Align	: Center
+		Local	: Field		: Default				: Style	: Normal Bold
+		Local	: Field		: Default				: Line	: 0		
+		
+		Local	: Field		: TSPL Smp LedName		: Set As: "Ledger Name"
+		Local	: Field		: TSPL Smp LedOpBal		: Set As: "Ledger Op.Balance"
+		Local	: Field		: TSPL Smp BillName		: Set As: "Bill Name"
+		Local	: Field		: TSPL Smp BillOpBal	: Set As: "Bill Op.Balance"
+		
+		Border	: Column Titles
+		
+	[Line: TSPL Smp CollSrcObj Det]
+		
+		Field		: TSPL Smp LedName
+		Right Field	: TSPL Smp LedOpBal, TSPL Smp BillName, TSPL Smp BillOpBal
+
+		[Field: TSPL Smp LedName]
+
+			Use			: Name Field
+			Set as		: $LedName
+			Full Width	: Yes
+		
+		[Field: TSPL Smp LedOpBal]
+
+			Use			: Amount Field
+			Set as		: $LedOpBal
+			Border		: Thin Left
+			Format		: "DrCr"
+			
+		[Field: TSPL Smp BillName]
+
+			Use			: Name Field
+			Set as		: $BillName
+			Border		: Thin Left
+			
+		[Field: TSPL Smp BillOpBal]
+	
+			Use			: TSPL Smp LedOpBal
+			Set as		: $BillLedOpBal
+
+[Collection: TSPL SMP_CollSrcObj_Extract_Coll]
+
+    Source Collection   : Ledger	;; This is default Ledger Collection
+    Walk                : Bill Allocations
+    By                  : LedName			: $$CollSrcObj:$Name
+    By                  : BillName          : $Name
+    Aggr Compute		: BillLedOpBal      : Sum    	: $OpeningBalance
+
+;; Function 'CollSrcObj' evaluates the Parameter expression in the context of Source Object
+    Compute             : LedOpBal          : $$CollSrcObj:$OpeningBalance
+
+;; End of file

@@ -1,0 +1,131 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This TDL File contains the Interface changes for displaying option to save Config,
+	retrieve saved Config and delete saved config
+
+Last modification – 
+-	Altered on 22/04/2010
+
+Dependencies - 
+-	File(s) :- Compound Var Usage in Report Config.txt, Sundry.txt, Functions.txt and
+			   Variables & Buttons.txt
+*/
+
+[Report: SmpConfigName]	;; Report to accept Config Name from an user - User Interface
+
+	Form	: SmpConfigName
+
+[Form: SmpConfigName]
+
+	Parts	: SmpConfigName
+	On		: Form Accept	: Yes	: CALL	: Smp Check Config Name in List	: #SmpConfigName
+
+[Part: SmpConfigName]
+
+	Lines	: SmpConfigName
+
+	[Line: SmpConfigName]
+
+		Fields	: Medium Prompt, SmpConfigName
+		Local	: Field	: Medium Prompt	: Info	: "Config Name :"
+
+		[Field: SmpConfigName]
+
+			Use		: Name Field
+			Set As	: ##SmpBaseReport
+
+[Report: SmpListofConfigs]		;; Report to display list of configs
+
+	Form	: SmpListofConfigs
+	Title	: "List of Configurations"
+	Auto	: Yes
+
+[Form: SmpListofConfigs]
+
+	Parts	: SmpListofConfigs
+	On		: Form Accept	: NOT ##SmpDeleteConfig	: CALL	: Smp Set Variable Values
+	On		: Form Accept	: ##SmpDeleteConfig		: CALL	: Smp Delete Variable Values
+	Width	: 20% Page
+	Height	: 100% Page
+
+[Part: SmpListofConfigs]
+
+	Lines	: SmpListofConfigTitle1, SmpListofConfigTitle2, SmpListofConfigs
+	Repeat	: SmpListofConfigs
+	Set		: $$ListCount:SmpSaveConfig[##ListVarIndex].SmpConfig
+	Scroll	: Vertical
+
+	[Line: SmpListofConfigTitle1]
+
+		Use		: SmpListofConfigs
+		Local	: Field	: SmpListofConfigs	: Info		: "Name of Configuration"
+		Local	: Field	: SmpListofConfigs	: Border	: Thin Bottom
+		Local	: Field	: SmpListofConfigs	: Style		: Normal Bold
+		Local	: Field	: SmpListofConfigs	: Align		: Center
+		Local	: Field	: SmpListofConfigs	: FullWidth	: Yes
+		Space Bottom	: 1
+
+	[Line: SmpListofConfigTitle2]
+
+		Use		: SmpListofConfigs
+		Local	: Field	: SmpListofConfigs	: Info		: "List of Configurations"
+		Local	: Field	: SmpListofConfigs	: Style		: Smp Normal
+		Local	: Field	: SmpListofConfigs	: Align		: Center
+		Local	: Field	: SmpListofConfigs	: FullWidth	: Yes
+		Local	: Field	: SmpListofConfigs	: Background: Table Title Green
+		Local	: Field	: SmpListofConfigs	: Color		: White
+
+	[Line: SmpListofConfigs]
+
+		Fields		: SmpListofConfigs
+
+		[Field: SmpListofConfigs]
+
+			Use		: Name Field
+			Set As	: ##SmpSaveConfig[##ListVarIndex].SmpConfig[$$Line].SmpConfigName
+			Style	: Normal
+			ReadOnly: Yes
+			Key		: Smp Set and Form Accept, Smp Esc
+			Option	: Smp Last Line Field	: $$ListCount:SmpSaveConfig[##ListVarIndex].SmpConfig = $$Line
+
+			[!Field: Smp Last Line Field]
+
+				Add		: Key	: Smp Down
+
+[Key: Smp Set and Form Accept]	;; Set the variable with the Index corresponding to User's choice and accept the Form
+
+	Key			: Enter
+	Action List	: Smp Set Var Value, Smp Form Accept
+
+	[Key: Smp Set Var Value]
+
+		Key		: Enter
+		Action	: Set	: User Config Index	: $$Line
+
+	[Key: Smp Form Accept]
+
+		Key		: Enter
+		Action	: Form Accept
+
+[Key: Smp Esc]	;; Since contents of Read Only field disappear on pressing Escape from Field (Since the Report is in Alter Mode)
+
+	Key		: Escape
+	Action	: Form Reject
+
+[Key: Smp Down]	;; To prevent from quitting the Report on pressing down from the last value (Since the Report is in Alter Mode)
+
+	Key		: Down
+	Action	: Form Home
+
+[Color: Table Title Green]	;; look and feel of Tally Table to the Report being displayed
+
+	RGB		: 18, 84, 70
+
+[Style: Smp Normal]
+
+	Use		: Normal
+	Height	: 11
+
+;; End-of-File

@@ -1,0 +1,43 @@
+;;Program to add custom report in Go To
+
+[Report: TSPL MessageReport Illustration]
+
+	Title			: $$LocaleString:"Illustrating the capability MessageReport"
+	Form			: TSPL MessageReport Illustration
+	
+[Form: TSPL MessageReport Illustration]
+	
+	Use				: TSPL SMP Illustration
+	Button			: TrialBalance
+		
+	Height			: 100% Screen
+	Width			: 100% Screen
+	
+	Local	: Part	: TSPL SMP Syntax		: Invisible	: Yes
+	Local	: Field	: FormSubTitle			: Info		: $$LocaleString:"Illustration for action - Message Report"
+	Local	: Field	: TSPL Smp Purpose		: Indent	: 2
+	Local	: Field	: TSPL Smp Purpose		: Info		: "The action Message Report allows the developer to bring a customised report as a Message Box. This action used to display a message box report with a specified string."
+	Local	: Field	: TSPL SMP Example		: Info		: "[Function: TrialBalance]" ++
+														$$NewLine + +	
+														$$NewLine + "Variable	: DiffInOB		: Amount	: $TBalClosing:Company:##svCurrentCompany" ++
+														$$NewLine + "Variable	: DiffInOBStr	: String	: ##DiffInOB"++
+														$$NewLine + +	
+														$$NewLine + '020	: Do If		: (NOT $$IsEmpty:##DiffInOB)	: Message Report    : SVReportErrorMsg    : ""    : ("There is difference in Opening Balance: " + ##DiffInOBStr)'++
+														$$NewLine + "030	: Display	: Trial Balance	"
+	Local	: Field	: TSPL SMP ExampleNote	: Info		: "In this example, a message is shown when there is a difference in Debit and Credit opening balance while opening the report Trial Balance, Click on the button Trial Balance to experience the behaviour." 	
+
+[Button: TrialBalance]
+	
+	Title	: "Trial Balance"
+	Key		: Ctrl + R
+	Action	: Call	: TrialBalance
+
+[Function: TrialBalance]
+	
+	Variable	: DiffInOB		: Amount	: $TBalClosing:Company:##svCurrentCompany
+	Variable	: DiffInOBStr	: String	: ##DiffInOB
+
+	020	: Do If		: (NOT $$IsEmpty:##DiffInOB)	: Message Report    : SVReportErrorMsg    : ""    : ("There is difference in Opening Balance: " + ##DiffInOBStr)
+	030	: Display	: Trial Balance	
+
+;;End of File

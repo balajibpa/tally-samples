@@ -1,0 +1,23 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Menu: Whats New in Rel 3.0]
+
+	Key Item: "Collection Enhancements"				: C : Menu		: Collection Enhancements for 3.0		: NOT $$IsEmpty:$$SelectedCmps
+	Key Item: "Image Printing Capabilities" 		: I : Menu		: Image Printing Capabilities			: NOT $$IsEmpty:$$SelectedCmps
+	Key Item: "Enhanced Columnar Capability"		: N : Menu		: Enhanced Columnar Capability			: NOT $$IsEmpty:$$SelectedCmps
+	Key Item: "Persistence of Variables"			: F : Menu		: Persistence of Variables				: NOT $$IsEmpty:$$SelectedCmps
+	Key Item: "Event Framework Enhancements"		: E	: Menu		: Event Framework Enhancements			: NOT $$IsEmpty:$$SelectedCmps AND NOT $$IsRemoteCompany
+	Key Item: "Programmable Configurations" 		: P	: Menu		: Programmable Configuration for 3.0	: NOT $$IsEmpty:$$SelectedCmps
+	Key Item: "Function and Attribute Enhancements"	: A : Menu		: Function and Attribute Enhancements	: NOT $$IsEmpty:$$SelectedCmps
+
+;; Include Files
+
+[Include: Collection Enhancements\Collection Enhancements.txt]
+[Include: Image Printing Capabilities\Image Printing Capabilities.txt]
+[Include: Enhanced Columnar Capability\Enhanced Columnar Capability.txt]
+[Include: Persistence of Variables\Persistence of Variables.txt]
+[Include: Event Framework Enhancements\Event Framework Enhancements.txt]
+[Include: Programmable Configurations\Programmable Configurations.txt]
+[Include: Func and Attr Enhancements\Func and Attr Enhancements.txt]
+
+;; End-of-File

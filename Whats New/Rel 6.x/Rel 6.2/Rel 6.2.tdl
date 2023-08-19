@@ -1,0 +1,22 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Menu: Whats New in Rel 6.2]
+
+	Indent		: "JSON Enhancements"
+	Item		: Blank
+	Key Item	: "Report Export in JSON" 		 			: R: Display	: TSPL Report In JSON
+	Item		: Blank
+	Key Item	: "File JSON as Datasource" 		 		: F : Display	: TSPL FileJSON
+	Item		: Blank
+	
+	Key Item	:"Export using Productivity Suite"         	: P : Display	: TSPL ProdSuite JSON
+	Item		: Blank
+
+
+	
+[Include: reportinjson.tdl]
+[Include: filejsondatasource.tdl]
+
+[Include: JSONProdSuite\JSONProdSuite.tdl]
+[Include: JSONProdSuite\distributorjsonexport.tdl]
+[Include: JSONProdSuite\distributorreports.tdl]

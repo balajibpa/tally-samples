@@ -1,0 +1,51 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s):-
+	- To display the Party Outstandings on saving the current Sales Bill
+	- To understand the Event 'On Form Accept'
+
+Capabilities Used:-
+	- Event 'On Form Accept'
+
+Syntax -
+	- On : <Event>		: <Logical Condition> : <Action>	: <Action Parameters>
+	- On : Form Accept	: <Logical Condition> : <Action>	: <Action Parameters>
+
+Updaion History:-
+	- Created on 20-4-2010
+*/
+
+[Function: OnFormAccept Sales Voucher]
+
+	Variable	: IsOnFormAcceptDemo: Logical	: Yes
+	Variable	: Info Msg			: String	: "On saving the current Voucher, the Report Billwise Outstandings for the party will be displayed"
+
+	00	: Create: OnFormAccept Sales Voucher
+
+[Report: OnFormAccept Sales Voucher]
+
+	Use			: Voucher
+	Form		: Voucher
+	Set 		: SVVoucherType		: Sales
+	Set 		: InvoicingModeFlag : Yes
+	Local		: Form	: Voucher	: On : Form Accept: @@IsSales : CALL	: Ledger Outstandings
+
+[Function: Ledger Outstandings]
+
+	Variable		: LedgerName	: String
+	00	: SET		: LedgerName	: $PartyLedgerName
+	10	: Display	: Ledger Outstandings
+
+;; To print the Info Message for user
+
+[#Form: VCHBASIC Form]
+
+	Option	: VCHBASIC Form On Form Accept: ##IsOnFormAcceptDemo
+
+	[!Form: VCHBASIC Form On Form Accept]
+
+		Add		: Parts : Before		: VCH Title	: Form SubTitle
+		Local	: Field	: Form SubTitle	: Info		: ##InfoMsg
+
+;; End-of-File

@@ -1,0 +1,22 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Menu: Collection Enhancements for 3.0]
+
+	Indent	: "Attribute Walk Ex"
+	Item	: Blank
+
+	Key Item: Aggregation of Vouchers - WalkEx	: W : Display 	: TSPL Smp WalkExAV 			: NOT $$IsEmpty:$$SelectedCmps
+	Key Item: Aggregation of Vouchers - Union	: U : Display 	: TSPL Smp UnionAV				: NOT $$IsEmpty:$$SelectedCmps
+
+	Item	: Blank
+	Indent	: "General Enhancements"
+	Item	: Blank
+	
+	Key Item: "Directory as a Data Source"		: D	: Alter		: TSPL Smp Directory Data Source: NOT $$IsEmpty:$$SelectedCmps
+
+;; Include Files
+
+[Include: Attribute WalkEx.txt]
+[Include: Directory as a Data Source.txt]
+
+;; End-of-File

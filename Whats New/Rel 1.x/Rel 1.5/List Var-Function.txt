@@ -1,0 +1,270 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This code demonstrates the usage of List Var within Functions
+-	These variables can retain multiple values of single data type 
+	within them.
+-	These values have a unique Key which helps to determine the 
+	required value.
+-	Scope of the List Variable exists within the Function in which
+	it is declared
+-	A List Variable is declared in a Function and a Report is
+	being displayed subsequently.  The List Variable is also 
+	available to the Report.
+-	All the List Variable Actions like List Fill, List Add, List 
+	Delete, List Key Sort, List Value Sort, etc. are demonstrated
+	in this code
+
+Last modification – 
+-	Altered on 09/11/2009
+*/
+
+[Function: List Var in Func]
+
+	List Variable	: List Var	: String	;; List Variable is declared here
+
+	01: DISPLAY	: List Variables
+
+[Report: List Variables]
+
+	Form		: List Variables
+	FullScreen	: No
+
+[Form: List Variables]
+
+	Parts	: List Variables
+	Buttons	: List Var Add, List Var DelAll, List Var Fill, List Var DelOne, List Var SortKey, List Var SortValue, List Var ResetSort, List Var Disp, List Var OpenFile
+
+[Part: List Variables]
+
+	Lines	: List Variables Info, List Variables, List Variables Var Value
+	Width	: 60% Page
+
+	[Line: List Variables Info]
+
+		Fields	: Info Field
+		Local	: Field	: Info Field	: Info		: "Example - List Variables"
+		Local	: Field	: Info Field	: FullWidth	: Yes
+		Local	: Field	: Info Field	: Align		: Centre
+		Local	: Field	: Info Field	: Border	: Thin Bottom
+		Local	: Field	: Info Field	: Style		: Normal Italic
+
+	[Line: List Variables]
+
+		Fields	: List Variables
+		SpaceTop: 1
+
+		[Field: List Variables]
+
+			Set As	: "Click on the buttons to perform the necessary actions and observe their impact on List Variables."
+			Lines	: 0
+			Width	: 60% Page
+
+	[Line: List Variables Var Value]
+
+		Fields	: List Variables
+		SpaceTop: 1
+		Local	: Field	: List Variables	: Set As	: ""
+
+;; The Following Button and Function is added to fill values to the variable using 
+;; Action List Add
+
+[Button: List Var Add]
+
+	Key		: Alt + A
+	Action	: CALL	: List Fill Value
+	Title	: "Add Values"
+
+[Function: List Fill Value]
+
+	;; Add elements to the list
+	Variable	: Counter		: Number
+
+	00: WALK COLLECTION	: Group
+	01: 	INCREMENT	: Counter
+
+	;; Action List Add adds an element to the List Variable
+	;; Parameters for the same are List Variable Name, Key and the Value
+
+	02: 	LIST ADD 	: List Var : ##Counter : $Name
+
+	;; List Var is the List Variable Name, Counter Value is assigned to he Key and 
+	;; Group Name is assigned as the Variable Value
+
+	03: END WALK
+	04: CALL		: List Print:"List Added with Counter as Key and Group Name as Value"
+
+;; The Following Button and Function is added to Delete a single key entered by user 
+;; in the Report List DelVar
+
+[Button: List Var DelOne]
+
+;;The button Alt+O has been used in default code of TallyPrime
+;;	Key		: Alt + O
+	Key		: Alt + B
+
+	Action	: CALL	: List DelOne
+	Title	: "Delete One"
+
+[Function: List DelOne]
+
+	Variable		: List DelVar: String
+	Local Formula	: DelKey		: "Deleted Key " + ##ListDelVar
+
+	00: Alter		: List DelVar
+	01: LIST DELETE	: ListVar		: ##ListDelVar
+	02: CALL		: List Print: @DelKey
+
+[Report: List DelVar]
+
+	Form		: List DelVar
+	FullScreen	: No
+
+[Form: List DelVar]
+
+	Parts	: List DelVar
+	Width	: 60% Page
+
+[Part: List DelVar]
+
+	Lines	: List DelVar Info, List DelVar, List DelVar Var Value
+
+	[Line: List DelVar Info]
+
+		Fields	: Info Field
+		Local	: Field	: Info Field	: Info		: "Example - List Variables"
+		Local	: Field	: Info Field	: FullWidth	: Yes
+		Local	: Field	: Info Field	: Align		: Centre
+		Local	: Field	: Info Field	: Border	: Thin Bottom
+		Local	: Field	: Info Field	: Style		: Normal Italic
+
+	[Line: List DelVar]
+
+		Fields	: List DelVar
+		Local	: Field	: List DelVar	: Set As	: "Enter a key to be deleted - "
+		Local	: Field	: List DelVar	: Skip		: Yes
+		SpaceTop: 1
+
+		[Field: List DelVar]
+
+			Use		: Name Field
+			Align	: Center
+			Width	: 60% Page
+
+	[Line: List DelVar Var Value]
+
+		Fields	: List DelVar
+		SpaceTop: 1
+		Local	: Field	: List DelVar	: Modifies	: List DelVar
+		Local	: Field	: List DelVar	: Table		: Group
+		Local	: Field	: List DelVar	: Show Table: Always
+
+;; The Following Button and Function is added to delete all the values of the 
+;; List Variable List Var
+
+[Button: List Var DelAll]
+
+	Key		: Alt + D
+	Action	: CALL	: List DelAll
+	Title	: "Delete All"
+
+[Function: List DelAll]
+
+	01: LIST DELETE	: ListVar
+	02: CALL		: List Print:"Deleted all values"
+
+;; The Following Button and Function is added to fill all the values of the 
+;; List Variable List Var using Action LIST FILL
+
+[Button: List Var Fill]
+
+	Key		: Alt + F
+	Action	: CALL	: List Fill
+	Title	: "Fill from Coll"
+
+[Function: List Fill]
+
+	01: LIST FILL 	: ListVar:Group:$Name:$$NumChildren
+	02: CALL		: List Print:"List Filled with Group Name and Children"
+
+;; The Following Button and Function is added to sort the values of the 
+;; List Variable List Var using List Key Sort
+
+[Button: List Var SortKey]
+
+;;The button Alt+K has been used in default code of TallyPrime
+;;	Key		: Alt + K
+	Key		: Alt + H
+	Action	: CALL	: List SortKey
+	Title	: "Sort Key"
+
+[Function: List SortKey]
+
+	01: LIST KEY SORT	: ListVar 		: No : String
+
+;; Action List Key Sort takes 3 parameters; first the variable name, second the 
+;; Logical parameter deciding the order Yes for Ascending and No for Descending,
+;; Third parameter for the Key Data Type to be used for Sorting
+
+	02: CALL			: List Print:"Key - String - Descending"
+
+[Button: List Var SortValue]
+
+	Key		: Alt + V
+	Action	: CALL	: List SortValue
+	Title	: "Sort Value"
+
+[Function: List SortValue]
+
+	01: LIST VALUE SORT	: ListVar 		: Yes : String
+
+;; Action List Value Sort takes 3 parameters; first the variable name, second the 
+;; Logical parameter deciding the order Yes for Ascending and No for Descending,
+;; Third parameter for the Key Data Type to be used for Sorting if more than one 
+;; values are same, then sorting will be done on secondary Key
+
+	02: CALL			: List Print:"Value - String - Ascending"
+
+[Button: List Var ResetSort]
+
+	Key		: Alt + R
+	Action	: CALL		: List ResetSort
+	Title	: "Reset Sort"
+
+[Function: List ResetSort]
+
+	01: LIST RESET SORT	: ListVar
+
+;; Action List Reset Sort reverts the List Variables to its pre sort position,
+;; i.e., the order in which values have been added
+
+	02: CALL			: List Print:"Sorting reset"
+
+[Button: List Var Disp]
+
+	Key		: Alt + I
+	Action	: CALL	: List Print:"Value of List Variable List Var"
+	Title	: "Display Values"
+
+[Function: List Print]
+
+	Parameter : Header : String
+
+	00: SET FILE LOG ON
+	01: LOG : "---" + ##Header + "---"
+	02: FOR IN : KeyVar : List Var
+	03: 	LOG : "Key: " + $$String:##KeyVar + " Value: " + $$ListValue:ListVar:##KeyVar
+	04: END FOR
+	05: LOG : "-----------------------------------------------"
+	06: SET FILE LOG ON
+
+[Button: List Var OpenFile]
+
+;;The button Alt+P has been used in default code of TallyPrime
+;;	Key		: Alt + P
+	Key		: Alt + J
+	Action	: Exec Command	: Notepad 	: "TDLFunc.Log"
+	Title	: "Open File"
+
+;; End-of-File

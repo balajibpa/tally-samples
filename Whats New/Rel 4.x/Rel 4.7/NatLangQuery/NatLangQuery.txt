@@ -1,0 +1,235 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This code demonstrates the Natural Language Query Capability to update the data in Tally.ERP9.
+
+- 	If the received SMS or Calculator Pane Command contains Create Ledger, the action against the first Event is executed.
+- 	If the received SMS or Calculator Pane Command contains Create Item, the action against the second Event is executed.
+- 	If the received SMS or Calculator Pane Command contains Create SO, the action against the third Event is executed.
+
+Syntax -
+-	Event NatLangQuery
+
+	[System: Event]
+	
+		<Event Name>	: NatLangQuery	: <Logical Condition>	: <Action>	: <Action Parameters>
+		
+		where
+		<Event Name> can be any meaningful unique Event Name
+		<Logical Condition> if evaluated to True, then only the given Action will be triggered
+		<Action> must be Call and <Action Parameters> must be Function Name with required Function Parameters
+
+Last modification -
+-	Created on 07-08-2013
+-	Updated on 16-09-2013 with Comments
+*/
+
+[System: Event]
+	
+;; Event 'NatLangQuery' when SMS or Calculator Pane command is received to Tally.ERP9
+	TSPL Smp NLQ CreateLed	: NatLangQuery : @@TSPLSmpNLQContainsLedger : Call 		: TSPL Smp NLQ CreateLedger
+	TSPL Smp NLQ CreateItem	: NatLangQuery : @@TSPLSmpNLQContainsItem 	: Call 		: TSPL Smp NLQ CreateItem
+	TSPL Smp NLQ CreateSO	: NatLangQuery : @@TSPLSmpNLQContainsSO 	: Call 		: TSPL Smp NLQ CreateSalesOrder
+
+[Function: TSPL Smp NLQ CreateLedger]
+	
+;; Create Ledger <Ledger Name> <Group Name>
+;; Create Ledger RadheShyam SundryDebtors
+
+	000	: Call			: TSPL Smp NLQ TokenizeQuery
+
+	010	: New Object	: Ledger					: ##TSPLSmpNLQSMSStrings[3]	: Yes
+	020	: 	Set Value	: Name						: ##TSPLSmpNLQSMSStrings[3]
+	030	: 	Set Value	: Parent					: if $$IsEmpty:##TSPLSmpNLQSMSStrings[4] then "Sundry Debtors" else ##TSPLSmpNLQSMSStrings[4]
+	040	: Save Target
+	
+	050	: If			: $$LastResult
+	060	: 	Set			: SVNatLangResponse			: "Ledger " + ##TSPLSmpNLQSMSStrings[3] + " Created/ Altered"
+	070	: Else			: 
+	080	: 	Set			: SVNatLangResponse			: $$LastError
+	090	: End If
+	100	: Set   		: SVNatLangRequestProcessed : Yes
+
+[Function: TSPL Smp NLQ CreateItem]
+
+;; Create Item <Stock Item Name> <Stock Group Name> <Primary Unit> <Opening Qty> <Opening Amount>
+
+;; Create Item AssembledPIV FinishedGoods Nos 200 400000
+;; Create Item MotherBoard FinishedGoods Nos 30 17000
+;; Create Item DustCovers FinishedGoods Nos 10 550
+
+	000	: Call			: TSPL Smp NLQ TokenizeQuery
+
+	010	: If	: $$IsEmpty:$Name:StockGroup:##TSPLSmpNLQSMSStrings[4]
+	020	: 	Call		: TSPL Smp NLQ Create Stock Group
+	030	: End If
+
+	040	: If	: $$IsEmpty:$Symbol:Unit:##TSPLSmpNLQSMSStrings[5]
+	050	: 	Call		: TSPL Smp NLQ Create Unit
+	060	: End If
+
+;; New Item created with Name, Parent and Base Units
+	065	: If	: $$IsEmpty:$Name:StockItem:##TSPLSmpNLQSMSStrings[3]
+	070	: 	New Object		: Stock Item			: ##TSPLSmpNLQSMSStrings[3]	: Yes
+	080	: 		Set Value	: Name					: ##TSPLSmpNLQSMSStrings[3]
+	090	: 		Set Value	: Parent				: ##TSPLSmpNLQSMSStrings[4]
+	100	:		Set Value	: Base Units			: ##TSPLSmpNLQSMSStrings[5]
+	110	: 	Save Target
+	115	: End If
+
+;; For Updating Quantitative Information as Base Units is set while creation above
+
+	120	: New Object	: Stock Item				: ##TSPLSmpNLQSMSStrings[3]	: Yes
+	125	:	Set Object		
+	130	:	Set Value	: Opening Balance			: $$AsQty:##TSPLSmpNLQSMSStrings[6]
+	140	:	Set Value	: Opening Value				: $$AsAmount:##TSPLSmpNLQSMSStrings[7]
+	150	:	Set Value	: Opening Rate				: $$TgtObject:$OpeningValue / $$TgtObject:$OpeningBalance
+	160	:	Insert Collection Object				: Batch Allocations
+	170	:		Set Value	: Batch Name			: "Primary Batch"
+	180	:		Set Value	: Godown Name			: "Main Location"
+	190	:		Set Value	: Opening Balance		: $$AsQty:##TSPLSmpNLQSMSStrings[6]
+	200	:		Set Value	: Opening Value			: $$AsAmount:##TSPLSmpNLQSMSStrings[7] * -1
+	210	:		Set Value	: Opening Rate			: $$TgtObject:$OpeningValue / $$TgtObject:$OpeningBalance
+	220	:	Set Target		: ..
+	230	: Save Target
+
+	240	: If			: $$LastResult
+	250	: 	Set			: SVNatLangResponse			: "Item " + ##TSPLSmpNLQSMSStrings[3] + " Created/ Altered"
+	260	: Else			: 
+	270	: 	Set			: SVNatLangResponse			: $$LastError
+	280	: End If
+	290	: Set   		: SVNatLangRequestProcessed : Yes
+
+[Function: TSPL Smp NLQ Create Stock Group]
+	
+	000	: New Object	: Stock Group				: ##TSPLSmpNLQSMSStrings[4]	: Yes
+	010	: 	Set Value	: Name						: ##TSPLSmpNLQSMSStrings[4]
+	020	: Save Target
+
+[Function: TSPL Smp NLQ Create Unit]
+	
+	000	: New Object	: Unit						: ##TSPLSmpNLQSMSStrings[5]	: Yes
+	010	:	Set Value	: IsSimpleUnit				: Yes
+	020	: 	Set Value	: Symbol					: ##TSPLSmpNLQSMSStrings[5]
+	030	: Save Target
+
+[Function: TSPL Smp NLQ CreateSalesOrder]
+
+;; Create SO <PartyName> <Order Reference No> <ItemName 1> <Qty 1> <Amount 1> <ItemName 2> <Qty 2> <Amt 2> ...... <ItemName n> <Qty n> <Amt n>
+
+;; Create SO RadheShyam PO1101 MotherBoard 15nos 10000
+;; Create SO RadheShyam PO1102 AssembledPIV 10 25000 MotherBoard 15nos 10000 DustCovers 8 500
+
+	Variable			: VoucherNumber				: String
+
+	000	: Call			: TSPL Smp NLQ TokenizeQuery
+	010	: If	: $$IsEmpty:$Name:Ledger:"Sales"
+	020	:	New Object	: Ledger					: "Sales"			: Yes
+	030	:		Set Value	: Name					: "Sales"
+	040	:		Set Value	: Parent				: "Sales Accounts"
+	050	:	Save Target
+	060	: End If
+	070	: Call			: TSPL Smp NLQ Create SO Voucher
+
+[Function: TSPL Smp NLQ Create SO Voucher]
+
+	Local Formula		: SMSStringsCtr				: ##TSPLSmpNLQSMSStrings[##Counter]
+	Local Formula		: FDate						: ($$NatLangInfo:FromDate)
+	Local Formula		: SDate						: ($$NatLangInfo:ToDate)
+			
+	Local Formula		: MobileNumber				: if NOT $$IsEmpty:($$HTTPInfo:Header:MobileNumber) then (" vide Mobile Number = " + $$HTTPInfo:Header:MobileNumber) else ""
+
+	Variable			: CumAmtTotal				: Amount
+	Variable			: Counter					: Number
+
+	010	: New Object	: Voucher
+	020	:	Set Object
+	030	: 	Set 		: SVViewName				: "Invoice Voucher View"
+	040	: 	Set Value	: Date						: @SDate
+	050	:	Set Value	: VoucherTypeName			: "Sales Order"
+	060	:	Set Value	: Reference					: ##TSPLSmpNLQSMSStrings[4]
+	070	: 	Set Value	: PersistedView				: ##SVViewName
+	
+	090	: 	Set Value	: PartyLedgerName			: ##TSPLSmpNLQSMSStrings[3]
+	100	:	Set Value	: Narration					: "Created thru SMS by " + $$NatLangInfo:UserName + @MobileNumber
+		
+	110	:	Set			: Counter					: 4
+
+	120	:	While		: ##Counter <= ($$ListCount:TSPLSmpNLQSMSStrings - 3)
+			;; Creating Multiple Items in the Loop
+
+	130	:		Insert Collection Object				: Inventory Entries
+	140	:			Set Object
+	150	:			Increment	: Counter
+	160	: 			Set Value	: StockItemName			: @SMSStringsCtr
+	170	:			Increment	: Counter
+	180	:			Set Value	: ActualQty				: $$AsQty:@SMSStringsCtr
+	190	:			Set Value	: BilledQty				: $$AsQty:@SMSStringsCtr
+	200	:			Increment	: Counter		
+	
+	210	: 			Set			: CumAmtTotal			: $$AsAmount:@SMSStringsCtr + ##CumAmtTotal
+	220	:			Set Value	: Amount				: -1 * $$AsAmount:@SMSStringsCtr
+	230	:			Set Value	: Rate					: $$TgtObject:$Amount / $$TgtObject:$BilledQty
+			;; Updating Sales Ledger Info for each Stock Item
+	240	:			Decrement	: Counter
+
+	250	:			Insert Collection Object			: Batch Allocations
+	260	:				Set Value	: BatchName			: "Primary Batch"
+	270	:				Set Value	: GodownName		: "Main Location"
+	280	:				Set Value	: OrderDueDate		: $$DateRange:@SDate:@SDate:True
+	290	:				Set Value	: ActualQty			: $$AsQty:@SMSStringsCtr
+	300	:				Set Value	: BilledQty			: $$AsQty:@SMSStringsCtr
+	310	:				Increment	: Counter		
+	320	:				Set Value	: Amount			: -1 * $$AsAmount:@SMSStringsCtr
+	330	:				Set Value	: Rate				: $$TgtObject:$Amount / $$TgtObject:$BilledQty
+	340	:			Set Target	: ..
+
+	350	:			Insert Collection Object			: Accounting Allocations
+	360	:				Set Value	: LedgerName		: "Sales"
+	370	:				Set Value	: IsDeemedPositive	: No
+	380	:				Set Value	: Amount			: $$AsAmount:@SMSStringsCtr
+	390	:			Set Target	: ..
+	400	:		Set Target		: ..
+	410	:	End While
+	
+			;; Updating Party Details in Voucher
+
+	420	: 	Insert Collection Object					: Ledger Entries
+	430	:		Set Value	: LedgerName				: ##TSPLSmpNLQSMSStrings[3]
+	440	:		Set Value	: IsDeemedPositive			: Yes
+	450	:		Set Value	: Amount					: ##CumAmtTotal
+	460	:	Set Target		: ..
+		
+	470	: Save Target
+
+	480	: If			: $$LastResult
+	490	: 	Set			: SVNatLangResponse				: "Sales Order Created"
+	500	: Else			: 
+	510	: 	Set			: SVNatLangResponse				: $$LastError
+	520	: End If
+	530	: Set   		: SVNatLangRequestProcessed 	: Yes
+
+[Function: TSPL Smp NLQ TokenizeQuery]
+	
+	000	: List Delete Ex: TSPL Smp NLQ SMSStrings
+	
+	010	: For Token		: TokenVar						: ##SVNatLangFullRequest	: " "
+	020	:	List Add Ex	: TSPL Smp NLQ SMSStrings		: ##TokenVar
+	030	: End For
+
+[System: Variable]
+	
+	List Var	: TSPL Smp NLQ SMSStrings	: String
+
+[System: Formula]
+	
+	TSPL Smp NLQ ContainsLedger	: ##SVNatLangFullRequest CONTAINS "Create Ledger"
+	TSPL Smp NLQ ContainsItem	: ##SVNatLangFullRequest CONTAINS "Create Item"
+	TSPL Smp NLQ ContainsSO		: ##SVNatLangFullRequest CONTAINS "Create SO"
+
+;; Include Files
+
+[Include: NatLangHelpDisplay.txt]
+
+;; End-of-File

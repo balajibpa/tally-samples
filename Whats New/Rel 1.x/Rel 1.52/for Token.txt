@@ -1,0 +1,106 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This code demonstrates the Enhancement done on loop constructs
+	'for Token' within User Defined Function.
+-	'For Token' takes a variable as its first parameter, Separator
+	Character as its second parameter and BracketsFlag as its third
+	Parameter. 
+-	'For Token' tokenizes the given string for the number of separator
+	character available within the string taking into account Brackets
+
+Last modification – 
+-	Altered on 09/11/2009
+*/
+
+[Function: for Token within Function]
+
+	00	: SET FILE LOG ON
+	10	: LOG			: "for Token - Tally:Shopper:Tally:Developer"
+	20	: LOG			: "-----------------------------------------"
+	30	: FOR TOKEN 	: TokenVar : "Tally:Shopper:Tally:Developer" : ":" : FALSE
+    40	: 	LOG 		: ##TokenVar
+    50	: END FOR
+	60	: LOG			: ""
+
+/* The following is the result of the above actions
+for Token - Tally:Shopper:Tally:Developer
+Tally
+Shopper
+Tally
+Developer
+*/
+
+	70	: LOG			: "for Token without Brackets - Tally:Shopper:Tally:Developer"
+	80	: LOG			: "-----------------------------------------------------------------------------------"
+    90	: FOR TOKEN 	: TokenVar : "Tally:Shopper:Tally:Developer" : ":" : FALSE
+    100	: 	LOG 		: ##TokenVar
+    110	: END FOR
+	120	: LOG			: ""
+
+/* The following is the result of the above actions
+for Token with Bracket
+Tally
+Shopper
+Tally
+Developer
+*/
+
+	130	: LOG			: "for Token with Inverted Quotes within - Tally:Shopper:'Tally:Developer'"
+	140	: LOG			: "------------------------------------------------------------------------------------------------"
+    150	: FOR TOKEN 	: TokenVar : "Tally:Shopper:'Tally:Developer':Kumar" : ":" : Yes ;;FALSE
+    160	: 	LOG 		: ##TokenVar
+    170	: END FOR
+	180	: LOG			: ""
+
+/* The following is the result of the above actions
+for Token with Inverted Quotes within
+Tally
+Shopper
+'Tally:Developer'
+*/
+
+	190	: LOG			: "for Token with Global Formula within - @@TokenString"
+	200	: LOG			: "------------------------------------------------------------------------------"
+    210	: FOR TOKEN 	: TokenVar : @@TokenString : ":" : FALSE
+    220	: 	LOG 		: ##TokenVar
+    230	: END FOR
+	240	: LOG			: ""
+
+/* The following is the result of the above actions
+for Token with Inverted Quotes within
+Tally
+Shopper
+'Tally
+Developer'
+*/
+
+	250	: LOG			: "for Token with Global Formula in all 3 parameters - @@TokenString : @@TokenSep : @@TokenBracketEnabled"
+	260	: LOG			: "------------------------------------------------------------------------------------------------------"
+    270	: FOR TOKEN 	: TokenVar : @@TokenString : @@TokenSep : @@TokenBracketEnabled
+    280	: 	LOG 		: ##TokenVar
+    290	: END FOR
+	300	: LOG			: ""
+
+/* The following is the result of the above actions
+for Token with Inverted Quotes within and BracketsFlag Disabled
+Tally
+Shopper
+'Tally
+Developer'
+*/
+
+	310	: LOG			: "-----------------------------"
+	320	: LOG			: ""
+	330	: SET FILE LOG OFF
+	340	: EXEC COMMAND	: "TDLFunc.LOG"
+	350	: LOG			: ""
+
+[System: Formula]
+
+	TokenString			: "Tally:Shopper:(Tally:Developer)"
+	TokenSep			: ":"
+	TokenBracketEnabled	: TRUE
+
+;; End-of-File

@@ -1,0 +1,89 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) 
+-	This program demonstrates the capability of $$CallDLL Function
+
+Syntax -
+-	$$CallDLL:<DLL Name>:<Name of the Function within DLL>:<Param1>:<Parm2>:...
+
+Last modification 
+-	Altered on 30/03/2018
+
+Dependencies -
+- 	CompoundInterest.dll must be copied either at current working Tally.ERP 9 Folder, 
+	Windows or Windows\System32 Folder
+	
+(Copy the CompoundInterest.DLL file to the Tally.ERP 9 application path from the samples folder of Tally.Developer 9 available in Samples->Supporting Files -> DLLs and Installers -> CompundInterest32bit (for 32 Tally.ERP 9) , CompoundInterest64bit (for 64 bit Tally.ERP 9))
+*/
+
+[Report: CallDLL Func]
+	
+	Form	: CallDLL Func
+
+[Form: CallDLL Func]
+
+	Parts	: Form SubTitle, CallDLL Func
+	Local	: Field	: Form SubTitle		: Info	: "Compound Interest Calculator"
+	Width	: 40% Page
+	
+[Part: CallDLL Func]
+	
+	Lines	: CDF Principle Amt, CDF Rateof Interest, CDF CallDLL Func, CDF CallDLL Func Notify
+	
+	[Line: CDF Principle Amt]
+		
+		Fields	: Long Prompt, CDF Principle Amt
+		Local	: Field	: Long Prompt	: Set As : "Enter Priniciple Amount:"
+		
+		[Field: CDF Principle Amt]
+			
+			Use		: Amount Field
+			Align	: Left
+
+	[Line: CDF Rateof Interest]
+		
+		Fields	: Long Prompt, CDF Rateof Interest
+		Local	: Field	: Long Prompt	: Set As : "Enter Rate of Interest:"
+		
+		[Field: CDF Rateof Interest]
+			
+			Use		: Number Field
+			Format	: "NoZero, Percentage"
+
+	[Line: CDF CallDLL Func]
+		
+		Fields	: Long Prompt, CDF CallDLL Func
+		Local	: Field	: Long Prompt	: Set As : "Compound Interest:"
+		SpaceTop: 1
+		
+		[Field: CDF CallDLL Func]
+			
+			Use				: Name Field
+			Set As			: @CompoundIntAmt
+			Set Always		: Yes
+			Read Only		: Yes
+
+			CompoundIntAmt	: $$CallDllFunction:CompoundInterest:cifunc:#CDFPrincipleAmt:#CDFRateofInterest:@DurationInDays:@StyleOfInst:@YearofStartDate:@MonthOfStartDate:@YearofEndDate:@MonthOfEndDate
+						
+			DurationInDays	: @YearEnd - @YearBeg
+			StyleOfInst		: $$Number:"1"  
+			YearofStartDate	: $$YearofDate:@YearBeg
+			MonthofStartDate: $$MonthofDate:@YearBeg
+			YearofEndDate	: $$YearofDate:@YearEnd
+			MonthofEndDate	: $$MonthofDate:@YearEnd
+
+			YearBeg			: $$Date:"01/01/2009"
+			YearEnd			: $$Date:"31/12/2014"
+
+	
+	[Line: CDF CallDLL Func Notify]
+		
+		Field: Simple Field
+		Local: Field: Simple Field: Info: "(Copy the CompoundInterest.DLL file to the Tally.ERP 9 application path from the samples folder of Tally.Developer 9 available in Samples->Supporting Files -> DLLs and Installers -> CompundInterest32bit (for 32 Tally.ERP 9) , CompoundInterest64bit (for 64 bit Tally.ERP 9))"
+		Local: Field: Simple Field: Style: Tiny Italic
+		Local: Field: Simple Field:Full Width: Yes
+		Local: Field: Simple Field: Lines: 0
+		Space Top	: .5
+
+;; End-of-File

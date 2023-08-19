@@ -1,0 +1,28 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This Code demonstrates the usage of Data Object Context changing function
+	'TableObj'
+
+Syntax -
+-	$$TableObj:<FieldName>:<Function> 	OR
+	$$TableObj:<FieldName>:<MethodName>
+
+Updation History – 
+-	Created on 20/04/2010
+*/
+
+[Report: VchAsTableSTableObj]
+
+	Use		: VchAsTableS
+	Local	: Part	: CollAsTable	: Add	: Lines	: CollAsTable2
+
+	[Line: CollAsTable2]
+
+		Fields	: Long Prompt, CollAsTable1
+		Local	: Field	: Long Prompt	: Set As	: "Check if Object Type is Voucher using $$TableObj :"
+		Local	: Field	: Long Prompt	: Inactive	: NOT ##VchAsTableS
+		Local	: Field	: CollAsTable1	: Set As	: $$TableObj:CollAsTable:$$IsVoucher
+
+;; End-of-File

@@ -1,0 +1,114 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s):-
+	- To Import data to understand the Import File Events
+	- To demonstrate the usage of Events 'After Import Object'
+
+Capabilities Used:-
+	- Import File Event 'After Import Object'
+
+Syntax -
+	[Import File: <Import File Definition Name>]
+	;; New Event introduced in this Release - After Import Object
+		On : After Import Object : <Logical Condition Expression> : <Action Keyword> : <Action Parameter>
+	
+	;; Events introduced in Release 3.0
+		On : Start Import        : <Logical Condition Expression> : <Action Keyword> : <Action Parameter>
+		On : Import Object       : <Logical Condition Expression> : <Action Keyword> : <Action Parameter>
+		On : End Import          : <Logical Condition Expression> : <Action Keyword> : <Action Parameter>
+
+Updation History:-
+	- Created on 14-2-2014
+*/
+
+[Function: TSPL Smp All Masters]
+
+	Parameter		: pIsXMLFormat		: Logical		: Yes
+	Variable		: SkipField			: Logical		: Yes
+	
+	00	: Set		: SVIsManualImport	: Yes
+	10	: Set		: ImportDups		: @@DupModify
+	20	: If		: ##pIsXMLFormat
+	30	: 	Set		: ImportMaster		: @@IMXML
+	40	: Else		: 
+	50	:	Set		: ImportMaster		: @@IM50
+	60	: End If	
+	70	: Import    : All Masters
+	80	: Set		: SVIsManualImport	: No
+	
+[Function: TSPL Smp Vouchers]
+
+	Parameter		: pIsXMLFormat		: Logical		: Yes
+	Variable		: SkipField			: Logical		: Yes
+
+	00	: Set		: SVIsManualImport	: Yes
+	10	: If		: ##pIsXMLFormat
+	20	:	Set		: ImportVoucher		: @@IMXML
+	30	: Else		: 
+	40	:	Set		: ImportVoucher		: @@IM50
+	50	: End If	
+	60	: Import    : Vouchers
+	70	: Set		: SVIsManualImport	: No
+
+[#Import File: All Masters]
+
+	Option	: TSPL Smp Import Events	: ##SkipField
+
+[#Import File: Vouchers]
+
+	Option	: TSPL Smp Import Events	: ##SkipField
+
+	[!Import File: TSPL Smp Import Events]
+
+		Delete	: On
+		Add		: On  	: Start Import  		: Yes  	: Call  : TSPL Smp LogInfo	: "Starting Import"
+
+		Add		: On	: Import Object			: Yes	: Call	: TSPL Smp UpdateObjValues
+		Add		: On	: Import Object			: Yes	: Import Object
+		
+;; This Event After Import Object is triggered for each Object
+		Add		: On	: After Import Object	: Yes	: Call	: TSPL Smp LogInfo	: "After Import Object - " + $$ImportAction + " - " + $$LastImportError + " - " + $$ImportType
+		Add		: On 	: End Import    		: Yes	: Call  : TSPL Smp LogInfo	: "Ending Import"
+		
+;; Functions
+[Function: TSPL Smp UpdateObjValues]
+	
+	Local Formula	: AmtofLedger			: $$String:$LedgerEntries[1].Amount
+
+	00	: If		: $$Type = "Voucher"
+	10	: 	Log			: "Updating Object ---> "	+ $$Type + "\n" + $VoucherTypeName + " - " + $VoucherNumber + " - " + @AmtofLedger
+	20 	: 	Set Value 	: Narration 		: if $$IsEmpty:$Narration then $VoucherTypeName + " - " + $VoucherNumber + " - " + @@TSPLSmpSystemDateTime + " - " + @AmtofLedger else $VoucherTypeName + " - " + $VoucherNumber + " - " + $Narration + " - " + @@TSPLSmpSystemDateTime + " - " + $$ImportType + " - " + @AmtofLedger
+	30	: Else		: 
+	40	: 	Log			: "Updating Object ---> "	+ $$Type + "\n" + $Name
+	
+;; Function ImportType returns the Source of the Data i.e., Manual Import, Sync, SOAP, Remote and NATLANG
+	50 	: 	Set Value 	: Narration 		: $Name + " - " + @@TSPLSmpSystemDateTime + " - " + $$ImportType
+	60	: End If
+	70	: If		: $VoucherTypeName = "Journal"
+;; Variable SVImportObject is set to No to not import the current Object i.e., if Journal, then do not Import the object
+	80	:	Set		: SVImportObject		: No
+	85	:	Log		: "JV not imported"
+	90	: End If
+
+[Function: TSPL Smp LogInfo]
+	
+	Parameter	: pLogInfo		: String	: ""
+	
+	00	: If	: ##pLogInfo = "Starting Import"
+	10	:	Set		: IgnoreErrStat			: ##SVIgnoreErrInImport
+	20	:	Set		: SVIgnoreErrInImport	: Yes
+	30	: End If
+
+	40	: Log	: ##pLogInfo
+	50	: If	: ##pLogInfo = "Ending Import"
+	60	:	Exec Command	: Notepad	: "TDLFunc.Log"
+	65	:	Log		: "-----------------------"
+	66	:	Set		: SVIgnoreErrInImport	: ##IgnoreErrStat
+	70	: End If
+
+[System: Variable]
+	
+	Variable	: IgnoreErrStat	: Logical
+
+;; End-of-File

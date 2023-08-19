@@ -1,0 +1,30 @@
+/*
+Objective(s):-
+	- To demonstrate the performance with the usage of Batch Posting Actions Start and End Batch Post
+	- To create 300 ledgers in the current company
+
+Capabilities Used:-
+	- Batch Posting Actions - Start & End Batch Post
+
+Syntax -
+	START BATCH POST[ : <Batch Size>]
+			<Action 1>
+			<Action 2>
+			       :
+			       :
+			<Action n>
+	END BATCH POST
+
+Updation History:-
+	- Created on 14-2-2014
+*/
+
+[Function: TSPL Smp Batch Posting Actions]
+	
+;; This Action START BATCH POST will invoke the further actions in Batches of 500 Objects each
+	00	: Start Batch Post	: 200
+	10	: Call				: TSPL Smp Async MsgBox Actions	: "Due to Batch Posting Actions, Ledger Creation through Function is much faster" : "Ledger Creation using Batch Posting Actions started"
+	20	: End Batch Post
+;; With this Action END BATCH POST, the Object creation actions, if included, further will not be executed in Batches
+
+;; End-of-File

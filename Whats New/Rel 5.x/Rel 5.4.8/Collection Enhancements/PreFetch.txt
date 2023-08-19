@@ -1,0 +1,193 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	The objective of this program is to demonstrate the usage of new attribute 'PreFetch' which is provided to evaluate external 
+	Methods prior to Compute Var such that these expressions do not get evaluated each time when they are used thereby optimizing the 
+	performance
+-	A similar Attribute 'Source Prefetch' is provided to evaluate the external Methods prior to Source Var for the Source
+	Object's Method Evaluation
+	
+Syntax -
+	Prefetch 		: Method1[, Method2[, ...[, Methodn]]]	;; External Methods defined in Current Walked Object
+	Source Prefetch : Method1[, Method2[, ...[, Methodn]]]  ;; External Methods defined in Source Objects
+	
+Notes
+	1) Source Prefetch is applicable only when walk is provided
+	2) The Prefetched List must be in the order of dependency. For instance, an Object's Method B uses A and C 
+	uses A as well as B. In this case, the order of Prefetch must be A, B which ensures optimal performance.
+
+Last modification – 
+-	Created on 21/10/2016
+-	Updated on 07/11/2016
+
+*/
+
+[Menu: TSPL SMP PreFetch]
+	
+	Title		: "Prefetch"
+
+	Item		: "Without Prefetch": Call		: (TSPL Smp Prefetch	: "No")	: NOT $$IsEmpty:$$SelectedCmps
+	Item		: "With Prefetch"	: Call		: TSPL Smp Prefetch		: NOT $$IsEmpty:$$SelectedCmps
+
+;; Collection Definition
+[Collection: TSPL SMP PreFetch Voucher]
+
+	Type		: Voucher
+
+[Collection: TSPL SMP PreFetch Stock Item]	;; Collection with Prefetch
+
+	Source Collection	: TSPL SMP PreFetch Voucher
+	Walk				: Inventory Entries
+	
+	By					: IName			: $ItemParent
+	Aggr Compute		: BilledQty		: SUM		: $BilledQty
+
+/*
+The sequence is in the order of dependency, since ItemParent method is used for evaluation of Method ItemParentPrimary, 
+ItemParent is specified earlier in the order of Prefetch
+*/
+	Prefetch			: ItemParent, ItemParentPrimary
+
+	Compute Var			: ItemPrimaryGrp: String	: if $ItemParentPrimary = "Primary" then "Group is Primary" else if $ItemParentPrimary = "Computers" then "System" else if $ItemParentPrimary CONTAINS "Printers" then "Output Devices" else if $ItemParentPrimary = "Defective Items" then "Scrap" else "Other Group"
+	Compute				: ItemGroupTxt	: ##ItemPrimaryGrp
+
+[Collection: TSPL SMP WOPreFetchStock Item]	;; Collection without Prefetch
+
+	Use			: TSPL SMP PreFetch Stock Item
+	Delete		: Prefetch
+
+[#Object: Inventory Entry]	;; External Method added to Object Inventory Entry
+
+	ItemParent			: $Parent:StockItem:$StockItemName
+
+;; Since ItemParent Method is used in the below Method, the Method ItemParent needs to be prefetched first
+	ItemParentPrimary	: if $$IsSysNameEqual:Primary:$ItemParent then "Primary" else $ItemParent
+
+;; Function Definition
+[Function: TSPL Smp Prefetch]
+	
+	Parameter	: pIsPrefetchOn		: Logical	: Yes
+	
+	000	: If	: Not $$InDeveloperMode
+	010	:	Msg Box	: "Message"		: "Please execute Tally in Developer Mode \n with /DevMode Parameter"
+	020	: Else	:
+	030	: 	Call	: TSPL Smp PF ProfileExecuteReportandDump
+	040	: End If
+
+[Function: TSPL Smp PF ProfileExecuteReportandDump]
+
+	Parameter	: pDumpFileName	: String	: "Prefetch.xlsx"
+	Variable	: vFileName		: String
+
+	000	: Set	: vFileName		: ##pDumpFileName
+	010	: If	: ##pIsPrefetchOn
+	040	: 	Start Profile
+
+	050	: 	Display		: TSPL Smp PreFetch
+	
+	060	: 	Call		: TSPL Smp DeleteExistingFile	: ##vFileName
+	070	:	Stop Profile: ##vFileName					: Yes
+	080	: 	Exec Command: ##vFileName
+	100	: Else	: 
+	130	: 	Set			: vFileName						: "WithoutPrefetch.xlsx"
+	140	: 	Call		: TSPL Smp DeleteExistingFile	: ##vFileName
+	150	: 	Start Profile
+
+	160	:	Display		: TSPL Smp Without PreFetch
+
+	170	:	Stop Profile: ##vFileName					: Yes
+	180	: 	Exec Command: ##vFileName
+	200	: End If
+
+[Function: TSPLSmp DeleteExistingFile]
+	
+	Parameter	: pFileName		: String
+	
+	000	: If	: $$IsFileExists:##pFileName
+	010	:	Delete File	: ##pFileName
+	020	: End If
+
+;; Interface Design
+
+[Report: TSPL SMP PreFetch]
+
+	Use		: DSP Template
+	Title	: "Prefetch"
+	Form	: TSPL SMP PreFetch
+	Set     : SVFromDate    : $StartingFrom:Company:##SVCurrentCompany
+	Set     : SVToDate      : $$MonthEnd:##SVCurrentDate
+
+[Report: TSPL SMP Without PreFetch]
+	
+	Use		: TSPL SMP PreFetch
+	Title	: "Approach prior to Prefetch"
+
+	Local	: Form	: Default			: Local		: Field	: Form SubTitle		: Info		: "Approach prior to Prefetch"
+	Local	: Part	: TSPL SMP PreFetch	: Delete	: Repeat
+	Local	: Part	: TSPL SMP PreFetch	: Add		: Repeat: TSPL SMP PreFetch Details		: TSPL SMP WOPreFetchStock Item
+
+	Local	: Form	: Default			: Local		: Field	: TSPL Smp Purpose	: Info		: "To understand the erstwhile approach and to observe the performance in the absence of attribute Prefetch"
+	Local	: Form	: Default			: Local		: Field	: TSPL Smp Syntax	: Info		: "NA"
+
+[Form: TSPL SMP PreFetch]
+
+	Use		: TSPL SMP Illustration
+	Add		: Part	: TSPL SMP PreFetch
+
+	Local	: Field	: Form SubTitle		: Info		: "Illustration for PreFetch"
+
+	Local	: Field	: TSPL Smp Purpose	: Info		: "A collection attribute 'Prefetch' is introduced to evaluate and retain the external methods " +
+			+ "of the current Object for further usage either in compute var, compute or other methods thereby optimizing the performance by not " +
+			+ "evaluating the same expressions each time they are referred" + $$NewLine + "- Attribute 'Prefetch' is used to evaluate the external Methods " +
+			+ "in the current context. " + $$NewLine + "- Attribute 'Source Prefetch' is used to evaluate the external Methods in the source context"
+	Local	: Field	: TSPL Smp Syntax	: Info		: "PreFetch: MethodSyntax, ..." + $$NewLine + "Source PreFetch: MethodSyntax, ..."
+
+	Local	: Field	: TSPL Smp Example	: Info		: "Observe the count and time recorded against the expression '$Parent:StockItem:$StockItemName' in the excel " + 
+			+ "file that opens after quitting this report."
+	Local	: Field	: TSPL Smp Example	: Color		: Blue
+
+[Part: TSPL SMP PreFetch]
+
+	Lines		: TSPL SMP PreFetch Title, TSPL SMP PreFetch Details
+	Repeat		: TSPL SMP PreFetch Details			: TSPL SMP PreFetchStock Item
+	Scroll		: Vertical
+	CommonBorder: Yes
+
+	[Line: TSPL SMP PreFetch Title]
+
+		Use		: TSPL SMP PreFetch Details
+
+		Local	: Field	: Default					: Type		: String
+		Local	: Field	: Default					: Align		: Center
+
+		Local	: Field	: TSPL SMP PreFetch Name	: Set as	: "Particulars"
+		Local	: Field	: TSPL SMP PreFetch Name	: Widespaced: Yes
+		Local	: Field	: TSPL SMP PreFetch Group	: Set as	: "Group Display Name"
+		Local	: Field	: TSPL SMP PreFetch Party	: Set as	: "Qty"
+		Border	: Flush Totals
+
+	[Line: TSPL SMP PreFetch Details]
+
+		Fields			: TSPL SMP PreFetch Name, TSPL SMP PreFetch Group
+		Right Fields 	: TSPL SMP PreFetch Party
+
+		[Field: TSPL SMP PreFetch Name]
+
+			Use			: Name Field
+			Set as		: $IName
+
+		[Field: TSPL SMP PreFetch Group]
+
+			Use			: Name Field
+			Set as		: $ItemGroupTxt
+			Border		: Thin Left
+
+		[Field: TSPL SMP PreFetch Party]
+
+			Use			: Qty Primary Field
+			Set as		: $BilledQty
+			Format		: "NoZero"
+			Border		: Thin Left
+
+;; End of file

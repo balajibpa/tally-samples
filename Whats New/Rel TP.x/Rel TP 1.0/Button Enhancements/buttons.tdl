@@ -1,0 +1,55 @@
+;;Program to add custom report in Go To
+
+[Report: TSPL Custom InlineButton Illustration]
+
+	Title			: $$LocaleString:"Inline Buttons"
+	Form			: TSPL Custom InlineButton Illustration
+	
+[Form: TSPL Custom InlineButton Illustration]
+	
+	Use				: TSPL SMP Illustration
+		
+	Height			: 100% Screen
+	Width			: 100% Screen
+	
+	Local	: Part	: TSPL SMP Syntax		: Invisible	: Yes
+	Local	: Field	: FormSubTitle			: Info		: $$LocaleString:"Illustration for Adding Inline Buttons"
+		
+	Local	: Field	: TSPL Smp Purpose		: Indent	: 2
+	Local	: Field	: TSPL Smp Purpose		: Info		: $$LocaleString:"Inline buttons are the buttons displayed inside a report screen, This capability provides better user interactions in the sub-forms, Query reports with multiple choices." + +
+															$$LocaleString:"The below mentioned code describes an approach for adding an inline button in the sub-form of Print configuration."
+			
+	
+	Local	: Field	: TSPL SMP Example		: Info		: $$NewLine	+ "[#Part: Print Buttons]" + $$NewLine + $$NewLine + +
+														"Add	: Button	: At Beginning	: Select Printer"  + $$NewLine   +  $$NewLine + +
+															"[Button: Select Printer]"  + $$NewLine + $$NewLine + +
+														"Use				: InlineButton Template Large" + $$NewLine + +														
+														"Use				: InlineButton Template Large" + $$NewLine + +
+														'Title			: $$LocaleString:"Printer"' + $$NewLine + +
+														"Key				: N" + $$NewLine + +
+														"Action			: Execute	: Change Printer" + $$NewLine + +
+														"Space Right		: 1.25 % Screen" + $$NewLine + +
+														"Skip Forward	: NOT $$IsEdited" + $$NewLine + +
+														"Inactive		: @@SVDraftDMPMode"
+	
+	Local	: Field	: TSPL SMP ExampleNote	: Info		: "The Inline Button 'Printer' has been added in the print Configurtaion Report. It can viewed by clicking the button 'Print' -> 'Current Report' from any report'." 	
+
+;;The code for adding an Inline Button
+
+[#Part: Print Buttons]
+
+	Add	: Button	: At Beginning	: Select Printer
+
+[Button: Select Printer]
+
+	Use				: InlineButton Template Large
+	Title			: $$LocaleString:"Printer"
+	Key				: N
+	Action			: Execute	: Change Printer
+	Space Right		: 1.25 % Screen
+	Skip Forward	: NOT $$IsEdited
+	Inactive		: @@SVDraftDMPMode
+
+
+
+;;End of File

@@ -1,0 +1,119 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+-	This code demonstrates the usage of Function RemoteUserID which gets executed at the Server to identify 
+the requestor in Remote Environment.
+-	This code displays the List of Ledgers in the Server. In Remote Environment, where Tally Net ID equals
+Tally Net ID in the System Formula 'TSPL Smp TallyNetID1' displays list of Sundry Debtors and if Tally Net ID
+equals Tally Net ID in the System Formula 'TSPL Smp TallyNetID2' displays list of Sundry Creditors
+
+Syntax -
+- 	$$RemoteUserID
+
+When a Report or User Defined Function with Function RemoteUserID triggered from the Client, the same is
+evaluated at the Server and returns the remote Tally Net ID who has requested the required data.
+
+Dependencies -
+-	System Formula 'TSPL Smp TallyNetID1' and 'TSPL Smp TallyNetID2' to be set with your Tally NET IDs.
+
+Updation History -
+-	Created on 09-02-2011
+-	Altered on 10-02-2011
+*/
+
+[Function: TSPL Smp Remote User Report]
+	
+	Variable	: TSPL Smp IsRemote Co	: String
+
+	00	: SET		: TSPL Smp IsRemote Co	: $$IsRemoteCompany
+	20	: DISPLAY	: TSPL Smp Remote User Report
+
+[Report: TSPL Smp Remote User Report]
+	
+	Form	: TSPL Smp Remote User Report
+	Title	: "Usage of Function 'RemoteUserID'"
+	
+[Form: TSPL Smp Remote User Report]
+	
+	Parts	: TSPL Smp Info, TSPL Smp Report Title, TSPL Smp Remote User Report
+	Local	: Part	: TSPL Smp Info			: Local	: Line	: Info					: Local	: Field	: Info Field	: Info	: "On executing from Remote Client, Function RemoteUserID gets evaluated in the Server in order to identify the requestor. This helps to curb unauthorized access."
+	Local	: Part	: TSPL Smp Report Title	: Local	: Line	: TSPL Smp Report Title	: Local	: Field	: Form SubTitle	: Set As: +
+			if NOT ##TSPLSmpIsRemoteCo then @@TSPLSmpGeneralTitle else if $$CmpUserName = @@TSPLSmpTallyNETID1 then +
+			@@TSPLSmpDebtorsTitle else if $$CmpUserName = @@TSPLSmpTallyNETID2  then @@TSPLSmpCreditorsTitle else +
+			@@TSPLSmpNoAccessTitle
+						
+[Part: TSPL Smp Remote User Report]
+	
+	Lines		: TSPL Smp Remote User Report Title, TSPL Smp Remote User Report
+	Repeat		: TSPL Smp Remote User Report	: TSPL Smp Remote User Ledger Coll
+	Scroll		: Vertical
+	CommonBorder: Yes
+	
+	[Line: TSPL Smp Remote User Report Title]
+		
+		Use		: TSPL Smp Remote User Report
+
+		Local	: Field	: Default			: Type	: String
+		Local	: Field	: Default			: Align	: Centre
+		Local	: Field	: Default			: Style	: Normal Bold
+		Local	: Field : Default			: Lines	: 0
+
+		Local	: Field	: Name Field		: Set As: "Name"
+		Local	: Field	: Simple Field		: Set As: "Group"
+		Local	: Field	: Amount Forex Field: Set As: "Opening Balance"
+		Local	: Field	: Amount Field		: Set As: "Closing Balance"
+		Local	: Field	: Amount Field		: Type	: String
+		
+		Border	: Thin Top Bottom
+
+	[Line: TSPL Smp Remote User Report]
+		
+		Fields		: Name Field, Simple Field
+		RightFields	: Amount Forex Field, Amount Field
+
+		Local	: Field	: Default			: Border	: Thin Left
+		Local	: Field	: Default			: Style		: Normal
+
+		Local	: Field	: Name Field		: Set As	: $Name
+		Local	: Field	: Name Field		: Width		: 35% Page
+	
+		Local	: Field	: Simple Field		: Set As	: $Parent
+		Local	: Field	: Simple Field		: Border	: Thin Left
+		Local	: Field	: Simple Field		: FullWidth	: Yes
+		Local	: Field	: AmountForexField	: Set As	: $OpeningBalance
+		Local	: Field	: AmountForexField	: Border	: Thin Left
+		Local	: Field	: Amount Field		: Set As	: $ClosingBalance
+		Local	: Field	: Amount Field		: Border	: Thin Left
+        Local	: Field	: Amount Field		: Type 		: Amount : Forex
+        Local	: Field	: Amount Field		: Format	: "Symbol, No Zero," + ##ShowForex
+
+[Collection: TSPL Smp Remote User Ledger Coll]
+	
+	Type	: Ledger
+	Fetch	: Name, Parent, OpeningBalance, ClosingBalance
+	Filter	: TSPL Smp Access Filter
+
+[System: Formula]
+	
+	TSPL Smp GeneralTitle	: "List of Ledgers with their Opening and Closing Balances"
+	TSPL Smp DebtorsTitle	: "List of Ledgers under Group 'Sundry Debtors' along with their Opening and Closing Balances"
+	TSPL Smp CreditorsTitle	: "List of Ledgers under Group 'Sundry Creditors' along with their Opening and Closing Balances"
+	TSPL Smp No AccessTitle	: "No Access Allowed"
+
+	TSPL Smp IsBelongstoSDrs: $$IsObjectBelongsTo:Group:$Parent:$$GroupSundryDebtors
+	TSPL Smp IsBelongstoSCrs: $$IsObjectBelongsTo:Group:$Parent:$$GroupSundryCreditors
+
+	TSPL Smp Access Filter	: if NOT ##TSPLSmpIsRemoteCo then Yes else (($$RemoteUserID = @@TSPLSmpTallyNetID1 AND @@TSPLSmpIsBelongstoSDrs) +
+								OR ($$RemoteUserID = @@TSPLSmpTallyNetID2 AND @@TSPLSmpIsBelongstoSCrs))
+
+/* On executing from Remote Client, Function RemoteUserID gets evaluated at the Server in order to identify the requestor. 
+This helps to curb unauthorized access.
+Replace the above Tally.NET ID with your actual ones prior to executing the code and observing the behavior */
+;	TSPL Smp TallyNetID1	: "TALLY.NETID1"
+;	TSPL Smp TallyNetID2	: "TALLY.NETID2"
+
+	TSPL Smp TallyNetID1	: "kumar.padmanabhan@tallysolutions.com"
+	TSPL Smp TallyNetID2	: "tallynetnormal@tallysolutions.com"
+
+;; End-of-File

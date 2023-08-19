@@ -1,0 +1,103 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This code demonstrates the usage of Action 'Load Variable' and 'Save Variable'
+-	In this code, we have allowed the user to save EMail Configuration Variables,
+	i.e., EMail Server, Server Address, etc..
+
+Syntax -
+-	SAVE VARIABLE : <File Name>	[: List of Variables]
+-	LOAD VARIABLE : <File Name>	[: List of Variables]
+
+Last modification – 
+-	Created on 14/08/2010
+*/
+
+[#Report: EMail Configuration]
+
+	Variable: SVMailServerName, SVMailServer, SVMailFormat, SVMailUseSsl
+	Variable: SVMailUseSSLOnStdPort, SVMailAuthUserName, SVExportFormatVar, SVExportFormat
+	Variable: SaveLoadConfigName			: String
+
+	Local	: Form	: Default				: Add		: Buttons				: TSPL Smp SaveEmailConfig, TSPL Smp LoadEmailConfig
+	Local	: Field	: Default				: Set Always: Yes
+
+	Local	: Form	: EMail Configuration	: On 		: Form Accept			: Yes	: Form Accept
+	Local	: Form	: EMail Configuration	: On		: Form Accept			: Yes	: CALL	: TSPL Smp Update System Variables
+
+	Local	: Field	: DSP MailServerName	: Modifies	: SVMailServerName		: Yes
+	Local	: Field : DSP MailServer		: Modifies	: SVMailServer			: Yes
+	Local	: Field : DSP MailFormat		: Modifies	: SVMailFormat			: Yes
+	Local	: Field : DSP MailUseSsl		: Modifies	: SVMailUseSsl			: Yes
+	Local	: Field : DSP MailUseSSLOnStdPort: Modifies	: SVMailUseSSLOnStdPort	: Yes
+	Local	: Field : DSP MailAuthUserName	: Modifies	: SVMailAuthUserName	: Yes
+	Local	: Field : DSP FinalExportFormat	: Modifies	: SVExportFormat		: Yes
+
+	Local	: Field	: DSPMailServer			: Set as	: If #DSPMailServerName Contains $$SysName:UserDefined Then ##SVMailServer +
+												Else If #DSPMailServerName NOT Contains $$SysName:UserDefined Then $$GetMailServerAddr:#DSPMailServerName Else ##SVMailServer
+	Local	: Field	: DSPMailServerName		: Set As	: ##SVMailServerName
+	Local	: Field	: DSPMailFormat			: Set As	: ##SVMailFormat
+	Local	: Field	: DSPMailUseSsl			: Set As	: ##SVMailUseSsl
+	Local	: Field	: DSPMailUseSSLOnStdPort: Set As	: ##SVMailUseSSLOnStdPort
+	Local	: Field	: DSPMailAuthUserName	: Set As	: ##SVMailAuthUserName
+	Local	: Field	: DSPFinalExportFormat	: Set As	: ##SVExportFormat
+
+[Function: TSPL Smp SaveLoadVar]	;; function to save or load email configuration to or fro PVF file
+
+;; Below is Optional Parameter. This function is common for both Save and Load Variable.
+;; To identify whether This function is called for Load instance or Save instance, below
+;; logical variable is introduced.  
+;; While invoking this function from Save Button, the Parameter is not required as by
+;; default the Optional Parameter value will be taken into consideration.
+	Parameter	: IsSaveVar			: Logical	: Yes
+
+	Variable	: ConfigNamewithExt	: String	: Yes
+
+	00	: EXECUTE 	: TSPL Smp SaveLoadConfig
+;; Correcting the file name entered with or without extension by user
+	06	: IF	: ##SaveLoadConfigName CONTAINS ".Pvf"
+	10	:	SET		: ConfigNamewithExt	: ##SaveLoadConfigName
+	20	: ELSE	: 
+	30	:	SET		: ConfigNamewithExt	: ##SaveLoadConfigName + ".pvf"
+	40	: ENDIF
+
+;; Saving or Loading the variables based on parameter value
+	50	: IF	: NOT $$IsEmpty:##SaveLoadConfigName
+	60	:	IF	: ##IsSaveVar
+	70	:		SAVE VARIABLE	: ##ConfigNamewithExt
+	80	:	ELSE: 
+	90	: 		LOAD VARIABLE	: ##ConfigNamewithExt
+	100	:	ENDIF
+	110	: ENDIF
+
+[Function: TSPL Smp Update System Variables]
+;; Setting current configuration values to Compound Variable
+
+	10	: SET	: ().SVMailServerName		: ##SVMailServerName
+	20	: SET	: ().SVMailServer			: ##SVMailServer
+	30	: SET	: ().SVMailFormat			: ##SVMailFormat
+	40	: SET	: ().SVMailUseSsl			: ##SVMailUseSsl
+	50	: SET	: ().SVMailUseSSLOnStdPort	: ##SVMailUseSSLOnStdPort
+	60	: SET	: ().SVMailAuthUserName		: ##SVMailAuthUserName
+	70	: SET	: ().SVExportFormat			: ##SVExportFormat
+
+;; Button Definition
+
+[Button: TSPL Smp SaveEmailConfig]	;; Button for saving current email configuration
+
+	Key			: Alt + S
+	Action		: CALL		: TSPL Smp SaveLoadVar
+	Title		: "Save Config"
+
+[Button: TSPL Smp LoadEmailConfig]	;; Button for loading current email configuration
+
+	Key			: Alt + L
+	Action		: CALL		: TSPL Smp SaveLoadVar:No
+	Title		: "Load Config"
+
+;; Include Files
+
+[Include: EMail Config SaveLoadVar.Txt]
+
+;; End-of-File

@@ -1,0 +1,46 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Menu: Context Changing Functions]
+
+	Indent		: "Data Context Changing Functions"
+	Item		: Blank
+	Key Item	: Basic Functions		: B	: Display	: Data Context Changing Functions 	: NOT $$IsEmpty:$$SelectedCmps
+	Key Item	: TGTObject				: T	: Menu		: Smp TGT Object
+	Key Item	: LoopCollObj			: L	: Menu		: Smp Loop Collection 				: NOT $$IsEmpty:$$SelectedCmps AND NOT $$SelectedCmps < 1
+	Key Item	: ObjectOf				: O	: Display	: DCCF ObjectOf
+	Key Item	: Table					: A	: Alter		: VchAsTableS
+	Key Item	: TableObj				: E	: Alter		: VchAsTableSTableObj
+	Key Item	: ReqObject				: Q	: Display	: NewMethodForObj
+	Title		: "Data Object Context"
+	Item		: Blank
+
+	Indent		: "Interface Context Changing Functions"
+	Item		: Blank
+	Key Item	: AsReqObj				: J	: Call		: Smp Sales Voucher
+	Key Item	: ReqOwner	Introduced	: W	: Call		: ICCF ReqOwner
+	Key Item	: AccessObj				: C	: Display	: AccessObj
+	Key Item	: ExplodeOwner			: X	: Display	: ICCF ExplodeOwner
+	Key Item	: PrevLine				: P	: Display	: ICCF PrevLine
+
+	Control		: LoopCollObj			: NOT $$IsRemoteCompany
+
+[Menu: Smp TGT Object]
+
+	Key Item	: TGT Object Function	: F : Call		: Set Value Enhanced
+	Key Item	: TGT Object Collection	: C : Display	: TgtObject Coll
+	Title		: "TGTObject"
+
+	Control		: TGT Object Function	: NOT $$IsRemoteCompany
+
+;; Data Object Changing Functions
+[Include: General Context Changing Functions.txt]
+[Include: ObjectOf.txt]
+[Include: TableObj.txt]
+
+;; Interface Object Changing Functions
+[Include: AsReqObj.txt]
+[Include: ReqOwner.txt]
+[Include: ExplodeOwner.txt]
+[Include: PrevLine.txt]
+
+;; End-of-File

@@ -1,0 +1,95 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+-	This code demonstrates the usage of new system events introduced that are invoked before and after an object is deleted.
+-   In this code, When user deletes multiple vouchers from day book, the Before Delete Object and After Delete Object Events 
+	are invoked parallely for each object. Suppose, n number of vouchers are deleted from Daybook, then, the functions,
+	BeforeDeleteObjectFunction and AfterDeleteObjectFunction are also invoked n times.
+-   These events can be helpful in logging or keeping record of the deleted transaction(s).
+
+Syntax -
+-	[System: Events]
+        <Label> : Before Delete Object : <Logical Condition Expression> : <Action Keyword> : <Action Parameter>
+        <Label> : After Delete Object  : <Logical Condition Expression> : <Action Keyword> : <Action Parameter>
+	
+Last modification -
+-	Altered on 14-02-2014
+*/
+
+[System: Variable]
+	
+	Variable: TSPL Smp DelCan Events	: Logical
+
+[Report: TSPL Smp Event Daybook]
+	
+	Use		: Daybook
+	Variable: TSPL Smp DelCan Events	: Logical
+	Set		: TSPL Smp DelCan Events	: Yes
+	Local	: Form	: Default	: Add	: Buttons	: TSPL Smp Open Log File
+	On		: Load	: Yes 		: Call	: TSPL Smp Delete Cancel Event
+
+[Function: TSPL Smp Delete Cancel Event]
+	
+	00	: Msg Box	: "Alert!!"	: "Events Deletion/ Cancellation will be triggered on Deletion/ Cancellation of Objects.\n Click on Button Open Log File after deletion/ cancellation"
+
+[System: Events]
+	
+;;	The system events are invoked only if vouchers are deleted from Daybook. On occurence of an event, the corresponding Function is called.
+
+    01 : Before Delete Object : ##TSPLSmpDelCanEvents : Call : BeforeDelCanObjectFunction
+	02 : After Delete Object  : ##TSPLSmpDelCanEvents : Call : AfterDelCanObjectFunction
+	
+    03 : Before Cancel Object : ##TSPLSmpDelCanEvents : Call : BeforeDelCanObjectFunction	: "Cancel"
+	04 : After Cancel Object  : ##TSPLSmpDelCanEvents : Call : AfterDelCanObjectFunction	: "Cancel"
+
+;; This Function executes just before the deletion of an object takes place. 
+;; In this case, this function is called as many times as the number of vouchers selected to be deleted from Day Book.
+
+[Function: BeforeDelCanObjectFunction]
+	
+	Parameter	: pDeleteCancel			: String	: "Delete"
+	Parameter	: pLogFile				: String	: "LogFileTransactions.txt"
+
+;; Since, the event is invoked for each object, the function is also called for each object.
+;; Hence, the object context is directly available at this stage.
+
+;; The file named LogFileDeletedTransactions.txt will contain a record of all the vouchersv    deleted from Daybook. 
+
+    00 : Open File 			: ##pLogFile: Text 	: Write
+	05 :    Write File Line : ##pDeleteCancel + " Object Event " + @@TSPLSmpSystemDateTime
+	10 : 	Write File Line	: $$String:$MasterID + " - " + $$Type + " - " + $VoucherTypeName + " - " + $VoucherNumber + " - " + $$String:$Date + " - " + $PartyLedgerName + ";" + $$String:$Amount
+	20 : Close Target File
+    40 : Msg Box			: "Event"	: "Before " + ##pDeleteCancel + " Object Event - " + $VoucherTypeName + " - " + $VoucherNumber
+
+;; This Function executes after the deletion of an object has taken place. 
+;; In this case, this function is called as many times as the number of vouchers selected to be deleted from Day Book.
+
+[Function: AfterDelCanObjectFunction]
+	
+	Parameter	: pDeleteCancel			: String	: "Delete"
+
+;; Since, the event is invoked for each object, the function is also called for each object.
+;; Hence, the object context is directly available at this stage.
+
+	00 : Msg Box	: "Event"	: "After " + ##pDeleteCancel + " Object Event - " + $VoucherTypeName + " - " + $VoucherNumber
+
+;; Open Log File Codes
+
+[Button: TSPL Smp Open Log File]
+	
+	Key		: Alt + L
+	Action	: Call		: TSPL Smp Open Log File
+	Title	: "Open Log File"
+
+[Function: TSPL Smp Open Log File]
+	
+	Parameter	: pLogFile		: String	: "LogFileTransactions.txt"
+
+	00	: If	: $$IsFileExists:##pLogFile
+	10	: 	Exec Command	: Notepad		: ##pLogFile
+	20	: Else	: 
+	30	:	Msg Box			: "Error!!"		: "The Log File " + ##pLogFile + " does not exist"
+	40	: End If
+
+;; End-of-File

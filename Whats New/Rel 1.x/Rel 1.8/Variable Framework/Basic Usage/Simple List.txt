@@ -1,0 +1,361 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This TDL File demonstrate the usage and purpose of Simple List Variables with
+	Reports and LOG Files displaying the same
+-	Wherever LOG File opens up on execution of any code, please traverse through
+	the end of the document to find the recent output
+
+Last modification – 
+-	Altered on 05/04/2010
+*/
+
+;; Report Definition for List Values with Key
+
+[Report: LV List Values with Key]	;; LV with Key
+
+	Form		: LV List Values
+
+[Form: LV List Values]
+
+	Parts		: Form SubTitle, LV List Values
+	On			: Form Accept	: Yes	: CALL	: LV Key Based Retrieval
+	Local: Field: Form SubTitle	: Info	: "Enter the Employee Names and Aliases"
+	Height		: 30% Page
+	Width		: 40% Page
+	No Confirm	: Yes
+
+[Part: LV List Values]
+
+	Lines		: LV List Title, LV List Values
+	Repeat		: LV List Values
+	BreakOn		: $$IsEmpty:#LVAlias
+	Scroll		: Vertical
+	CommonBorder: Yes
+
+	[Line: LV List Title]
+
+		Use		: LV List Values
+		Local	: Field	: Default	: Type 		: String
+		Local	: Field	: Default	: Style		: Normal
+		Local	: Field	: Default	: Align		: Centre
+		Local	: Field	: Default	: Delete	: Storage
+		Local	: Field	: Default	: Delete	: Inactive
+
+		Local	: Field	: LV Alias	: Info		: "Alias"
+		Local	: Field	: LV Name	: Info		: "Name"
+		Border	: SubTotals
+
+	[Line: LV List Values]
+
+		Fields		: LV Alias, LV Name
+		Space Top	: 0.25
+
+		[Field: LV Alias]
+
+			Use			: Name Field
+			PrevVal		: $$PrevLine:#LVName
+			On	: Focus	: (($$Line > 1) AND NOT ($$IsEmpty:$$PrevLineField OR $$IsEmpty:@PrevVal)): List Add	: LVEmp	: $$PrevLineField : @PrevVal
+
+		[Field: LV Name]
+
+			Use			: Name Field
+			Inactive	: $$IsEmpty:#LVAlias
+			Set As		: if $$ListFind:LVEmp:#LVAlias then $$ListValue:LVEmp:#LVAlias else $$Value
+			Set Always	: Yes
+			Border		: Thin Left
+
+[Function: LV Key Based Retrieval]
+
+	Variable		: IndexVar	: Number
+	Local Formula	: ListFind	: $$ListFind:LVEmp:"S2"
+	Local Formula	: ListTotal	: $$ListCount:LVEmp
+
+	10	: LOG		: "List Var with Key"
+	20	: LOG		: "Alias is the Key and Name is the Value"
+	30	: LOG		: "--------"
+
+	40	: FOR IN 	: KeyVar 	: LVEmp
+;; ListIndex Function is used to find the Position/Index of the given Key
+	50	: 	SET		: IndexVar	: $$ListIndex:LVEmp:##KeyVar
+;; ListValue Function is used to find the value of the given Key
+	60	: 	LOG		: "Corresponding Name for Alias " + ##KeyVar + " is " + $$ListValue:LVEmp:##KeyVar
+;; ListValueEx Function is used to find the value corresponding to a given Index
+	70	: 	LOG		: "Corresponding Name for Index Position " + $$String:##IndexVar + " is " + $$ListValueEx:LVEmp:##IndexVar
+	80	:   LOG		: "Index Position of Alias " + ##KeyVar + " is " + $$String:##IndexVar
+;; ListKey Function is used to find the Key at a given Index
+	90	:   LOG		: "Alias corresponding to Index " + $$String:##IndexVar + " is " + $$ListKey:LVEmp:##IndexVar
+	100	:	LOG		: $$LoopIndex
+	101	: 	LOG		: "--------"
+	110	: END FOR
+
+	120	: LOG		: "Total No. of Items in the List are " + $$String:@ListTotal
+	130	: LOG		: "Does Alias S2 exist in list ? " + $$String:@ListFind
+	140	: EXEC COMMAND	: "TDLFunc.LOG"
+
+;; Report Definition for List Values with Index
+
+[Report: LV List Values with Index]
+
+	Use		: LV List Values with Key
+
+	Local	: Form	: LV List Values	: Width		: 20% Page
+	Local	: Form	: LV List Values	: Local		: Field		: Form SubTitle	: Info	: "Enter the Employee Names"
+	Local	: Form	: LV List Values	: Delete	: On
+	Local	: Form	: LV List Values	: Add		: On		: Form Accept	: Yes	: CALL	: LV Index Based Retrieval
+
+	Local	: Part	: LV List Values	: Delete	: BreakOn
+	Local	: Part	: LV List Values	: Add		: BreakOn	: $$IsEmpty:#LVName
+
+	Local	: Line	: Default			: Delete	: Fields	: LV Alias
+
+	Local	: Line	: LV List Values	: Local		: Field		: LV Name	: Width		: 20% Page
+	Local	: Line	: LV List Values	: Local		: Field		: LV Name	: Set As	: ##LVEmpIndex[$$Line]
+	Local	: Line	: LV List Values	: Local		: Field		: LV Name	: On: Focus	: (($$Line > 1) AND (NOT $$IsEmpty:$$PrevLineField AND $$ListCount:LVEmpIndex < $$Line-1)): List Add Ex : LVEmpIndex
+	Local	: Line	: LV List Values	: Local		: Field		: LV Name	: On: Focus	: (($$Line > 1) AND NOT $$IsEmpty:$$PrevLineField)	: CALL	: LV Set List Values By Index : $$Line 		: $$PrevLineField
+	Local	: Line	: LV List Values	: Local		: Field		: LV Alias	: Delete	: On
+	Local	: Line	: LV List Values	: Local		: Field		: LV Name	: Inactive	: No
+
+	Local	: Field	: LV Name			: Delete	: Border
+
+[Function: LV Set List Values By Index]
+
+	Parameter	: VarLine	: Number
+	Parameter	: VarVal	: String
+
+	10	: SET	: LVEmpIndex[##VarLine-1]	: ##VarVal
+
+[Function: LV Index Based Retrieval]
+
+	Local Formula	: Total List Items	: $$ListCount:LVEmpIndex
+	List Variable	: LVEmpIndexNo		: Number
+
+	10	: LOG		: "List Var with Index without Key"
+
+	20	: FOR RANGE	: IteratorVar	: Number	: 1	: @TotalListItems	: 1
+	30	:	LOG		: ##LVEmpIndex[##IteratorVar]
+	40	:	IF		: NOT $$IsEmpty:$$ListKey:LVEmp:##IteratorVar
+	50	:   	LOG	: "Key for Index " + $$String:##IteratorVar + " is " + $$ListKey:LVEmpIndex:##IteratorVar
+	60	:	ENDIF
+	80	: 	LOG		: "--------"
+	90	: END FOR
+
+	100	: LIST ADD EX	: LVEmpIndexNo
+	110	: LIST ADD EX	: LVEmpIndexNo
+	120	: SET			: LVEmpIndexNo[1]	: 10
+	130	: SET			: LVEmpIndexNo[2]	: 30
+	140	: LOG			: "Before Manipulation - " + $$String:##LVEmpIndexNo[1]
+	150	: INCREMENT		: LVEmpIndexNo[1]	: 2
+	160	: LOG			: "Post Increment - " + $$String:##LVEmpIndexNo[1]
+	170	: DECREMENT		: LVEmpIndexNo[1]	: 3
+	180	: LOG			: "Post Decrement - " + $$String:##LVEmpIndexNo[1]
+	190	: EXCHANGE		: LVEmpIndexNo[1]	: LVEmpIndexNo[2]
+	200	: LOG			: ##LVEmpIndexNo[1]
+	210	: EXEC COMMAND	: "TDLFunc.LOG"
+
+;; Function Definition for List Values from Collection
+
+[Function: LV List Values From Collection]
+
+	List Variable	: List from Coll	: String
+	Local Formula	: Total List		: $$ListCount:ListFromColl
+
+	00	: LIST FILL	: List from Coll	: Group	with Balance : $Name	: $ClosingBalance
+	10	: LOG		: @TotalList
+	20	: FOR RANGE	: IteratorVar	: Number	: 1	: @TotalList : 1
+	30	:	LOG		: $$ListKey:ListFromColl:##IteratorVar
+	40	:	LOG		: ##ListFromColl[##IteratorVar]
+	50	: END FOR
+	60	: LOG		: "---------"
+	70	: EXEC COMMAND	: "TDLFunc.LOG"
+
+[Collection: Group with Balance]
+
+	Type	: Group
+	Filter	: CBGTZero
+	Fetch	: Name, ClosingBalance
+
+[System: Formula]
+
+	CBGTZero: $ClosingBalance > 0
+
+;; Function Definition for Sorting List Values
+
+[Function: LV List Sorting by Key]
+
+	01	: LOG	: "Sorting by Key in Ascending Order"
+	10	: LIST KEY SORT		: LVEmp	: Yes : String
+	20	: FOR IN	: KeyVar	: LVEmp
+	30	:	LOG		: ##KeyVar + " - " + $$ListValue:LVEmp:##KeyVar
+	40	: END FOR
+	60	: EXEC COMMAND	: "TDLFunc.LOG"
+	70	: LOG			: "-----------"
+
+[Function: LV List Sorting by Value]
+
+	01	: LOG		: "Sorting by Value in Descending Order"
+	10	: LIST VALUE SORT	: LVEmp	: No : String
+	20	: FOR IN	: KeyVar	: LVEmp
+	30	:	LOG		: ##KeyVar + " - " + $$ListValue:LVEmp:##KeyVar
+	40	: END FOR
+	60	: EXECCOMMAND: "TDLFunc.LOG"
+	70	: LOG		: "-----------"
+
+;; Report Definition for Repeat without Collection
+
+[Report: LV Repeat without Collection]
+
+	Use		: LV List Values with Key
+	Local	: Form	: LV List Values	: Height: 100% Page
+	Local	: Form	: LV List Values	: Local	: Field	: Form SubTitle	: Info	: "List of Employee Names and Aliases"
+
+	Local	: Part	: LV List Values	: Set	: $$ListCount:LVEmp
+
+	Local	: Line	: LV List Values	: Local	: Field	: LV Alias	: Set As: $$ListKey:LVEmp:$$Line
+	Local	: Line	: LV List Values	: Local	: Field	: LV Name	: Set As: ##LVEmp[$$Line]
+
+;; Repeat Variable with Collection
+
+[Function: LV Repeat Variable with Collection]
+
+	00	: IF	: $$ListCount:LVEmp > 0
+	10	:	DISPLAY		: LV Repeat Variable with Collection
+	20	: ELSE	: 
+	30	:	MSGBOX		: "Error!"			: "Simple List Variable is Empty"
+	40	: 	QUERYBOX 	: "Do you want to add values now ?":Yes:No
+	50	:	IF	: $$LastResult
+	60	:		ALTER	: LV List Values with Key
+	70	:		CALL	: LV Repeat Variable with Collection
+	80	:	ENDIF
+	90	: ENDIF
+
+[Report: LV Repeat Variable with Collection]
+
+	Use		: LV List Values with Key
+	Local	: Form	: LV List Values	: Height: 100% Page
+	Local	: Form	: LV List Values	: Width	: 20% Page
+	Local	: Form	: LV List Values	: Local	: Field	: Form SubTitle	: Info	: "List of Employee Names"
+
+	Local	: Part	: LV List Values	: Repeat: LV List Values	: LV List Collection
+
+	Local	: Line	: LV List Values	: Local	: Field	: LV Alias	: Set As	: $$VarKey
+	Local	: Line	: LV List Values	: Local	: Field	: LV Name	: Set As	: $LVEmp
+	Local	: Line	: LV List Values	: Local	: Field	: LV Name	: Inactive	: No
+	
+	Local	: Field	: LV Name			: Delete: Border
+
+[Collection: LV List Collection]
+
+	Data Source	: Variable	: LVEmp
+
+	Format		: $LVEmp
+	Format		: $$VarKey
+	ClientOnly	: Yes
+
+;; Report Variable in Table
+
+[Report: LV Variable in Table]
+
+	Form	: LV Variable in Table
+
+[Form: LV Variable in Table]
+
+	Parts		: Form SubTitle, LV Variable in Table
+	Width		: 25% Page
+	No Confirm	: Yes
+	Local: Field: Form SubTitle				: Info	: "Select name of Employee"
+
+[Part: LV Variable in Table]
+
+	Lines	: LV VIT Title, LV Variable in Table
+
+	[Line: LV VIT Title]
+
+		Use		: LV Variable in Table
+		Local	: Field	: Default			: Style	: Normal Bold
+		Local	: Field	: Default			: Align	: Centre
+		Local	: Field	: Default			: Lines	: 0
+
+		Local	: Field	: LV Variable		: Info	: "Name"
+		Local	: Field	: LV Variable Key	: Info	: "Alias"
+		Border	: Thin Top Bottom
+		SpaceTop: 0
+
+	[Line: LV Variable in Table]
+
+		Fields	: LV Variable, LV Variable Key
+		Local	: Field	: Default			: Align	: Centre
+		SpaceTop: 1
+
+		[Field: LV Variable]
+
+			Use			: Name Field
+			Table		: LV List Collection
+			Show Table	: Always
+
+		[Field: LV Variable Key]
+
+			Use			: Name Field
+			Set As		: $$Table:LVVariable:$$VarKey
+			Set Always	: Yes
+			ReadOnly	: Yes
+
+;; Report Set with Dotted Notation
+
+[Report: LV Report Set with Dotted Notation]
+
+	Use		: LV Repeat without Collection
+	SET		: LVEmp[1]	: "Radhe"
+	PRINTSET: LVEmp[1]	: "Keshav"
+	Local	: Form		: Default		: Buttons	: Print Button
+
+;; Modifies with Dotted Notation
+
+[Report: LV Modifies with Dotted Notation]
+
+	Auto	: Yes
+
+[Form: LV Modifies with Dotted Notation]
+
+	Parts	: Form SubTitle, LV Modifies with Dotted Notation
+	Local	: Field	: Form SubTitle		: Info		: "Enter Employee Name for Employee1"
+	Width	: 30% Page
+
+[Part: LV Modifies with Dotted Notation]
+
+	Lines	: LV Modifies with Dotted Notation
+
+	[Line: LV Modifies with Dotted Notation]
+
+		Fields	: Name Field
+		Local	: Field	: Name Field	: Modifies	: LVEmp[1]
+		Local	: Field	: Name Field	: Align		: Centre
+		Local	: Field	: Name Field	: FullWidth	: Yes
+		Local	: Field	: Name Field	: PrintBG	: Red
+
+;; Function to Delete List Variables
+
+[Function: LV Delete List Variables]
+
+	00	: LIST DELETE	: LVEmp
+	10	: LIST DELETE	: LVEmpIndex
+
+;; Variable Definition
+
+[Variable: LV Emp]
+
+	Type		: String
+	Persistent	: Yes
+
+[Variable: LV Emp Index]
+
+	Type		: String
+	Persistent	: Yes
+
+[System: Variable]
+
+	List Variable	: LV Emp
+	List Variable	: LV Emp Index
+
+;; End-of-File

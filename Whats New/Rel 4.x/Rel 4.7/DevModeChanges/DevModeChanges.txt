@@ -1,0 +1,109 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This code is added for demonstrating various DevMode changes in Release 4.7
+
+Syntax -
+	For Action Dump Recording - Key Recording
+		Action	: Dump Recording[ : <File Name>[ : <Separator Character>]]
+
+Last modification -
+-	Created on 18-09-2013
+*/
+
+[Menu: TSPL Smp Developer Mode Changes]
+	
+	Key Item	: "Profiler"				: P	: Menu		: TSPL Smp Profiler Changes
+	Key Item	: "Expression Diagnostics"	: D	: Menu		: TSPL Smp Debugger Changes
+	Key Item	: "Key Recording"			: K	: Menu		: TSPL Smp Key Recording Changes
+
+	Title		: "Developer Mode Changes"
+
+[Menu: TSPL Smp Profiler Changes]
+	
+	Use		: TSPL Smp Profiler
+	Delete	: Button	: TSPL Smp Profiler
+	Add		: Button	: TSPL Smp Profiler Changes
+
+[Button: TSPL Smp Profiler Changes]
+	
+	Use		: TSPL Smp Profiler
+	Action	: Call				: TSPL Smp ProfilerOnOff Changes
+
+[Function: TSPL Smp ProfilerOnOff Changes]
+	
+	010 : If 	: $$IsProfilerOn		;; Function returns true if Status of the Profiler is 'On'
+	020 : 		Stop Profile	: "tdlprof"
+	025 : 		Msg Box			: "Profiler" 	: "Profiled Information is dumped into an Excel Filename starting with tdlprof"
+	030 : Else
+	040 : 		Start Profile	;; If the status of profiler is off, then this Action is executed to Start the Profiler
+	050 : End If	
+	060 : Set	: IsProfilerOn 	: $$IsProfilerOn
+
+;; Debugger Changes
+
+[Menu: TSPL Smp Debugger Changes]
+
+	Use		: TSPL Smp Debugger
+	Delete	: Button	: TSPL Smp Expression Diagnostics
+	Add		: Button	: TSPL Smp Expression Diagnostics Changes
+	
+[Button: TSPL Smp Expression Diagnostics Changes]
+	
+	Use		: TSPL Smp Expression Diagnostics
+	Action	: Call		: TSPL Smp DebuggerOnOff Changes
+
+[Function : TSPL Smp DebuggerOnOff Changes]
+	
+	0010 : If 	: $$IsDebuggerOn		;; Function returns true if Status of the Debugger is 'On'
+	0020 : 		Stop Debug		: "tdldebug"
+	0025 : 		Msg Box			: "Expression Diagnostics"		: "Debugged Information is dumped into an \n Excel filename starting with tdldebug"
+	0030 : Else
+	0040 : 		Start Debug		;; If the status of debugger is off, then this Action is executed to Start the Debug
+	0050 : End If
+	0060 : Set	: IsDebuggerOn 	: $$IsDebuggerOn
+
+;; Key Recording Changes
+
+[Menu: TSPL Smp Key Recording Changes]
+	
+	Use		: TSPL Smp Key Recording
+	Delete	: Button	: TSPL Smp Dump Recording, TSPL Smp Replay Recording
+	Add		: Buttons	: Before	: TSPL Smp Record Status	: TSPL Smp Dump Recording Changes, TSPL Smp Replay Recording Changes
+
+[Button: TSPL Smp Dump Recording Changes]
+	
+	Use		: TSPL Smp Dump Recording
+	Action	: Dump Recording	: "RecordedKeyDump.Log"		: "-"
+
+[Button: TSPL Smp Replay Recording Changes]
+	
+	Use		: TSPL Smp Replay Recording
+	Action	: Call				: TSPL Smp Macro Playback Changes
+
+[Function: TSPL Smp Macro Playback Changes]
+	
+;; This Function is written to replay only the first macro, ie., the first line item from the Macros.Log File
+	
+	Variable	: Macroline : String
+	
+	Local Formula: ReadMacroKeys :($$StringWordEx:##MacroLine:"~t":Last)
+	
+	0000 : If	: $$IsFileExists:"RecordedKeyDump.Log"
+	0010 : 	Open File	: "RecordedKeyDump.Log"  : TEXT
+
+	0020 : 	Set : Macroline : $$FileRead
+	
+	0040 : 	If	: $$IsEmpty:@ReadMacroKeys
+	0050 : 		Return
+	0060 : 	End If
+
+	0080 : 	For Token  	: Key 	: @ReadMacroKeys : ','
+	0030 : 		Trigger Key    	: ##Key					;; To trigger or enter a key as if an operator is pressing a key
+	0090 : 	End For
+	0100 : Else
+	0110 : 	Msg Box		: "Status"	: "Macro has not been dumped.  Please dump and try again"
+	0120 : End If
+
+;; End-of-File

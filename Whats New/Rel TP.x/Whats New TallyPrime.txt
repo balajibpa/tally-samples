@@ -1,0 +1,23 @@
+;;Menu for TallyPrime
+
+[Menu: TallyPrime]
+	
+	Title		: "What's New in TallyPrime"
+	Item		: Blank
+	
+	Key Item	: "TallyPrime Release 3.0"		 			: 3 : Menu	 : Release 3.0
+	Item		: Blank	
+	
+	Key Item	: "TallyPrime Release 1.1"		 			: 1 : Menu	 : Release 1.1
+	Item		: Blank	
+	
+	Key Item	: "TallyPrime Release 1.0"		 			: 0 : Menu	 : Release 1.0
+	Item		: Blank	
+	
+	
+[Include: Rel TP 3.0\TP rel 3.0.tdl]
+[Include: Rel TP 1.1\TP rel 1.1.tdl]
+[Include: Rel TP 1.0\TP rel 1.0.tdl]
+
+
+;;End of File

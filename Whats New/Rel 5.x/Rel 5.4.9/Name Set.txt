@@ -1,0 +1,89 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) - 
+-	The objective of this program is to demonstrate the usage of Name Set with a collection as Data Source
+
+Syntax -
+
+[Name Set: <NameSetName>]
+     
+    List		: <Identifier> : <Expression>
+	
+[Collection : <CollectionName>]
+
+	Data Source	: Name Set : <Name Set Definition>
+
+Last modification - 
+-	Created on 05/12/2016
+
+*/
+
+[Report: TSPL Name SetCollection]
+ 
+    Form 	: TSPL RepeatNameSet
+ 
+[Form: TSPL RepeatNameSet]
+	
+	Use			: TSPL SMP Illustration
+	Local		: Field	: FormSubTitle		: Info		: "Illustration for Definition Name Set & Usage in Collection Data Source"
+	Local		: Field	: TSPL Smp Purpose	: Info		: "     Name Set provides capabilities to define a 'Set' of Name-Value pairs. "+
+			+ "While Name acts as a TDL identifier, Value is a string. and hence provides an efficient way to define the " +
+			+ "static string data, localizability, efficient access. Also, this ensures that strings are always segregated " +
+			+ "and kept away from within the source code expressions. They are similar to the concept of SysNames " +
+			+ "or TDL Names, but provides grouping and have more advantage over SysNames. Hence identifiers can be " +
+			+ "duplicated across groups." + $$NewLine + "       Name Sets are used to define application string groups - " +
+			+ "like error strings for a given rule, static application data like List of states, Countries, Commodity codes "
+	Local		: Field	: TSPL Smp Syntax	: Info		: "[Name Set : <NameSetDefinition>]" + 
+			+ $$NewLine + "         List Name      : <Identifier> : <Expression>"
+ 
+    Part 				: TSPL RepeatNameSet
+    Horizontal Align 	: Center
+
+
+[Part: TSPL RepeatNameSet]
+ 
+    Line 		: TSPL RepeatNameSet Title, TSPL RepeatNameSet
+    Repeat 		: TSPL RepeatNameSet : TSPLNameSetColl
+	Scroll		: Vertical
+ 
+[Line: TSPL RepeatNameSet Title]
+ 
+    Field : TSPL RepeatNameSet Name, TSPL RepeatNameSet Value
+ 
+    Border : Column Titles
+ 
+    Local : Field : TSPL RepeatNameSet Name 	: Info : "Name"
+    Local : Field : TSPL RepeatNameSet Value 	: Info : "Value"
+  
+[Line: TSPL RepeatNameSet]
+ 
+    Field : TSPL RepeatNameSet Name, TSPL RepeatNameSet Value
+ 
+[Field : TSPL RepeatNameSet Name]
+ 
+    Use 		: Name Field
+    Set as 		: $Name
+ 
+[Field : TSPL RepeatNameSet Value]
+ 
+    Use 		: Name Field
+    Set as 		: $Value
+	
+;;name set definition
+[Nameset : TSPLNameSet]
+ 
+	List Name	: PurcAnnex		: "Purchases"
+	
+	List Name	: AnnexureA		: "Annexure-A"
+	List Name	: AnnexureA1	: "Annexure-A1"
+	List Name	: AnnexureA2	: "Annexure-A2"	
+    
+ 
+[Collection: TSPLNameSetColl]
+ 
+    Data Source : Name Set : TSPLNameSet
+    Format : $Name, 10
+    Format : $Value, 20
+	
+;; End of file

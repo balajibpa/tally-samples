@@ -1,0 +1,259 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+-	This code demonstrates the usage of Action 'Modify Object'
+-	Ledger Details are displayed with a button to modify the ledger object's details
+
+Syntax -
+-	Action : Modify Object : <PrimaryObjectSpec>.<SubObjectPathSpec>.MethodName : value>
+			[,Method Name: <value> , …] [,<SubObjectPathSpec>.MethodName :<value>, …..]
+-	Syntax for Enhanced Method and Key Action Modify Object are similar except that in Enhanced Method
+	Syntax $ should be prefixed with $.
+
+Last Modification -
+-	Altered on 09-11-2009
+*/
+
+[Button: Input Modify]
+
+	Key			: F5
+	Title		: "Modify Object"
+	ActionList	: Input Values, Modify Ledger Object
+
+[Button: Input Values]
+
+	Key			: F5
+	Action		: Alter			: ModObject Variables
+
+[Button: Modify Ledger Object]
+
+	Key			: F5
+
+	;; New Key Action Modify Object which requires the entire path to be specified if the Object
+	;; is not pertaining to Current.  Dot . operator is used to traverse the path from primary object
+	;; to secondary object and so on. Double Dot is used to traverse to the parent object and Triple
+	;; Dot is used to traverse to the grandparent and so on.
+
+	;; Primary Object has to be specified within Parenthesis () and Sub Object Specification should
+	;; be done within Square Brackets []
+	Action		: Modify Object	: (Ledger, ##LedName).Address[Last].Address : ##LedAddr, ..BillAllocations[First, $Name=##LedBillMatch].Name : ##LedBillAlter, OpeningBalance : (if $$IsLedOfGrp:##LedName:$$GroupSundryCreditors then ($$AsAmount:##LedBillAmtAlter) else -1 * ($$AsAmount:##LedBillAmtAlter)) ;;@@LedBillAmt
+
+[Report: ModObject]
+
+	Form		: ModObject
+	Title		: "Modify Object"
+	Variable	: LedName, LedAddr, LedBillMatch, LedBillAlter	: String
+	Variable	: LedBillAmtAlter	: Number
+
+[Form: ModObject]
+
+	Parts		: ModObject
+	Buttons		: Input Modify
+	Width		: 100% Screen
+
+[Part: ModObject]
+
+	Lines			: ModObjectTitle, ModObject
+	Repeat			: ModObject		: DebCreditors
+	Common Border	: Yes
+	Scroll			: Vertical
+
+	[Line: ModObjectTitle]
+
+		Fields			: ModObjectName, ModObjectAddr
+		Right Fields	: ModObjectBD, ModObjectBA, ModObjectOBDr, ModObjectOBCr
+	
+		Local: Field	: Default		: Type		: String
+		Local: Field	: Default		: Align		: Center
+
+		Local: Field	: ModObjectName	: Set As	: "Name"
+		Local: Field	: ModObjectAddr	: Set As	: "Address"
+		Local: Field	: ModObjectBD	: Set As	: "Bill Name"
+		Local: Field	: ModObjectBA	: Set As	: "Bill Amount"
+		Local: Field	: ModObjectOBDr	: Set As	: "Dr Opening Balance"
+		Local: Field	: ModObjectOBCr	: Set As	: "Cr Opening Balance"
+		Border			: Column Titles
+
+	[Line: ModObject]
+
+		Fields			: ModObjectName, ModObjectAddr
+		Right Fields	: ModObjectBD, ModObjectBA, ModObjectOBDr, ModObjectOBCr
+		Local	: Style	: Default		: Bold		: No
+		Explode			: ExplDetails
+
+		[Field: ModObjectName]
+		
+			Use			: Name Field
+			Set As		: $Name
+			Variable	: LedgerName
+
+		[Field: ModObjectAddr]
+		
+			Use			: Name Field
+			
+			;; New Method Syntax allows the following, i.e., the First Line from the Sub Object
+			;; Collection Address and Method required is Address
+			Set As		: $Address[First].Address
+			FullWidth	: Yes
+			Border		: Thin Left
+
+		[Field: ModObjectBD]
+		
+			Use			: Name Field
+
+			;; New Method Syntax allows the following, i.e., the First Line from the Sub Object
+			;; Collection Bill Allocations and Method required is Name
+			Set As		: $BillAllocations[First].Name
+			Border		: Thin Left
+
+		[Field: ModObjectBA]
+		
+			Use			: Amount Field
+			Set As		: $BillAllocations[First].OpeningBalance
+			Border		: Thin Left Right
+			Format		: "DrCr"
+
+		[Field: ModObjectOBDr]
+		
+			Use			: Amount Forex Field
+			Set As		: if $$IsDr:$OpeningBalance then $OpeningBalance else 0
+			Border		: Thin Left Right
+
+		[Field: ModObjectOBCr]
+
+			Use			: Amount Forex Field
+			Set As		: if NOT $$IsDr:$OpeningBalance then $OpeningBalance else 0
+
+		[Part: ExplDetails]
+
+			Lines		: ExplDetails
+
+			Switch		: Case 1	: AddExplDetails	: $$NumItems:BillAllocations < $$NumItems:Address OR $$NumItems:BillAllocations = $$NumItems:Address
+			Switch		: Case 1	: BillExplDetails	: $$NumItems:BillAllocations > $$NumItems:Address
+
+			[!Part: AddExplDetails]
+		
+				Repeat		: ExplDetails	: Address
+
+			[!Part: BillExplDetails]
+
+				Repeat		: ExplDetails	: BillAllocations
+
+			[Line: ExplDetails]
+
+				Fields			: ModObjectName, ModObjectAddr
+				Right Fields	: ModObjectBD, ModObjectBA, ModObjectOBDr, ModObjectOBCr
+				Local	: Field	: Default		: Set As	: ""
+
+				;; New Method Syntax allows the following, i.e., the Line Number which is variable 
+				;; from the Sub Object Collection Address and Method required is Address
+				Local	: Field	: ModObjectAddr	: Set As	: $..Address[($$Line + 1)].Address  ;; $$Line + 1 can also be used within System Formula but we have used it within Bracket since it is supported now
+				Local	: Field	: ModObjectBD	: Set As	: $..BillAllocations[($$Line + 1)].Name
+				Local	: Field	: ModObjectBA	: Set As	: $..BillAllocations[($$Line + 1)].OpeningBalance
+				Empty			: $$IsEmpty:$..Address[($$Line + 1)].Address AND $$IsEmpty:$..BillAllocations[($$Line + 1)].Name
+
+[Collection: DebCreditors]
+
+	Collection	: SDebtors, SCreditors
+	Sort		: Default		: $Name
+	
+[Collection: SDebtors]
+
+	Type		: Ledger
+	Child Of	: $$GroupSundryDebtors
+	BelongsTo	: Yes
+	Fetch		: Name, OpeningBalance, Address.*, BillAllocations.*
+	
+[Collection: SCreditors]
+
+	Type		: Ledger
+	Child Of	: $$GroupSundryCreditors
+	BelongsTo	: Yes
+	Fetch		: Name, OpeningBalance, Address.*, BillAllocations.*
+
+;; Report to accept inputs from user
+
+[Report: ModObject Variables]
+
+	Form		: ModObject Variables
+	Auto		: Yes
+	Fetch Collection : BillAll
+	
+[Form: ModObject Variables]
+
+	Parts		: ModObject Variables
+
+[Part: ModObject Variables]
+
+	Lines		: ModObject Ledger, ModObject AddrLast, ModObject BillDet
+
+	[Line: ModObject Ledger]
+
+		Fields		: Long Prompt, ModObject Ledger
+		Local: Field: Long Prompt	: Set As	: "Select Ledger :"
+
+		[Field: ModObject Ledger]
+
+			Use			: Name Field
+			Table		: DebCreditors
+			Show Table	: Always
+			Modifies	: LedName
+			Variable	: LedName
+			Fetch Object: Ledger	: $$Value	: Bill Allocations.Name, Bill Allocations.OpeningBalance
+
+	[Line: ModObject AddrLast]
+
+		Fields		: Long Prompt, ModObject AddrLast
+		Local: Field: Long Prompt	: Set As	: "Last Line of Address to be altered :"
+
+		[Field: ModObject AddrLast]
+
+			Use			: Name Field
+			Modifies	: LedAddr
+			Variable	: LedAddr
+
+	[Line: ModObject BillDet]
+
+		Fields		: Long Prompt, ModObject BillMatch, Medium Prompt, ModObject BillAlter, Short Prompt, ModObject BillAmtAlter
+		Local: Field: Long Prompt	: Set As	: "Bill Number Matching :"
+		Local: Field: Medium Prompt	: Set As	: "to be altered to :"
+		Local: Field: Short Prompt	: Set As	: "Bill Amount :"
+
+		[Field: ModObject BillMatch]
+
+			Use			: Name Field
+			Modifies	: LedBillMatch
+			Variable	: LedBillMatch
+			Set Always	: Yes
+			Table		: BillAll
+			Show Table	: Always
+
+		[Field: ModObject BillAlter]
+
+			Use			: Name Field
+			Modifies	: LedBillAlter
+			Variable	: LedBillAlter
+
+		[Field: ModObject BillAmtAlter]
+
+			Use			: Number Field
+			Modifies	: LedBillAmtAlter
+			Variable	: LedBillAmtAlter
+
+			;; Opening Balance Method required from the SubCollections Bill Allocations of which 
+			;; First name matching the Condition #LedBillMatch and the parent Ledger matching the 
+			;; Name #LedName
+			Set As		: $(Ledger, #LedName).BillAllocations[First, $Name=#LedBillMatch].OpeningBalance
+			Set Always	: Yes
+			Format		: "NoZero, NoComma"
+
+[Collection: BillAll]
+
+	Title		: $$LocaleString:"Bills of Ledger " + #LedName
+	Type		: Bill Allocations	: Ledger
+	Child Of	: #LedName
+	Fetch		: Name, OpeningBalance
+	Format		: $Name, 20
+
+;; End-of-Code

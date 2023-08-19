@@ -1,0 +1,13 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Menu: Whats New in Rel 5.3]
+
+	Key Item	: "Action Introduced - Exec Excel Macro"	: M	: Export			: TSPL Smp ActionExecExcelMacro	: NOT $$IsEmpty:$$SelectedCmps
+	Key Item	: "Form Attribute - Confirm Text"			: C	: Alter Collection	: TSPL Smp FormAttrConfirmText	: NOT $$IsEmpty:$$SelectedCmps
+
+;; Include Files
+
+[Include: ActionExecExcelMacro.txt]
+[Include: FormAttributeConfirmText.txt]
+
+;; End-of-File

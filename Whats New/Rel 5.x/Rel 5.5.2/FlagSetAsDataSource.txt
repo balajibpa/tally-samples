@@ -1,0 +1,192 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Collection:   FlagSetDataSource]
+	
+    Use         : Ledger
+	Report		: FlagSetDataSource
+
+[Report:   FlagSetDataSource]
+	
+	Title		: "FlagSet as Data Source"
+
+	Form		: FlagSetDataSources
+	Object		: Ledger						: #SLedger
+	Variable	: FlagSetVar					: FlagSet
+	Variable	: NumSetVar						: NumSet
+	Set			: FlagSetVar					: $$EvaluateRuleSet:RuleNameWalkOn
+
+[Form:   FlagSetDataSources]
+	
+	Use			: TSPL SMP Illustration
+	Set			: NumSetVar					: $$AsNumSet:##FlagSetVar
+	
+	Local	: Field	: FormSubTitle		: Info		: "Illustration for FlagSet as DataSource"
+
+	Local	: Field	: TSPL Smp Purpose	: Info		: "This helps to gather data pertaining to FLAGSET." +
+			+ " This data source can be used for customer facing reports using Value " +
+			+ "method. This also an debugging aid for developers"
+	Local	: Field	: TSPL Smp Syntax	: Info		: "[Collection   : <CollectionName>]" + $$NewLine + "     DataSource : Flag Set : <Identity>" + 
+			+ $$NewLine	+ "where, "+ $$NewLine	+ "       Identity is an expression evaluating to Flag Set data type value. This can be a variable or method"
+
+	Local	: Field	: TSPL Smp Example	: Info		: "The example is to show the output of FlagSet for debbuging purpose"
+	
+	Parts		:   FlagSetDataSources
+
+[Part:   FlagSetDataSources]
+	
+	Lines		: FlagSetDataSources_Title, FlagSetDataSources
+	Repeat		: FlagSetDataSources	: FlagSetDataSource_Rep
+	Scroll		: Vertical
+	
+	[Line:   FlagSetDataSources_Title]
+		
+		Use			:   FlagSetDataSources
+		
+		Local: Field: Default					: Type		: String
+		Local: Field: Default					: Style		: Normal Bold
+		Local: Field: Default					: Align		: Center
+		Local: Field: Default					: Lines		: 0
+		
+		Local: Field:   FlagSetName					: Set as	: "Rule Name"
+		Local: Field:   FlagSetAddName				: Set as	: "Leaf Rule Name"
+		Local: Field:   FlagSetSortPos				: Set as	: "Sort Position"
+		Local: Field:   FlagSetIsAgg				: Set as	: "Is Aggregate Rule"
+		Local: Field:   FlagSetParent				: Set as	: "Parent (Current FlagSet)"		
+		Local: Field:   FlagSetUserDescription		: Set as	: "User Description (Appl only for NameSet)"
+		Local: Field:   FlagSetDepth				: Set as	: "Level/ Depth"
+		Local: Field:   FlagSetValue				: Set as	: "Value (Appl only for FlagSet or NumSet)"
+		
+		Border		: Thin Top Bottom
+		
+	[Line:   FlagSetDataSources]
+		
+		Fields		:   FlagSetName,   FlagSetAddName,   FlagSetSortPos,   FlagSetIsAgg,   FlagSetUserDescription,   FlagSetParent
+		Right Fields:   FlagSetDepth,   FlagSetValue
+		Local: Field: Default	: Style		: Normal
+		
+		[Field:   FlagSetName]
+			
+			Use			: Name Field
+			Set as		: $Name
+			Full Width	: Yes
+			Line		: 3
+
+		[Field:   FlagSetAddName]
+			
+			Use			: Name Field
+			Set as		: $AdditionalName
+			Width		: 15
+
+		[Field:   FlagSetSortPos]
+			
+			Use			: Name Field
+			Set as		: $SortPosition
+			Align		: Center
+			Width		: 7
+
+		[Field:   FlagSetIsAgg]
+			
+			Use			: Name Field
+			Set as		: $IsAggregate
+			Align		: Center
+			Width		: 7
+
+		[Field:   FlagSetUserDescription]
+			
+			Use			: Name Field
+			Set as		: $UserDescription
+
+		[Field:   FlagSetParent]
+			
+			Use			: Name Field
+			Set as		: $Parent
+
+		[Field:   FlagSetDepth]
+			
+			Use			: Name Field
+			Set as		: $Depth
+			Align		: Center
+			Width		: 7
+
+		[Field:   FlagSetValue]
+			
+			Use			: Name Field
+			Set as		: $Value
+			Align		: Center
+
+
+;; Collections with Data Sources
+
+[Collection:   FlagSetDataSource_Rep]
+	
+	Data Source	: Flag Set	: ##FlagSetVar
+
+;; RuleSet Definitions start here
+
+[Rule Set:   RuleNameWalkOn]
+	
+	Rule		: IsLedOfDebtors		: @IsLedOfGrpDebtors 		;; Is ledger under Sundry debtors directly
+	Rule		: IsLedOfSubGrpDebtors	: @IsSubGroupofDebtors		;; Is ledger under Sundry debtors indirectly
+	Rule		: IsOpBalGrThan1000		: $OpeningBalance > 1000 	;; Is opening balance of ledger more than 1000
+	Rule		: IsBillWiseOn			: $IsBillWiseOn				;; Is bill wise details enabled
+
+	Aggr Rule	: IsAnyTrueLevel1		: OR	: 1
+	Aggr Rule	: IsAllTrueLevel2		: AND	: 2
+
+	LocalFormula: IsLedOfGrpDebtors		: ($$IsLedOfGrp:$Name:$$GroupSundryDebtors)
+	LocalFormula: IsSubGroupofDebtors	: @IsLedOfGrpDebtors AND NOT ($Parent = $$GroupSundryDebtors)
+
+	RuleSet		:   RuleName_WOMD_Dim1			: IsOpBalGrThan1000, IsBillWiseOn	: IsPANNoEmpty, NoBillAllocations
+	
+	NameSet		: PartyDetailsCaptured
+
+	[RuleSet:   RuleName_WOMD_Dim1]
+		
+		Rule		: IsPANNoEmpty		: @IsPANNoEmpty		;; Is PAN Number provided for Ledger
+		Rule		: IsLedofKarnataka	: @IsLedStateKA		;; Is Ledger from Karnataka state
+		Rule		: NoBillAllocations	: @IsLedBillsEmpty	;; Is Opening bills provided for Ledger
+		
+		LocalFormula: IsPANNoEmpty		: $$IsEmpty:$IncomeTaxNumber
+		LocalFormula: IsLedStateKA		: $LedStateName = "Karnataka"
+		LocalFormula: IsLedBillsEmpty	: $$NumItems:BillAllocations = 0
+	
+		RuleSet		:   RuleName_WOMD_Dim2
+		NameSet		: PartyDetailsCaptured
+
+		[RuleSet:   RuleName_WOMD_Dim2]
+			
+			Rule		: IsContactEmpty	: @IsLedContactEmpty 	;; Is Contact Person provided for Ledger
+			Rule		: IsWebsiteEmpty	: @IsLedWebsiteEmpty	;; Is website provided for Ledger
+			
+			LocalFormula: IsLedContactEmpty	: $$IsEmpty:$LedgerContact 
+			LocalFormula: IsLedWebsiteEmpty	: $$IsEmpty:$Website
+
+			RuleSet		:   RuleName_WOMD_Dim3
+			NameSet		: PartyDetailsCaptured
+
+			[RuleSet:   RuleName_WOMD_Dim3]
+				
+				Rule		: IsPhNoEmpty		: @IsLedPhoneEmpty	;; Is phone number provided for Ledger
+				
+				LocalFormula: IsLedPhoneEmpty	: $$IsEmpty:$LedgerPhone
+				NameSet		: PartyDetailsCaptured
+
+;; RuleSet Definitions end here
+;; Name Set Definition starts here
+
+[NameSet		: PartyDetailsCaptured]
+	
+	List Name	: IsLedOfDebtors 		: "Sundry Debtors"
+	List Name	: IsLedOfSubGrpDebtors	: "Child of Sundry Debtors"
+	List Name	: IsOpBalGrThan1000		: "Opening Balance More Than 1000"
+	List Name	: IsBillWiseOn			: "BillWise Details allowed"
+	List Name	: IsPANNoEmpty			: "PAN Not provided"
+	List Name	: IsLedofKarnataka		: "From Karnataka State"
+	List Name	: NoBillAllocations		: "No Opening Bills"
+	List Name	: IsContactEmpty		: "Contact Person Not Provided"
+	List Name	: IsWebsiteEmpty		: "Website Not Provided"
+	List Name	: IsPhNoEmpty			: "Phone no Not Provided"
+	
+;; Name Set Definition ends here
+
+;; End-of-File

@@ -1,0 +1,43 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Menu for Developer Mode Features
+*/
+
+[Menu: Developer Mode Features]
+	
+	Key Item	: "Profiler"				: P	: Menu		: TSPL Smp Profiler
+	Key Item	: "Expression Diagnostics"	: D	: Menu		: TSPL Smp Debugger
+	Key Item	: "Key Recording"			: K	: Menu		: TSPL Smp Key Recording
+
+[Menu: TSPL Smp DevMode Common Menus]
+	
+	Key Item    : @@locTrialBalance    		: T : Display   : TSPL Smp Trial Balance
+	Key Item    : @@locProfitLossAcc   		: P : Display   : TSPL Smp Profit and Loss
+	Key Item    : @@locBalanceSheet    		: B : Display   : TSPL Smp Balance Sheet
+	
+[Report: TSPL Smp Trial Balance]
+	
+	Use			: Trial Balance
+	Form		: Group Summary
+	Local		: Form	: Default			: Add			: Buttons	: TSPL Smp Stop Recording
+
+[Report: TSPL Smp Profit and Loss]
+	
+	Use			: Profit and Loss
+	Form		: Profit and Loss
+	Local		: Form	: Default			: Add			: Buttons	: TSPL Smp Stop Recording
+
+[Report: TSPL Smp Balance Sheet]
+	
+	Use			: Balance Sheet
+	Form		: Balance Sheet
+	Local		: Form	: Default			: Add			: Buttons	: TSPL Smp Stop Recording
+
+;; Include Files
+
+[Include: Profiler.txt]
+[Include: Debugger.txt]
+[Include: Macros.txt]
+
+;; End of file

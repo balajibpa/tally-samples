@@ -1,0 +1,224 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+
+- This code has the report that reads the leave summary response and displays the information
+
+Last modification 
+-	Altered on 01/04/2018
+
+*/
+
+;;;------Report that reads the leave summary response and displays the information----------------;;
+
+[Report: TSPL Emp Leave Summary]
+	
+[Form: TSPL Emp Leave Summary]
+	
+	Height		: 45% Screen
+	Width		: 50% Screen
+	Parts		: Form SubTitle, TSPLTopDetails, TSPLDetails
+	Bottom Part	: TSPLDetailsTotal
+	Local		: Field: Form SubTitle : Info: "Leave Summary"
+	
+	Option		: SmallSizeForm 
+	
+[Part: TSPLTopDetails]
+	
+	Line		: TSPLEmpNameId
+	Line		: TSPLEmpDeptGender
+	Space Bottom: .5
+	
+[Line: TSPLEmpNameId]
+	
+	Field		: Medium Prompt, TSPLEmployeeName
+	Right Field	: Short Prompt, TSPLEmployeeId
+	Local		: Field: Medium Prompt : Set as: $$LocaleString:"Employee"
+	Local		: Field: Short Prompt  : Set as: $$LocaleString:"Id"
+	
+[Line: TSPLEmpDeptGender]
+	
+	Field		: Medium Prompt, TSPLEmployeeDept
+	Right Field	: Short Prompt, TSPLEmployeeGen
+	Local		: Field: Medium Prompt : Set as: $$LocaleString:"Department"
+	Local		: Field: Short Prompt  : Set as: $$LocaleString:"Gender"
+	
+[Field: TSPLEmployeeName]
+	
+	Use 		: NameField
+	Set 		: ##TSPLEmpName 
+	Full Width	: Yes
+	
+[Field: TSPLEmployeeId]
+	
+	Use : ShortNameField
+	Set : ##TSPLEmpId	
+	
+[Field: TSPLEmployeeDept]
+	
+	Use : NameField
+	Set : ##TSPLEmpDept
+	
+[Field: TSPLEmployeeGen]
+	
+	Use : ShortNameField
+	Set : ##TSPLEmpGender	
+
+	
+[Part: TSPLDetails]
+	
+	Line			: TSPLDetailsTitle, TSPLDetails 
+	Common Border	: Yes
+	
+	Switch		: Format: TSPLDetailsJSON : ##TSPLFormat = "JSON"
+	Switch		: Format: TSPLDetailsXML  : ##TSPLFormat = "XML"
+	Scroll		: Vertical
+	
+	Total		: TSPLEntitled, TSPLAvailed, TSPLRemaining, TSPLLOP
+
+;; Repeats over the collection having leave summary for the employee, leave type in JSON format
+[!Part: TSPLDetailsJSON]
+	
+	Repeat		: TSPLDetails : TSPLLeaveSummaryJSON
+	
+; Repeats over the collection having leave summary for the employee, leave type in XML format	
+[!Part: TSPLDetailsXML]
+	
+	Repeat		: TSPLDetails : TSPLLeaveSummaryXML
+	
+[Line: TSPLDetailsTitle]
+	
+	Field: TSPLLeaveType
+	Right Fields: TSPLEntitled, TSPLAvailed, TSPLRemaining, TSPLLOP
+	
+	
+	Border: Thin Top Bottom
+	
+	Local: Field: Default : Border: Thin Right
+
+	Local: Field: TSPLLeaveType : Set as: $$LocaleString:"Leave Type"
+	Local: Field: TSPLEntitled 	: Set as: $$LocaleString:"Entitled"
+	Local: Field: TSPLAvailed 	: Set as: $$LocaleString:"Availed"
+	Local: Field: TSPLRemaining : Set as: $$LocaleString:"Remaining"
+	Local: Field: TSPLLOP 		: Set as: $$LocaleString:"LOP"
+	
+[Line: TSPLDetails]
+	
+	Field: TSPLLeaveType
+	Right Fields: TSPLEntitled, TSPLAvailed, TSPLRemaining, TSPLLOP
+		
+	Local: Field: TSPLEntitled 	: Type: Number
+	Local: Field: TSPLAvailed 	: Type: Number
+	Local: Field: TSPLRemaining : Type: Number
+	Local: Field: TSPLLOP 		: Type: Number
+
+[Part: TSPLDetailsTotal]
+	
+	Line  : TSPLDetailsTotal
+	Border: Totals
+	
+[Line: TSPLDetailsTotal]
+	
+	Field: TSPLLeaveType
+	Right Fields: TSPLEntitled, TSPLAvailed, TSPLRemaining, TSPLLOP
+	
+	Local: Field: Default 		: Border: Thin Right
+	
+	Local: Field: TSPLLeaveType : Set as: "Total"
+	Local: Field: TSPLLeaveType : Align	: Right
+	
+	Local: Field: TSPLEntitled 	: Type: Number
+	Local: Field: TSPLAvailed 	: Type: Number
+	Local: Field: TSPLRemaining : Type: Number
+	Local: Field: TSPLLOP 		: Type: Number
+	
+	Local: Field: TSPLEntitled 	: Set as: $$Total:TSPLEntitled
+	Local: Field: TSPLAvailed 	: Set as: $$Total:TSPLAvailed
+	Local: Field: TSPLRemaining : Set as: $$Total:TSPLRemaining
+	Local: Field: TSPLLOP 		: Set as: $$Total:TSPLLOP
+	
+[Field: TSPLLeaveType]
+   
+	Use		: NameField
+	Set as	: $Type
+	
+[Field: TSPLEntitled]
+   
+	Use: NameField
+	Set as	: $Entitled
+	
+[Field: TSPLAvailed]
+   
+	Use: NameField
+	Set as: $Availed
+	
+[Field: TSPLRemaining]
+   
+	Use: NameField
+	Set as: If #TSPLAvailed >= #TSPLEntitled then 0 else #TSPLEntitled - #TSPLAvailed
+	
+[Field: TSPLLOP]
+   
+	Use		: NameField
+	Set as	: If #TSPLAvailed <= #TSPLEntitled then 0 else  #TSPLAvailed - #TSPLEntitled
+	
+
+;;----------Report constructs the request payload with Leave Type information--------------------;; 
+[Report: TSPL Leave Request]
+
+	Form  			: TSPL Leave Request
+	Keep Xml Case	: Yes	
+	
+[Form: TSPL Leave Request]
+
+    Parts 	: TSPL Leave Request
+    Delete  : XMLTag
+	
+[Part: TSPL Leave Request]
+
+    Lines	:  TSPL Leave Request
+	Scroll	:  Vertical
+	Option  : TSPL Leave XML Tag : ##TSPLFormat = "XML"
+	
+[!Part: TSPL Leave XML Tag]
+	
+	XMLTag: "Request"
+
+	[Line: TSPL Leave Request]
+
+		Fields 	:  TSPL Leave Request Type
+
+      	[Field: TSPL Leave Request Type]
+
+			Set As 	:  ##TSPLLeaveType
+  			XML Tag	: "LeaveType"
+			
+
+	
+;; Gets the Leave summary from server in JSON format. 
+;; The http header "Accept:application/json", "Emp Id" and 'Leave Type' in the body is sent in the request to the server, 
+;; In order to recieve response in JSON format for the employee and leave type selected. 
+[Collection: TSPLLeaveSummaryJSON]
+	
+	Data Source	 : HTTP JSON: "http://localhost/ExportHeader/getleavedetails.php"
+	Export Header	: "Accept:application/json"
+	Export Header	: "Accept-Charset:utf-8"
+	Export Header	: "EmpId:"+##TSPLEmpId
+	RemoteRequest: TSPL Leave Request: UTF8
+	JSON Object Path : "LeaveInfo:1:LeaveDetails:1"
+
+	
+;; Gets the Leave summary from server in XML format. 
+;; The http header "Accept:application/xml", "Emp Id" and 'Leave Type' in the body is sent in the request to the server, 
+;; In order to recieve response in XML format for the employee and leave type selected. 	
+[Collection: TSPLLeaveSummaryXML]
+	
+	Data Source	 : HTTP XML: "http://localhost/ExportHeader/getleavedetails.php"
+	Export Header	: "Accept:application/xml"
+	Export Header	: "Accept-Charset:utf-8"
+	Export Header	: "EmpId:"+##TSPLEmpId
+	RemoteRequest: TSPL Leave Request: UTF8
+	XML Object Path: "LeaveInfo:1:Envelope:LeaveDetails:1"
+	
+
+;;End Of File

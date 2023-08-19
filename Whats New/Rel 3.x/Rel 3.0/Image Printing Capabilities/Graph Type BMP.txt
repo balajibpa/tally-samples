@@ -1,0 +1,47 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This program demonstrates the Image rendering capability using Part
+Attribute 'Graph Type'
+-	The following report prints/exports a Tally Logo
+
+Syntax -
+-	Part Attribute 'Graph Type' enhanced to print or export BMP/JPEG Image
+
+	[Part: <Part Name>]
+		Graph Type	: <Path of BMP/JPEG File> or Yes
+
+where if Graph Type is Yes, it assumes this part to use Bar Graph else
+it assumes BMP or JPEG Image to be rendered within this Part
+
+Updation History – 
+-	Created on 03/02/2011
+*/ 
+
+[Report: TSPL Smp Graph Type BMP]
+
+	Form		: TSPL Smp Graph Type Enhanced
+	Title		: "Graph Type - BMP"
+	
+[Form: TSPL Smp Graph Type Enhanced]
+	
+	Parts		: TSPL Smp Info, TSPL Smp Graph Type Enhanced
+;; The Image at Part is rendered in Display, Print as well as Export in 
+;; PDF Format
+	Buttons		: Print Button, Export Button
+
+	Local		: Part	: TSPL Smp Info	: Local	: Line	: Info	: Local	: Field : Info Field	: Info	: "Image rendered from BMP File using Part Attribute 'Graph Type'"
+
+[Part: TSPL Smp Graph Type Enhanced]
+	
+	Lines		: TSPL Smp Graph Type Enhanced
+;; Attribute 'Graph Type' which was used to display the image at the Part 
+;; now can also be rendered in other modes like Print, Export in PDF Format, etc.
+	Graph Type	: "Images\TallyLogo.bmp"
+
+	[Line: TSPL Smp Graph Type Enhanced]
+		
+		Fields	: Simple Field
+
+;; End-of-File

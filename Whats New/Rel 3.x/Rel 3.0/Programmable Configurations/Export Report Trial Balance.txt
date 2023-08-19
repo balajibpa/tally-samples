@@ -1,0 +1,102 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+-  	To use Report Specific Action 'Export Report' without bringing up the configuration
+screen
+-	Global Actions Print, Export, Upload, Mail were already supported in Rel 1.6.  The 
+same is now extended to report specific actions 'Print Report', 'Mail Report', 'Export 
+Report' and 'Upload Report'
+-	This report exports Trial Balance on clicking the button 'Export Report'.
+
+Capabilities Used -
+- 	Action 'Export Report' with 2 parameters viz., the Report Name and Logical Value
+
+Syntax -
+- 	EXPORT REPORT 	: <Report Name> : <Logical Formula>
+- 	PRINT REPORT 	: <Report Name> : <Logical Formula>
+- 	MAIL REPORT 	: <Report Name> : <Logical Formula>
+- 	UPLOAD REPORT 	: <Report Name> : <Logical Formula>
+
+where Report Name can be any other report or . for current report
+
+For e.g., PRINT REPORT	: . : True
+
+In the above example, the Report Name specified in the Print Attribute of the current 
+Form gets printed and if print attribute is not specified in the current Form, then the 
+current report gets printed.
+
+Updation History -
+- 	Created on 08/02/2011
+*/
+
+[Report: TSPL Smp Prog Configuration]
+
+	Form		: TSPL Smp Prog Configuration
+	Title		: "Enhanced Suppress Configuration - Export Trial Balance"
+	
+[Form: TSPL Smp Prog Configuration]
+	
+	Parts		: TSPL Smp Info, TSPL Smp Report Title, TSPL Smp Prog Configuration
+	Button		: TSPL Smp Export PC
+	
+	Local: Part	: TSPL Smp Info			: Local	: Line	: Info					: Local	: Field	: Info Field	: Info	: "Click on the Button 'Export Report' which exports the current Report in PDF Format using Action 'Export Report'"
+	Local: Part	: TSPL Smp Info			: Invisible		: $$InPrintMode
+	Local: Part	: TSPL Smp Report Title	: Local	: Line	: TSPL Smp Report Title	: Local	: Field	: Form SubTitle	: Set As: "List of Ledgers with their Closing Balances"
+
+[Part: TSPL Smp Prog Configuration]
+	
+	Lines		: TSPL Smp PC Title, TSPL Smp PC Details
+	Repeat		: TSPL Smp PC Details		: Ledger
+	Scroll		: Vertical
+	CommonBorder: Yes
+	
+	[Line: TSPL Smp PC Title]
+		
+		Fields		: TSPL Smp PC LedName
+		Right Fields: TSPL Smp PC ClosingBalance
+		
+		Local: Field: Default					: Type	: String
+		Local: Field: Default					: Align	: Center
+		
+		Local: Field: TSPL Smp PC LedName		: Info	: "Ledger Name"
+		Local: Field: TSPL Smp PC ClosingBalance: Info	: "Closing Balance"
+		Border		: Thin Top Bottom
+
+	[Line: TSPL Smp PC Details]
+		
+		Fields		: TSPL Smp PC LedName
+		Right Fields: TSPL Smp PC ClosingBalance
+		
+		[Field: TSPL Smp PC LedName]
+			
+			Use		: Name Field
+			Set As	: $Name
+			XMLTAG	: "Name"
+
+		[Field: TSPL Smp PC ClosingBalance]
+			
+			Use		: Amount Forex Field
+			Set As	: $ClosingBalance
+			Border	: Thin Left
+			XMLTAG	: "Closing Balance"
+
+[Button: TSPL Smp Export PC]
+	
+	Key		: Ctrl + E
+	Action 	: Call	: TSPL Smp PC Export Report
+	Title	: "Export Report"
+
+;; Function Definition begins
+
+[Function: TSPL Smp PC Export Report]
+
+	Local Formula		: SysDate			: $$SysInfo:SystemDate
+	
+	00	: SET			: SVExportLocation	: "."
+	10	: SET			: SVExportFormat	: $$SysName:PDF
+	20	: SET			: SVPrintFileName	: "List of Ledgers as on " + $$String:@SysDate + ".PDF"
+	30	: SET			: SVPrintFileName	: $$MakeExportName:##SVPrintFileName:##SVExportFormat
+	40	: EXPORT REPORT	: .					: TRUE
+
+;; End-of-File

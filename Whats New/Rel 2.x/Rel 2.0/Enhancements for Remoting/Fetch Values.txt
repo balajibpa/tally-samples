@@ -1,0 +1,31 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Collection: Multi ExtractLedger]
+	
+	Use         : List of Extract Groups
+	Collection	: All Items	
+    Report      : Multi Ledger
+    Variable    : MGroupName
+    Trigger     : MGroupName
+
+[Report: MGroupName]    ;;Auto Report
+
+	Use     : Group Name
+	Title   : $$LocaleString:"Select Group"
+	Local   : Field : Group Name : Delete   : Table
+	Local   : Field : Group Name : Add      : Table    : Multi ExtractGroup
+	Local   : Field : Group Name : Set as   : ##MGroupName
+	Local   : Field : Group Name : Modifies : MGroupName 
+
+[Report: Multi Ledger]  ;; Auto Report
+
+    Variables	: MGroup
+	Set			: SVAccounts	: Yes
+	Set			: SVInventory	: No
+	Set			: SVStatutory	: No
+
+[#Object: Ledger]
+	
+	GroupTotal	: $ClosingBalance:Group:$Parent
+
+;; End-of-File

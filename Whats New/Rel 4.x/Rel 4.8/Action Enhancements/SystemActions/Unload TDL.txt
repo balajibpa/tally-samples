@@ -1,0 +1,41 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s):-
+	- To dynamically Unload the TDLs
+	- To demonstrate the usage of Action Unload TDL
+
+Capabilities Used:-
+	- Action Unload TDL
+
+Syntax -
+	Unload TDL : <TDL/ TCP File Path>
+
+Updation History:-
+	- Created on 14-2-2014
+*/
+
+[Report: TSPL Smp UnLoad TDL File Path]
+	
+	Title	: "Action UnLoad TDL"
+	Form	: TSPL Smp TDL File Path
+	Local	: Form	: Default		: Local	: Field	: Form SubTitle	: Info	: "Action Unload TDL"
+	Local	: Form	: Default		: Delete: On
+	Local	: Form	: Default		: Add	: On	: Form Accept	: Yes	: Call		: TSPL Smp Action Unload TDL	: #TSPLSmpTDLFilePath
+
+[Function: TSPL Smp Action Unload TDL]
+
+	Parameter	: pTDLPath		: String
+
+	00	: If	: $$IsTDLLoaded:##pTDLPath
+;; Action Unload TDL unloads the TDL File dynamically
+	10	:	Unload TDL	: ##pTDLPath
+	20	:	If	: NOT $$IsTDLLoaded:##pTDLPath
+	30	:		Msg Box		: "Status!"		: "TDL File " + ##pTDLPath + " unloaded succesfully"
+	40	: 	End If 
+	50	: Else	:
+	60	:	Msg Box		: "Status!!"  : "TDL File " + ##pTDLPath + " is not loaded"
+	70	: End If
+	80	: Display		: ReportProductNFeatures
+
+;; End-of-File

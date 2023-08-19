@@ -1,0 +1,31 @@
+/*
+Objective : This file would like Menus for enhancement of Collection Definition
+*/
+
+[Menu	: TSPL CollectionEnhancements]
+	
+	Title		: "Object & Collection Enhancements"
+		
+	Indent		: "General Enhancements - Collection"
+
+	Key Item	: Table Sort				: S	: Alter	: TSPL Table Sort
+	Key Item	: Advanced					: A	: Alter	: TSPL Advanced
+	Key Item	: Hierarchy Table 			: H	: Alter	: TSPL Hierarchy Table
+	Item		: Blank	
+	
+	Indent		: "Formatting Enhancements - Collection"
+	
+	Key Item	: Formatting Enhancements	: F	: Alter	: TSPL Formatting Enhancements
+	Item		: Blank	
+	
+	Indent		: "Object Enhancements"
+	
+	Key Item	: Change Table				: C	: Alter	: TSPL Change Table
+
+[Include	: General Enhancements\Table Sort.tdl]
+[Include	: General Enhancements\Advanced.tdl]
+[Include	: Formatting Enhancements\Table Formatting.tdl]
+[Include	: Object Enhancements\Change Table.tdl]
+[Include	: Object Enhancements\Hierarchy Table.tdl]
+
+;; End of file

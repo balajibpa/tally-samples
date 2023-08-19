@@ -1,0 +1,42 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This program demonstrates the Image rendering capability with a Newly
+introduced Resource Definition
+-	The following report prints/exports a Tally Logo
+
+Syntax -
+-	Part Attribute 'Image' introduced to accept Resource Name
+
+	[Part: <Part Name>]
+		Image	: <Resource Name>
+
+- 	Resource Definition introduced to declare Sources/Resources of Image
+
+	[Resource: <Resource Name>]
+		Source	: <Path of the Image File>  ;; Can also accept HTTP/FTP
+		Resource: <Resource Object Name> [: Application Path]
+		Resource Type : <Type of the Image> ;; BMP/JPEG/Cursor/Icon
+
+Updation History – 
+-	Created on 04/02/2011
+*/ 
+
+[Report: TSPL Smp Other Appl as Resource]
+
+	Form	: TSPL Smp Resource Type
+	Local	: Part	: TSPL Smp Resource Type	: Delete: Image
+	Local	: Part	: TSPL Smp Resource Type	: Add	: Image	: TSPL Smp Other Appl as Resource
+	
+	Local	: Form	: TSPL Smp Resource Type	: Local	: Part	: TSPL Smp Info	: Local	: Line	: Info	: Local	: Field : Info Field	: Info	: "Image 'BMP1' of Type 'BMP' rendered from External Application using Part Attribute 'Image' and corresponding definition 'Resource'"
+	Title	: "Resource Type - BMP from external application"
+
+[Resource: TSPL Smp Other Appl as Resource]
+	
+;; Resource Name '102' is entered as Resource which is available in the 
+;; File 'Everything.exe' and Resource Type is declared as BMP
+	Resource		: "102"	: "Images\Everything.Exe"
+	Resource Type	: BMP
+	
+;; End-of-File

@@ -1,0 +1,11 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Function: TSPL Smp IsServiceRunning]
+	
+	00	: If		: $$IsServiceRunning:"Tally Server 9 - 1"
+	10	:	Msg Box	: "Service Check" 	: "The Current Service \n is Running" 
+	20	: Else	: 
+	30	: 	Msg Box	: "Service Check"	: "The Current Service \n is not Running "
+	40	: End If
+	
+;; End-of-File

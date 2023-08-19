@@ -1,0 +1,54 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[System: Variable]
+	
+	Variable: TSPL Smp Operation Type	: String	: ""
+
+[Report: TSPL Smp IsUserAllowed]
+	
+	Form 	: TSPL Smp IsUserAllowed
+	Title	: "Usage of Function IsUserAllowed"
+	Variable: TSPL Smp Operation Type	: String	: ""
+	
+[Form: TSPL Smp IsUserAllowed]
+	
+	Part: TSPL Smp IsUserAllowed
+	
+[Part: TSPL Smp IsUserAllowed]
+	
+	Line: TSPL Smp User Info 1, TSPL Smp User Info 2
+	
+[Line: TSPL Smp UserInfo 1]
+	
+	Field: Long Prompt, TSPL Smp UserName
+	Local: Field: Long Prompt : Set as	: "User Name :"
+	
+	[Field: TSPL Smp UserName]
+		
+		Use			: Name Field
+			
+[Line: TSPL Smp UserInfo 2]
+	
+	Field	: Long Prompt, TSPL Smp Operation Menu, Medium Prompt, TSPL Smp Authorized
+	Local	: Field	: Long Prompt 	: Info	: "Operation  :"
+	Local	: Field	: Medium Prompt : Info	: "Authorized :" 
+		
+	[Field: TSPL Smp Operation Menu]
+		
+		Table		: TSPL Smp Collection of Operations
+		Show Table	: Always
+		Modifies	: TSPL Smp Operation Type	: Yes
+		Width		: 15
+		
+	[Field: TSPL Smp Authorized]
+		
+		Use			: Logical Field
+		Set as		: $$IsUserAllowed:#TSPLSmpUserName:##TSPLSmpOperationType:##SVTallyServer
+		Read Only	: Yes
+		
+[Collection: TSPL Smp Collection of Operations]
+	
+	List Name	: "Backup", "Restore", "Re-Write", "Create Company", "Split Company", "Monitor Tool"
+	Title		: "Type of Operation"
+
+;; End-of-File

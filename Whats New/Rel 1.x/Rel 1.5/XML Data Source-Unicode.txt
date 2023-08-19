@@ -1,0 +1,122 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+-	This code demonstrates the capability of gathering XML Collection to 
+	retrieve the data from XML File present at a specified URL. Further, it 
+	displays the data fetched in a Report.
+
+Specific TDL feature(s) used –
+-	External Unicode XML File at a predefined URL as Data Source for Collection
+
+Last modification – 
+-	Altered on 26/10/2009
+
+Dependencies – 
+-	NA
+*/
+
+[Report: DSU XML Get Collection]
+
+	Form 	: DSU XML Get Collection
+	Title 	: "Simple Get Request "
+
+[Form: DSU XML Get Collection]
+
+	Height	: 100% Screen
+	Width	: 100% Screen
+	Parts	: DSU XML Get Collection, XMLData
+		
+[Part: DSU XML Get Collection]
+
+	Lines		: Note, DSU XML Get Collection 
+	Repeat		: DSU XML Get Collection : DSU XML Get Collection	
+	Scroll  	: Vertical
+	Local: Line	: Note	: Local	: Field: Name Field	: Set As: "(Unicode XML file is being read as Data Source)"
+	Local: Line	: Note	: Local	: Field: Name Field	: Lines	: 0
+	Local: Line	: Note	: Local	: Field: Default	: Style	: Normal Italic
+	Local: Line	: Note	: Space Bottom : 1
+			
+	[Line: DSU XML Get Collection]
+
+		Fields	: DSU XML Name, DSU XMLEmp ID
+		Explode : DSU XML Phone
+		Explode : DSU XML Add
+		
+		[Field: DSU XMLName]
+
+			Set As 	: "Name : " + $NAME
+		
+		[Field: DSU XMLEmp ID]
+
+			Set As 	: "Employee ID :" +  $EMPID
+			Indent 	: 10
+
+;; Explode Part - XML Phone
+
+[Part: DSU XML Phone]
+
+	Lines 	: DSU XML Get CollPhone
+	Repeat 	: DSU XML Get CollPhone		: Phone
+	Scroll	: Vertical
+
+	[Line: DSU XML Get CollPhone]
+
+		Fields	: Name Field, DSU XML Office, DSU XML Home, DSU XML Mobile
+		Local 	: Field	: Name Field	: Set As 	: "Phone No"
+			
+		[Field: DSU XML Office]
+
+			Set As 	: "Office:" + $OfficeNo
+		
+		[Field: DSU XML Home]
+
+			Set As 	: "Home :" + $HomeNo
+		
+		[Field: DSU XML Mobile]
+
+			Set As 	: "Mobile :" + $Mobile				
+			
+;; Explode Part - XML Add
+
+[Part: DSU XML Add]
+
+	Lines	: DSU XML Get CollAdd
+	Repeat 	: DSU XML Get CollAdd 	: Address
+	Scroll	: Vertical
+
+	[Line: DSU XML Get CollAdd]
+
+		Fields	: DSU XML Add1
+		Explode : DSU XML Addr Line
+
+		[Field: DSU XML Add1]
+
+			Use 	: Name Field
+			Set As 	: "Address"
+
+;; Explode Part - XML Addr Line
+
+[Part: DSU XML Addr Line]
+
+	Lines	: DSU XML Get Addrline
+	Repeat 	: DSU XML Get Addrline 	: AddrLine
+	Scroll	: Vertical
+
+	[Line: DSU XML Get Addrline]
+
+		Fields	: DSU XML Add2
+
+		[Field: DSU XML Add2]
+
+			Set As 	: $ADDRLINE
+			Indent 	: 5
+
+;; Collection retrieving data from an XML file located at a predefined URL 
+
+[Collection: DSU XML Get Collection]
+
+	Data Source : HTTP XML   : "http://localhost/TestXML.xml" : UNICODE ;;URL specification
+	ClientOnly	: Yes
+
+;; End-of-File

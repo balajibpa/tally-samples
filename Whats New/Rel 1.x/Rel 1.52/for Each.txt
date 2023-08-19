@@ -1,0 +1,51 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This Code demonstrates the usage of 'For Each' within Functions which is
+	an alias to 'For In'
+
+Last modification – 
+-	Altered on 09/11/2009
+*/
+
+[Function: for Each within Function]
+
+	List Variable	: GroupName	: String
+
+	00	: CALL				: For Each List Fill
+	10	: LIST VALUE SORT	: GroupName				: Yes	: Logical
+	20	: CALL 				: For Each List Print	: "Value - String - Ascending"
+
+[Function: For Each List Fill]
+
+	Variable	: Count		: Number
+
+	00	: SET	: Count		: 1
+	10	: WALK COLLECTION	: My Group
+	20	: 	LIST ADD : GroupName : ##Count : $Name
+	30	: 	INCREMENT: Count
+	40	: END WALK
+
+[Function: For Each List Print]
+
+	Parameter : SortTypeString : String
+
+	00	: SET FILE LOG ON
+	10	: LOG : "---" + ##SortTypeString + "---"
+
+	20	: FOR EACH : KeyVar : GroupName
+	30	: 	LOG : "Key: " + $$String:##KeyVar + " Value: " + $$ListValue:GroupName:##KeyVar
+	40	: END FOR
+
+	50	: LOG : "-----------------------------------------------"
+	60	: SET FILE LOG OFF
+
+[Collection: MyGroup]
+
+	Type		: Group
+	Child Of	: $$GroupCurrentAssets
+	BelongsTo	: Yes
+	Fetch		: Name
+
+;; End-of-File

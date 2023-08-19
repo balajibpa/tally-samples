@@ -1,0 +1,19 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Menu: Persistence of Variables]
+
+	Key Item	: "Save Report & System Variables"	: R : Alter 	: TSPL SMP VarPersist
+	Item		: Blank
+
+	Key Item	: "Save System Scope Variables"		: S : Call		: TSPL SMP SystemScopeSave
+	Key Item	: "Alter the saved Variables"		: A : Alter		: TSPL SMP SystemScopeAlterSaved
+	Key Item	: "Load System Scope Variables"		: L : Call		: TSPL SMP SystemScopeLoad
+	Key Item	: "Display the loaded Variables"	: D : Display	: TSPL SMP SystemScopeAlterSaved
+	Item		: Blank
+	
+;; Include Files
+
+[Include: Report and System Scope.txt]
+[Include: System Scope Variable Persistence.txt]
+
+;; End-of-File

@@ -1,0 +1,65 @@
+;;Program to add custom report in Go To
+
+[Report: TSPL PreLoadCheck Illustration]
+
+	Title			: $$LocaleString:"Illustrating the capability PreLoad Check"
+	Form			: TSPL PreLoadCheck Illustration
+	
+[Form: TSPL PreLoadCheck Illustration]
+	
+	Use				: TSPL SMP Illustration
+	Button			: CreateSalesVoucher
+	
+	Height			: 100% Screen
+	Width			: 100% Screen
+	
+	Local	: Part	: TSPL SMP Syntax		: Invisible	: Yes
+	Local	: Field	: FormSubTitle			: Info		: $$LocaleString:"Illustration for report attribute - PreLoad Check"
+		
+	Local	: Field	: TSPL Smp Purpose		: Indent	: 2
+	Local	: Field	: TSPL Smp Purpose		: Info		: $$LocaleString:"The attribute Preload Check used to specify a condition to be checked before " ++
+															"launching the report. If the condition is satisfied the query report is launched."
+	Local	: Field	: TSPL SMP Example		: Info		: $$NewLine	+ "[#Report: Voucher]" + $$NewLine + $$NewLine + +
+														'PreLoad Check  : ($$IsSales:##SVVoucherType AND $$Numitems:InvSalesLedgersVchExtract=0)  : SV User Query  : @@EnableSalesLedger    : "" : "" : Call	: CreateSalesLedger' ++
+														$$NewLine ++
+														$$NewLine + "[System: Formula]" ++
+														$$NewLine + +	
+														$$NewLine + 'EnableSalesLedger	: "There are no Sales Ledger! Create a Sales Ledger?"' ++
+														$$NewLine + +
+														$$NewLine + "[Function: CreateSalesLedger]" ++
+														$$NewLine +  "             |" +	+
+														$$NewLine + "100	: New Object	: Ledger" ++
+														$$NewLine + '110	:	Set Value	: Name			: "Sales"'++
+														$$NewLine + '120	: 	Set Value	: Parent		: "Sales Accounts"'++
+														$$NewLine + "130 : Create Target" ++
+														$$NewLine +  "             |" ++
+														$$NewLine +  "             |"				
+															
+	Local	: Field	: TSPL SMP ExampleNote	: Info		: "In this example, creating a Ledger for sales by system when the user intending to create a Sales Voucher while not having a ledger for Sales account." + +
+															$$NewLine + 'Click the button "Create Sales voucher"  to experience the illustration.'
+
+
+
+[Button: CreateSalesVoucher]
+	
+	Title	: "Create Sales Voucher"
+	Key		: Ctrl + R
+	Action	: Create Collection	: Company Vouchers
+
+[#Report: Voucher] 
+	
+	Set				: svVoucherType	: "Sales"
+	Pre Load Check  : ($$IsSales:##SVVoucherType AND $$Numitems:InvSalesLedgersVchExtract=0)  : SV User Query  : @@EnableSalesLedger    : "" : "" : Call	: CreateSalesLedger
+
+[System: Formula]
+	
+	EnableSalesLedger	: "There are no Sales Ledger! Create a Sales Ledger?"
+	
+[Function: CreateSalesLedger]
+	
+	100	: New Object	: Ledger
+	110	:	Set Value	: Name			: "Sales"
+	120	: 	Set Value	: Parent		: "Sales Accounts"
+	130 : Create Target
+
+;;End of File

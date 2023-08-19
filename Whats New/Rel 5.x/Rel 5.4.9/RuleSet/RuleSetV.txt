@@ -1,0 +1,15 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Menu	: TSPL Smp RuleSetV]
+	
+	Title		: $$LocaleString:"Rule Set - Vertical"
+
+	Key Item	: Simple Rule		: S :	Display	: TSPL Smp SimpleRule 		: NOT $$IsEmpty:$$SelectedCmps
+	Key Item	: Break	on Yes		: Y :	Display	: TSPL Smp BreakOnYes 		: NOT $$IsEmpty:$$SelectedCmps
+	Key Item	: Break	on No		: N :	Display	: TSPL Smp BreakOnNo 		: NOT $$IsEmpty:$$SelectedCmps
+	Key Item	: Break	on Override	: O :	Display	: TSPL Smp BreakOnOverride 	: NOT $$IsEmpty:$$SelectedCmps
+	
+[Include	: Vertical\SimpleRules.txt]
+[Include	: Vertical\BreakOnYes.txt]
+[Include	: Vertical\BreakOnNo.txt]
+[Include	: Vertical\BreakOn Overriden.txt]

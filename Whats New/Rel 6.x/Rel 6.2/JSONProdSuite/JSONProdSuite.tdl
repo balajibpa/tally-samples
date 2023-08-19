@@ -1,0 +1,76 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+/*
+Objective(s) – 
+- To support productivity suite based export, a new resource type called 'JSON' is introduced."+
+- This is used in the attribute 'Resource Type' of the Resource definition which holds the details of the json template file mentioned in its 'Source' attribute.+
+- The existing form attribute 'Map' with aliases 'XML Map' and 'JSON Map' is used map the tokens used in the Json template with the Tally data.
+{
+		"Distributor": "$DistributorId",
+		"TotalSales" : "$TotalSales",
+		"Vch": [{
+			"Vch Num": "$VchNum",
+			"Vch Dt": "$Vchdt",
+			"Vch Type": "$VchType",
+		
+				"item": [{
+					"Stock Item": "$StkName",
+					"Qty": "$Qty",
+					"unit": "$unit"
+				}]
+			
+		}]
+}
+
+Last modification – 
+-	Altered on 24/10/2017
+*/
+
+
+[Report: TSPL ProdSuite JSON]
+
+	Title	: $$LocaleString:"Productivity suite based JSON Export"
+	Form	: TSPL ProdSuiteJSON
+
+[Form: TSPL ProdSuiteJSON]
+
+	Use		: TSPL SMP Illustration
+	
+	Height	: 90% Screen
+	Width	: 90% Screen
+	
+	Local   : Part	: TSPL SMP Illustration : Add	: Part: TSPL SMP ExampleExecution
+	
+	Local	: Field	: FormSubTitle		: Info		: $$LocaleString:"Productivity suite based JSON Export"
+	
+	Local	: Field	: TSPL Smp Purpose	: Indent	: 2
+	Local	: Field	: TSPL Smp Purpose	: Info		: $$LocaleString:" To support productivity suite based export, a new resource type called 'JSON' is introduced."+
+	+"This is used in the attribute 'Resource Type' of the Resource definition which holds the details of the json template file mentioned in its 'Source' attribute."+
+	+"The existing form attribute 'Map' with aliases 'XML Map' and 'JSON Map' is used map the tokens used in the Json template with the Tally data."
+				
+	Local	: Field	: TSPL Smp Syntax	: Indent	: 2
+	Local	: Field	: TSPL Smp Syntax	: Info		: "[Form : Form Name]"+
+			+$$NewLine+ "       Resource  : <JSON Resource Def Name>"+
+			+$$NewLine+ " 		      Map       : <Token Name>: <Expression >[:<Collection Name>]"+
+			+$$NewLine+ "[Resource : <JSON Resource Def Name>]"+
+			+$$NewLine+ " 		Resource Type : JSON"+
+			+$$NewLine+ "Resource takes the name of the Resource definition that provides the details of JSON based template that can be used for printing or exporting the Form, "+
+			+"While the Map attribute provides the required value to the tokens specified in the document template"+
+				
+	Local	: Field	: TSPL SMP Example	: Indent: 2
+	Local	: Field	: TSPL SMP Example	: Info: $$LocaleString:"[Form: TSPL Json ColRepSupinSuite]"+
+			+$$NewLine+"    Map : DistributorId : ##SVDistributorName"+
+			+$$NewLine+"[Resource: TSPL Json ColRepSupinSuite] "    +
+			+$$NewLine+"    Source			: sales.json"+
+			+$$NewLine+"    Resource Type	: JSON "    +
+			+$$NewLine+$$LocaleString:"Here the token DistributorId is the token mentioned in the source template sales.json. When the report is exported, " +
+			+$$LocaleString:"the value in the variable SVDistributorName gets evaluated for the map DistributorId and thus the token gets the variable value, in the exported file"+
+				
+	Local	: Field	: TSPL SMP ExampleExec: Info: $$LocaleString:"This example illustrates the cycle of Distributors sending their sales details in json format to their Principal company."+
+	+"and how principal company uses the json files to show reports. Follow the below steps"+
+	+$$Newline + "1. Create 2 Distributor companies and enter some sales and credit note invoices. Click on Send Distributor sales for both the companies. "+
+	+"This will generate 2 json files in the Tally.ERP 9 location in the folder 'Distributors'"+
+	+$$NewLine+ "2. Create a principal company and click on view Distributor report, provide the path of the exported 2 Distributor json files. "
+	Local	: Field	: TSPL SMP ExampleNote: Info: $$LocaleString:"  (The file sales.json is available in the Samples -> whats New -> Rel 6.2 -> JSONProdSuite Folder)"
+
+	Button: TSPL Distri Sales, TSPL View Report
+	

@@ -1,0 +1,214 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+-	This code demonstrates the usage of Procedural File IO
+-	This code imports the Stock Item Data i.e., Name, Group and Units from either
+	Excel or Text using File IO capability and subsequently displays an error report
+	as well as opens a logged file on request
+
+Capabilities Used -
+-	List/Compound Variables
+- 	User Defined Functions
+-	Collections with Variables as its Data Source
+-	File IO (Read/Write) Capability
+
+Last Modification -
+-	Created on 13-08-2009
+
+Dependencies -
+-	Supporting files 'Import Config.txt' & 'Import Error Report.txt'
+-	Data files 'Text' &/or 'Excel' - 'ListofStockItems.Txt' & 'ListofStockItems.xls'
+*/
+
+[Function: TSPL Smp Import Stock Items]
+
+	Variable		: Row			: Number	: 1
+	Variable		: Temp Var		: String
+	Variable		: Last Status	: String
+	Variable		: Counter		: Number	: 1
+
+	Variable		: Item Columns
+	List Variable	: TSPL Item Details, Item Import Status
+
+	00	: QUERY BOX	: "Import Stock Items"		: Yes	: No
+	10	: IF	: $$LastResult
+	20	: 	IF	: ##TSPLSmpSICSource = "Excel"
+	30	: 		OPEN FILE: @@TSPLSmpTotFilePath	: Excel	: READ
+	40	: 	ELSE	: 
+	50	: 		OPEN FILE: @@TSPLSmpTotFilePath	: Text	: READ
+	60	: 	ENDIF
+
+	70	:	SET		 : ItemColumns.ItemName	: @@TSPLSMPItemNameColIdx
+	80	:	SET		 : ItemColumns.ItemGrp	: @@TSPLSMPItemGrpColIdx
+	90	:	SET		 : ItemColumns.ItemUOM	: @@TSPLSMPItemUOMColIdx
+
+	100	: 	IF	: ##TSPLSmpSICSource = "Excel"
+	110	:		SET		: Row	: if ##TSPLSmpSICIncHeader then 2 else 1
+
+;; Reading from Excel File and updating to List
+	120	:		WHILE	: NOT $$IsEmpty:($$FileReadCell:##Row:##ItemColumns.ItemName)
+	130	:			LIST ADD EX	: TSPL Item Details
+	140	: 			SET			: TSPLItemDetails[$$LoopIndex].ItemName	: $$FileReadCell:##Row:##ItemColumns.ItemName
+	150	: 			SET			: TSPLItemDetails[$$LoopIndex].ItemGrp	: $$FileReadCell:##Row:##ItemColumns.ItemGrp
+	160	: 			SET			: TSPLItemDetails[$$LoopIndex].ItemUOM	: $$FileReadCell:##Row:##ItemColumns.ItemUOM
+	170	: 			INCREMENT	: Row
+	180	:		END WHILE
+
+	190	: 	ELSE: 
+
+;; Reading from Text File and updating to List
+	200	: 		SET		: Counter	: 1
+	210	: 		WHILE	: NOT $$FileIsEOF
+	220	:			SET		: Temp Var		: $$FileRead
+	230	:			IF		: NOT $$IsEmpty:##TempVar AND (NOT ##TSPLSmpSICIncHeader OR (##TSPLSmpSICIncHeader AND $$LoopIndex > 1))
+	240	:				LIST ADD EX	: TSPL Item Details
+	250	: 				SET			: TSPLItemDetails[##Counter].ItemName	: $$TSPLSmpSICExtractDet:##TempVar:##ItemColumns.ItemName
+	260	: 				SET			: TSPLItemDetails[##Counter].ItemGrp	: $$TSPLSmpSICExtractDet:##TempVar:##ItemColumns.ItemGrp
+	270	: 				SET			: TSPLItemDetails[##Counter].ItemUOM	: $$TSPLSmpSICExtractDet:##TempVar:##ItemColumns.ItemUOM
+	280	:				INCREMENT	: Counter
+	290	:			ENDIF
+	300	: 		END WHILE
+
+	310	:	ENDIF
+	320	: 	CLOSE FILE
+
+	330	: 	IF	: ##TSPLSmpSICOpenLogFile
+	340	:		OPEN FILE		: @@TSPLSmpErrorFilePath	: Text	: WRITE	: ASCII
+	350	:		TRUNCATE FILE
+	360	:	ENDIF
+
+	370	: 	SET		: Counter	: 1
+
+;; Creating Stock Items from List of Compound Variable
+	380	: 	WALK COLLECTION	: TSPL Smp Imp StockItem Summ
+	390	:		SET		: Last Status	: ""
+
+	391	: 		IF	: $$IsRemoteCompany
+	392	:			CALL	: TSPL Smp Fetch Objects
+	393	:		ENDIF
+
+	400	:		IF		: $$IsEmpty:$Name:StockItem:$SICStockItem
+	410	:			NEW OBJECT		: Stock Item
+	420	:			SET VALUE		: Name	: $SICStockItem
+
+	430	:			IF	: NOT $$IsEmpty:$Name:StockGroup:$SICStockGroup
+	431	:				LOG			: "Group Allocation"
+	440	:				SET VALUE	: Parent	: $SICStockGroup
+	450	:			ELSE:
+	460	:				SET			: LastStatus: "Group " + $SICStockGroup + " does not exist"
+	470	:			ENDIF
+
+	480	:			IF	: NOT $$IsEmpty:$Symbol:Unit:$SICStockUOM
+	490	:				SET VALUE	: Base Units	: $SICStockUOM
+	500	:			ELSE:
+	510	:				SET			: LastStatus	: "Unit " + $SICStockUOM + " does not exist"
+	520	:			ENDIF
+	530	:			IF	: $$IsEmpty:##LastStatus
+	540	:				SAVE TARGET
+	550	:				SET			: Last Status	: "Imported Successfully"
+	560	:			ENDIF
+	570	:		ENDIF
+	575	:		IF	: $$IsEmpty:##LastStatus
+	576	:			SET		: Last Status	: "Item already exists"
+	577	:		ENDIF
+;; Writing Import Status to the LOG File if LOG File is to be displayed at the end
+	580	: 		IF	: ##TSPLSmpSICOpenLogFile
+	590	:			WRITE FILE LINE	: $SICStockItem + ##TSPLSmpSICTextSep + ##LastStatus
+	600	:		ENDIF
+
+;; Updating List of Compound Variables is Status is to be displayed in a Report
+	610	: 		IF	: ##TSPLSmpSICDisplayReport
+	620	:			LIST ADD EX		: ItemImportStatus
+	630	:			SET				: ItemImportStatus[##Counter].ItemName	: $SICStockItem
+	640	:			SET				: ItemImportStatus[##Counter].Status	: ##LastStatus
+	650	:			INCREMENT		: Counter
+	660	:		ENDIF
+
+	670	: 	END WALK
+;;	680	:	CLOSE TARGET FILE
+
+;; Display Error Report from the List of Compound Variables 'ItemImportStatus'
+	690	: 	IF	: ##TSPLSmpSICDisplayReport
+	700	: 		DISPLAY			: TSPL Smp SIC Error Report
+	710	: 	ENDIF
+
+;; Open the LOG File
+	720	: 	IF	: ##TSPLSmpSICOpenLogFile
+	730	: 		EXEC COMMAND	: @@TSPLSmpErrorFilePath
+	740	: 	ENDIF
+	750	: ENDIF
+
+[Collection: TSPL Smp Imp StockItem]	;; Collection using List of Compound Variable
+
+	Data Source			: Variable			: TSPLItemDetails
+
+[Collection: TSPL Smp Imp StockItem Summ]
+
+	Source Collection	: TSPLSmpImpStockItem
+	By					: SICStockItem		: $ItemName
+	By					: SICStockGroup		: $ItemGrp
+	By					: SICStockUOM		: $ItemUOM
+	Filter				: TSPL Smp NonEmpty Item
+	Client Only			: Yes
+
+[System: Formula]
+
+	TSPL Smp NonEmpty Item	: NOT $$IsEmpty:$SICStockItem
+
+	TSPL Smp Folder Path	: if $$TSPLSMPEndsWithSlash:##TSPLSmpSICDirPath then ##TSPLSmpSICDirPath else ##TSPLSmpSICDirPath + "\"
+	TSPL Smp File Name		: ##TSPLSmpSICFilePath
+	TSPL Smp File Ext 		: if $$TSPLSMPSymbolExistsinFileName:##TSPLSmpSICFileExt then ##TSPLSmpSICFileExt else "." + ##TSPLSmpSICFileExt
+
+	TSPL Smp TotFilePath	: @@TSPLSmpFolderPath + @@TSPLSmpFileName + @@TSPLSmpFileExt
+
+	TSPL Smp ItemNameColIdx	: if $$Number:##TSPLSmpSICItemName = 0 then $$FileGetColumnIdx:##TSPLSmpSICItemName else ##TSPLSmpSICItemName
+	TSPL Smp ItemGrpColIdx	: if $$Number:##TSPLSmpSICItemGroup = 0 then $$FileGetColumnIdx:##TSPLSmpSICItemGroup else ##TSPLSmpSICItemGroup
+	TSPL Smp ItemUOMColIdx	: if $$Number:##TSPLSmpSICItemUOM = 0 then $$FileGetColumnIdx:##TSPLSmpSICItemUOM else ##TSPLSmpSICItemUOM
+
+	TSPL SMP Error File Path: @@TSPLSmpFolderPath + @@TSPLSmpFileName + ".LOG"
+
+;; Functions
+
+[Function: TSPL Smp Fetch Objects]
+
+	Fetch Object: Stock Item	: $SICStockItem	: $Name
+	Fetch Object: Stock Group	: $SICStockGroup: $Name
+	Fetch Object: Unit			: $SICStockUOM	: $Symbol
+
+	00	: LOG	: "Objects fetched for Item - " + $SICStockItem
+
+[Function: TSPL Smp SIC Extract Det]
+
+	Parameter	: pValue	: String
+	Parameter	: pIndex	: Number
+
+	Variable	: Counter	: Number	: 1
+
+	00	: FOR TOKEN	: TokenVar	: ##pValue	: ##TSPLSmpSICTextSep
+	10	:	IF	: ##Counter = ##pIndex
+	20	:		RETURN	: ##TokenVar
+	30	:	ENDIF
+	40	:	INCREMENT	: Counter
+	50	: END FOR
+
+;; Compound Variable Declaration
+
+[Variable: Item Columns]
+
+	Variable	: Item Name, Item Grp, Item UOM		: Number
+
+[Variable: TSPL Item Details]
+
+	Variable	: Item Name, Item Grp, Item UOM		: String
+
+[Variable: Item Import Status]
+
+	Variable	: Item Name, Status					: String
+
+;; Include Files
+
+[Include: Import Config.txt]
+[Include: Import Error Report.txt]
+
+;; End-of-File

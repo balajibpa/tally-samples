@@ -1,0 +1,24 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+-	This Sample TDL demonstrates the usage of Action BrowseURLEx and the difference of the same against
+action BrowseURL
+
+Syntax -
+-	Action : Browse URLEx : <URL Formula> [: '<Multiple Parameters separated by space>']
+-	Exec Command Ex is an alias for action Browse URL Ex
+
+Last Modification -
+-	Updated on 16-08-2012
+*/
+
+[Function: TSPL Smp Action BrowseURLEx]
+	
+	00	: Browse URL 	: "SmpBrowseURLEx.Bat"	: '"Browse URL which does not wait for the completion of external task"'
+	10	: MsgBox		: "Browse URL"			: "Does not wait for the completion of external task"
+
+	20	: Browse URLEx 	: "SmpBrowseURLEx.Bat"	: '"Browse URLEx which waits for the completion of external task and then continues the execution of further actions"'
+	30	: MsgBox		: "Browse URLEx"		: "Waits for the completion of external task"
+
+;; End-of-File

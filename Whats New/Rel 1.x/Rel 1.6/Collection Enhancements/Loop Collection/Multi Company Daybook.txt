@@ -1,0 +1,108 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+-	This code demonstrates the usage of Loop Collection
+-	To view all vouchers of loaded companies
+
+Syntax -
+-	There is an enhancement in syntax of attribute 'Collection' at definition 'Collection'.
+-	[Collection : <CollectionName>
+		Collection : <Data Collection Name>[:<Loop Collection Name>[:<Condition  for Loop Coll>]]
+Last Modification -
+-	Altered on 13-01-2010
+
+Specifications -
+- 	More than one company must be loaded
+*/
+
+[Report: MultiCmpDBRep]
+
+	Use		: DSP Template
+	Form	: MultiCmpDBForm
+	Title	: "Multi-Company Day Book"
+
+[Form: MultiCmpDBForm]
+	
+	Part 		: MultiCmpDBPart	
+	Background  : @@SV_DAYBOOK
+	
+[Part: MultiCmpDBPart]
+
+	Lines	: MultiCmpDBLnTitle, MultiCmpDBLnDetails
+	Repeat	: MultiCmpDBLnDetails: Vouchers of Multiple Companies
+	Scroll	: Vertical
+
+	[Line : MultiCmpDBLnTitle]
+		
+		Use		: MultiCmpDBLnDetails
+		
+		Local : Field	: Name Field 			: Set as : "Particulars"
+		Local : Field	: MultiCmpVchNo			: Set as : "Vch No."
+		Local : Field	: MultiCmpVchTypeName	: Set as : "Vch Type"
+		Local : Field	: UniDate Field			: Set as : "Date"
+		Local : Field	: Amount Field			: Set as : "Amount"
+		
+		Local : Field	: Default			: Type	 : String
+		Local : Field	: Default			: Align	 : Center
+		Local : Field	: Default			: Style	 : Normal Bold
+		Local : Field	: Default			: Lines	 : 0
+
+		Border	: Top Thick Bottom Thin
+		
+	[Line: MultiCmpDBLnDetails]
+
+		Fields		: MultiCmpOwnerCmpName,UniDate Field, Name Field 
+		Right Field : MultiCmpVchTypeName,MultiCmpVchNo, Amount Field
+		
+		Local	: Field	: UniDate Field			: Set as	: $Date
+		Local	: Field	: Amount Field			: Set as	: $Amount
+		Local	: Field	: Amount Field			: Format	: "ShowBaseCurrency"
+		Local	: Field	: Amount Field			: Width		: 30
+		Local	: Field	: Name Field			: Set as	: $LedgerName
+		Option  : Alter on Enter
+/*
+As our collection is a loop collection, when we press enter on voucher, alongwith its master id, 
+we also need to modify the company name variable 'SVCurrentCompany' so the voucher understands its current company
+*/
+        [Field : MultiCmpOwnerCmpName]
+
+            Use 	 : Name Field
+            Set as	 : $OwnerCompany
+			Alter    : Voucher
+			Variable : SVCurrentCompany
+			Modifies : SVCurrentCompany
+			Invisible: Yes
+
+        [Field : MultiCmpVchNo]
+
+             Use 	: Short Name Field
+             Set as	: $VoucherNumber
+				
+        [Field : MultiCmpVchTypeName]
+
+             Use 	: Short Name Field
+             Set as	: $VoucherTypeName
+
+[Collection: Vouchers of Multiple Companies]
+	
+	Collection 	: MultiCmpDB VchCollection	: Company Collection
+	Sort		: Default					: $Date, $LedgerName
+
+[Collection: MultiCmpDB VchCollection]
+
+	Type	: Voucher
+	Fetch	: Date, Vouchernumber, VoucherTypeName, Amount, MasterID, LedgerName
+	Compute : Owner Company	: $$LoopCollObj:$Name
+
+[Collection: Company Collection]
+
+	Type   	: Company
+	Fetch   : Name
+
+/* 
+* 1. data-collection to gather vouchers of a ledger
+* 2. Note how $Name is now available from the Ledger context object
+*/ 
+
+;; End-of-file

@@ -1,0 +1,15 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Menu: Whats New in Rel 6.4.1]
+
+	Indent		: "Collection Enhancements"
+	Item		: Blank
+	Key Item	: "HTTP JSON Datasource" 		: H : Display	: TSPL HTTP JSON
+	Item		: Blank
+	Key Item	: "Export Header" 		 		: F : Display	: TSPL Export Header
+	Item		: Blank
+	
+
+[Include: ExportHeader\exportheader.tdl]
+[Include: HttpJson\httpjson.tdl]
+

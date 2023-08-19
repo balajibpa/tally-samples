@@ -1,0 +1,35 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- This code demonstrates the use of the Do If in a Button.
+- The action Do If is enhanced as a system action, and thus can be used in definitions like button.
+- In this example, the usage of Do if to set the SVVoucher Type based on the user selection of accounting voucher type is shown
+
+Last modification – 
+-	Altered on 17/06/2017
+*/
+
+[Report: TSPL Do If Rep]
+	
+	Title	: $$LocaleString:"Do If illustration"
+	
+[Form: TSPL Do If Rep]
+	
+	Use	 	: TSPL ActionEx Rep
+	
+	Local	: Field	: FormSubTitle		: Info		:$$LocaleString:"Illustration for system action Do If"
+	
+	Local	: Field	: TSPL Smp Purpose	: Info		: $$LocaleString:"       'Do If',which was a function action, is enhanced to support conditional action execution at definintions like buttons."+
+			+$$LocaleString:"Action statement Do if executes the given action when the condition given evaluates to True."
+			
+	Local	: Field	: TSPL Smp Syntax	: Info		: "       Do if: <Condition>: <Action Keyword>: <Action Parameters>"+
+	
+	Local	: Field	: TSPL SMP ExampleNote: Info: ""
+				
+	Local	: Field	: TSPL SMP ExampleExec: Info: "Click on the Create Acc Vch button to experience the behavior of 'Do If'. " +
+				+$$LocaleString:"It allows to create accounting vouchers of selected type."
+
+
+	
+;;EOF

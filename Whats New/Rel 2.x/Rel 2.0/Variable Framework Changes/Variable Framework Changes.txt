@@ -1,0 +1,32 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Menu for Variable Framework Changes
+*/
+
+[Menu: Variable Framework Changes]
+
+	Indent		: "Basic Usage"
+	Item		: Blank
+	Key Item	: Save and Load Var		: L : Create 	: TSPL Smp SLReport
+	Key Item	: Variable Instance		: I : Display 	: TSPL Smp Instance Var Report
+	Key Item	: Copy Variable			: C : Display 	: TSPL Smp CopyVar
+	Key Item	: Scope Specification	: S : Call 		: TSPL Smp ScopeSpec
+	Item		: Blank
+
+	Indent		: "Use Case - Multiple EMail Configurations"
+	Item		: Blank
+	Key Item	: EMail Configuration	: M : Execute 	: EMail Configuration
+
+;; Include Files
+
+;; Basic Usage
+[Include: Basic Usage\Save and Load Var.txt]
+[Include: Basic Usage\Variable Instance.txt]
+[Include: Basic Usage\Copy Variable.txt]
+[Include: Basic Usage\Var Scope Specification.txt]
+
+;; Use Case
+[Include: EMail Configuration\EMail Configuration.txt]
+
+;; End-of-File

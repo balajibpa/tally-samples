@@ -1,0 +1,85 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This code demonstrates the usage of Zip Procedural Actions
+
+Syntax – 
+	Start Zip:  <Target File> [: <Overwrite>]
+		Zip Add Path 	: <Source Path> [: <Include Sub-directory>]
+						:
+						:
+		Zip Exclude Path: <Exclude Path>
+						:
+						:
+	End Zip[: <Password> [: <Show Progress Bar>]]
+
+	Where 
+		<Target File> indicates the name of the resultant Zip File and also includes the Folder Path. 
+
+		<Overwrite> is the Logical Flag to specify the behaviour if the Target File already exists. Specifying a Yes 
+		will overwrite the file and No will not overwrite the file. If not specified, the default value is No.
+
+		<Source Path> is the path of the Files or Folders which is to be zipped. It can be a folder or a file or a path
+		containing wildcard characters.
+
+		<Include Sub-directory> is the Logical Flag to specify whether to include sub directories available in the specified
+		source path or not.  Specifying Yes will include all the Sub-Directories from the Source for Zipping.  If not specified,
+		the default value is No.
+
+		<Exclude Path> is the path of the Files/ Folders which need to be excluded from the Target Zip. 
+
+		<Password> is the password assigned to the Target zipped file.
+
+		<Show Progress Bar> is the Logical Flag to specify if Progress Bar needs to be shown during the Zipping Process.  Specifying
+		a Yes will show the Progress Bar and No will not show the Progess Bar.  If not specified, the default value is No.
+
+Last modification – 
+-	Created on 04/09/2013
+-	Altered on 18/09/2013
+*/
+
+[Function: TSPL Smp Zip Procedural Actions]
+	
+	Variable				: TSPLSmpTgtFile 		: String
+	Variable				: TSPLSmpSrcFile 		: String			
+	Variable				: TSPLSmpExcPath		: String
+	
+;; Start the Zipping with Procedural Action 'Start Zip'
+	10 : SET 				: TSPLSmpTgtFile 		: $$SysInfo:ApplicationPath + "\ZipFiles\zipOutput.zip"	
+	20 : MsgBox				: "Start Zip"			: "Target File = \n" + ##TSPLSmpTgtFile + ", \n" + "Overwrite = Yes" 
+	30 : START ZIP 			: ##TSPLSmpTgtFile 		: Yes	;; Start Zip with Target Zip File Name and Overwrite Zip File Parameter enabled
+
+;; Zip Add First Source Path
+	40 : 	Set 			: TSPLSmpSrcFile 		: $$SysInfo:ApplicationPath + "\Supporting Files\*.xml"
+	50 : 	Msg Box			: "Zip Add Path"		: "Source Path = \n" + ##TSPLSmpSrcFile + ", \n Include SubDirectory = Yes"
+	60 : 	ZIP ADD PATH	: ##TSPLSmpSrcFile		: Yes	;; Add Zip File with Include Sub-directory enabled for *.xml
+;; The above action will fail as Supporting Files folder is not available in Local Tally Folder.
+;; Observe the Calculator Pane which will log this as a warning and zip will continue.
+;; For this to work, copy the Folder 'Samples\Supporting Files' from the Tally.Developer 9 Application Folder
+
+;; Zip Add Second Source Path
+	70 : 	Set 			: TSPLSmpSrcFile		: "." ;; if Slash is included i.e., ".\", then only files and folders within the current Tally Folder will be zipped directly without the Tally Folder Name being zipped
+	80 : 	Msg Box			: "Zip Add Path"		: "Source Path = \n" + ##TSPLSmpSrcFile
+	90 : 	ZIP ADD PATH 	: ##TSPLSmpSrcFile		: No 	;; entire Current Application Folder including the Tally Folder Name will be added for zipping.
+
+;; Zip Add First Exclude Path
+	100: 	Set 			: TSPLSmpExcPath 		: ##TSPLSmpSrcFile + "\Licensing*"
+	110: 	Msg Box			: "Zip Exclude Path" 	: ##TSPLSmpExcPath
+	120: 	ZIPEXCLUDEPATH	: ##TSPLSmpExcPath		;; Exclude Folders/ Files starting with Licensing from the above Include Paths
+	
+;; Zip Add Second Exclude Path
+	130: 	Set 			: TSPLSmpExcPath 		: ##TSPLSmpSrcFile + "\*.dll"
+	140: 	Msg Box			: "Zip Exclude Path" 	: ##TSPLSmpExcPath
+	150: 	ZIPEXCLUDEPATH	: ##TSPLSmpExcPath		;; Exclude Folders/ Files with an extension dll from the above Include Paths
+	
+;; Zip Add Third Exclude Path
+	160: 	Set 			: TSPLSmpExcPath 		: ##TSPLSmpSrcFile + "\Te?t*.*"
+	170: 	Msg Box			: "Zip Exclude Path"	: ##TSPLSmpExcPath
+	180: 	ZIPEXCLUDEPATH	: ##TSPLSmpExcPath		;; Exclude Folders/ Files with an extension dll from the above Include Paths
+
+;; Procedural Action 'End Zip' with Zip File Password and Show Progress Bar enabled
+	190: 	Msg Box			: "End Zip"				: "Password = Tally, \n Show Progress Bar = Yes"
+	200: END ZIP			: "Tally"				: Yes	;; End Zip with Password as 'Tally' and Show Progress Bar enabled
+
+;; End-of-File

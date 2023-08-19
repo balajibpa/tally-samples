@@ -1,0 +1,530 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This TDL File demonstrate the usage and purpose of Compound List Variables with
+	Reports and LOG Files displaying the same
+-	Wherever LOG File opens up on execution of any code, please traverse through
+	the end of the document to find the recent output
+
+Last modification – 
+-	Altered on 05/04/2010
+*/
+
+;; Report Definition for Compound List Values with Key
+
+[Report: CV List Values]
+	<InUse:System:Formulae:CV FindIndexRel, CV PrevLineFieldIndex>
+
+	Form		: CV List Values
+
+[Form: CV List Values]
+
+	Parts		: Form SubTitle, CV List Values
+	On			: Form Accept	: Yes	: CALL	: CV Log Values
+	Local: Field: Form SubTitle	: Info	: "Enter the Employee Names with their details"
+	Height		: 30% Page
+	Width		: 40% Page
+	No Confirm	: Yes
+
+[Part: CV List Values]
+
+	Lines		: CV List Title, CV List Values
+	Repeat		: CV List Values
+	BreakOn		: $$IsEmpty:#CVAlias
+	Scroll		: Vertical
+	CommonBorder: Yes
+
+	[Line: CV List Title]
+
+		Use		: CV List Values
+		Local	: Field	: Default	: Type 		: String
+		Local	: Field	: Default	: Style		: Normal
+		Local	: Field	: Default	: Align		: Centre
+		Local	: Field	: Default	: Delete	: Storage
+		Local	: Field	: Default	: Delete	: Inactive
+
+		Local	: Field	: CV Alias	: Info		: "Alias"
+		Local	: Field	: CV Name	: Info		: "Name"
+		Local	: Field	: CV Age	: Info		: "Age"
+		Local	: Field	: CV Salary	: Info		: "Salary"
+		Border	: SubTotals
+
+	[Line: CV List Values]
+
+		Fields		: CV Alias, CV Name, CV Age, CV Salary
+		Space Top	: 0.25
+		Explode		: CV Relation	: NOT $$IsEmpty:#CVAlias
+
+		[Field: CV Alias] 
+
+			Use			: Name Field
+
+		[Field: CV Name]
+
+			Use			: Name Field
+			Inactive	: $$IsEmpty:#CVAlias
+			Set As		: if NOT $$IsEmpty:##CVEmp[@@CVFindIndex].Name then ##CVEmp[@@CVFindIndex].Name else $$Value
+			Set Always	: Yes
+
+		[Field: CV Age]
+
+			Use			: Number Field
+			Format		: "NoZero, NoComma"
+			Inactive	: $$IsEmpty:#CVAlias
+			Set As		: if NOT $$IsEmpty:##CVEmp[@@CVFindIndex].Age then ##CVEmp[@@CVFindIndex].Age else $$Value
+			Set Always	: Yes
+
+		[Field: CV Salary]
+
+			Use			: Amount Forex Field
+			Format		: "NoZero, NoComma"
+			Inactive	: $$IsEmpty:#CVAlias
+			Set As		: if NOT $$IsEmpty:##CVEmp[@@CVFindIndex].Salary then $$AsAmount:##CVEmp[@@CVFindIndex].Salary else $$Value
+			Set Always	: Yes
+			Delete		: Key
+			Add			: Key	: SetVariablesandFieldAccept
+
+			[Key: SetVariablesandFieldAccept]
+
+				Key			: Enter
+				Action List	: Field Accept, Set Variables, Field Accept
+
+				[Key: Set Variables]
+
+					Key		: Enter
+					Action	: CALL	: CV List Add	: #CVAlias : #CVName : #CVAge : $$Value
+
+		[Part: CV Relation]
+
+			Lines		: CV List Rel Values
+			Repeat		: CV List Rel Values
+			Scroll		: Vertical
+			Set			: 3
+			Local: Line	: Default	: Indent	: 2
+			Local: Field: Default	: Style		: Normal Italic
+
+			[Line: CV List Rel Values]
+
+				Fields		: CV Rel Alias, CV Rel Name, CV Rel Age, CV Relation, CV Rel Salary
+				Space Top	: 0.25
+
+				[Field: CV Rel Alias]
+
+					Use			: Name Field
+
+				[Field: CV Rel Name]
+
+					Use			: Name Field
+					Inactive	: $$IsEmpty:#CVRelAlias
+					Set Always	: Yes
+
+				[Field: CV Rel Age]
+
+					Use			: Number Field
+					Inactive	: $$IsEmpty:#CVRelAlias
+					Set As		: if NOT $$IsEmpty:##CVEmp[@@CVFindIndex].Relatives[@CVFindIndexRel].Age then ##CVEmp[@@CVFindIndex].Relatives[@CVFindIndexRel].Age else $$Value
+					Set Always	: Yes
+
+				[Field: CV Relation]
+
+					Use			: Name Field
+					Inactive	: $$IsEmpty:#CVRelAlias
+					Table		: Relationship
+					Show Table	: Always
+
+				[Field: CV Rel Salary]
+
+					Use			: Amount Forex Field
+					Inactive	: $$IsEmpty:#CVRelAlias
+					Set As		: if NOT $$IsEmpty:##CVEmp[@@CVFindIndex].Relatives[@CVFindIndexRel].Age then $$AsAmount:##CVEmp[@@CVFindIndex].Relatives[@CVFindIndexRel].Salary else $$Value
+					Set Always	: Yes
+					Delete		: Key
+					Add			: Key	: SetVariablesandFieldAccept
+					Local: Key	: Set Variables	: Delete	: Action
+					Local: Key	: Set Variables	: Add		: Action	: CALL 	: CV Sub List Add	: #CVAlias : #CVRelAlias	: #CVRelName	: #CVRelAge	: #CVRelation : $$Value
+
+[Table: Relationship]
+
+	List Name	: "Mother", "Father", "Husband", "Wife", "Son", "Daughter", "Brother", "Sister"
+
+[System: Formula]
+
+	CV FindIndex			: $$ListIndex:CVEmp:#CVAlias
+	CV FindIndexRel			: $$ListIndex:Relatives:#CVRelAlias
+	CV PrevLineFieldIndex	: $$ListIndex:CVEmp:$$PrevLineField
+
+[Function: CV List Add]
+
+	Parameter	: KeyVar		: String
+	Parameter	: NameVar		: String
+	Parameter	: AgeVar		: Number
+	Parameter	: SalVar		: Amount
+
+	Variable	: IndexFromKey 	: Number
+
+	10	: LIST ADD	: CVEmp							: ##KeyVar
+	15	: SET		: IndexFromKey 					: $$ListIndex:CVEmp:##KeyVar
+	20	: SET		: CVEmp[##IndexFromKey].Name	: ##NameVar
+	30	: SET		: CVEmp[##IndexFromKey].Age		: ##AgeVar
+	40	: SET		: CVEmp[##IndexFromKey].Salary	: $$Number:##SalVar
+	50	: LOG		: ##CVEmp[##IndexFromKey].Salary
+
+[Function: CV Sub List Add]
+
+	Parameter	: ListKeyVar	: String
+	Parameter	: KeyVar		: String
+	Parameter	: NameVar		: String
+	Parameter	: AgeVar		: Number
+	Parameter	: RelVar		: String
+	Parameter	: SalVar		: Amount
+
+	Variable	: IndexFromKey 		: Number
+	Variable	: SubIndexFromKey 	: Number
+
+	00	: SET		: IndexFromKey 		: $$ListIndex:CVEmp:##ListKeyVar
+	10	: LIST ADD	: CVEmp[##IndexFromKey].Relatives			: ##KeyVar
+	11	: SET		: SubIndexFromKey 	: $$ListIndex:CVEmp[##IndexFromKey].Relatives:##KeyVar
+	20	: SET		: CVEmp[##IndexFromKey].Relatives[##SubIndexFromKey].Name		: ##NameVar
+	30	: SET		: CVEmp[##IndexFromKey].Relatives[##SubIndexFromKey].Age		: ##AgeVar
+	40	: SET		: CVEmp[##IndexFromKey].Relatives[##SubIndexFromKey].Relation	: ##RelVar
+	50	: SET		: CVEmp[##IndexFromKey].Relatives[##SubIndexFromKey].Salary		: $$Number:##SalVar
+	60	: LOG		: ##CVEmp[##IndexFromKey].Relatives[##SubIndexFromKey].Salary
+
+[Function: CV Log Values]
+
+	Local Formula	: ListFind		: $$ListFind:CVEmp:"S2"
+	Local Formula	: ListTotal		: $$ListCount:CVEmp
+	Local Formula	: PrevLoopIndex	: $$LoopIndex:1
+	Local Formula	: ListSal		: ##CVEmp[$$LoopIndex].Salary
+
+	10	: LOG		: "Compound List Values"
+	20	: LOG		: "Alias is the Key and Name is the Value"
+	30	: LOG		: "--------"
+
+	40	: FOR IN 	: KeyVar 	: CVEmp
+	50	: 	LOG		: "Corresponding Name for Alias " + ##KeyVar + " is " + $$ListValue:CVEmp:##KeyVar
+	60	: 	LOG		: "Corresponding Name for Index Position " + $$String:$$LoopIndex + " is " + $$ListValueEx:CVEmp:$$LoopIndex
+	70	: 	LOG		: "Salary for Index Position " + $$String:$$LoopIndex + " is " + $$String:@ListSal
+	80	:   LOG		: "Index Position of Alias " + ##KeyVar + " is " + $$String:$$LoopIndex
+	90	:   LOG		: "Alias corresponding to Index " + $$String:$$LoopIndex + " is " + $$ListKey:CVEmp:$$LoopIndex
+	100	: 	LOG		: "--------"
+	110	: 	FOR RANGE	: IteratorVar	: Number	: 1	: 3	: 1
+	120	:		IF		: NOT $$IsEmpty:##CVEmp[@PrevLoopIndex].Relatives[$$LoopIndex].Name
+	130	:			LOG		: ##CVEmp[@PrevLoopIndex].Relatives[$$LoopIndex].Name
+	140	:			LOG		: ##CVEmp[@PrevLoopIndex].Relatives[$$LoopIndex].Age
+	150	:			LOG		: ##CVEmp[@PrevLoopIndex].Relatives[$$LoopIndex].Relation
+	155	:			LOG		: ##CVEmp[@PrevLoopIndex].Relatives[$$LoopIndex].Salary
+	160	:		END IF
+	170	:	END FOR
+	180	: END FOR
+
+	190	: LOG		: "Total No. of Items in the List are " + $$String:@ListTotal
+	200	: LOG		: "Does Alias S2 exist in list ? " + $$String:@ListFind
+
+	210	: LOG		: "Before Manipulation - " + $$String:##CVEmp[1].Salary
+	220	: INCREMENT	: CVEmp[1].Salary : 2
+	230	: LOG		: "Post Increment - " + $$String:##CVEmp[1].Salary
+	240	: DECREMENT	: CVEmp[1].Salary : 3
+	250	: LOG		: "Post Decrement - " + $$String:##CVEmp[1].Salary
+
+	255	: LOG		: "Before Manipulation - " + $$String:##CVEmp[1].Relatives[1].Salary
+	260	: INCREMENT	: CVEmp[1].Relatives[1].Salary : 15
+	270	: LOG		: "Post Increment - " + $$String:##CVEmp[1].Relatives[1].Salary
+	280	: DECREMENT	: CVEmp[1].Relatives[1].Salary : 25
+	290	: LOG		: "Post Decrement - " + $$String:##CVEmp[1].Relatives[1].Salary
+
+;; Function Definition for Sorting List Values
+
+[Function: CV List Sorting by Key]
+
+	Local Formula	: PrevLoopIndex	: $$LoopIndex:1
+
+	01	: LOG	: "Sorting by Key in Ascending Order"
+	10	: LIST KEY SORT		: CVEmp	: Yes : String
+	20	: FOR IN	: KeyVar	: CVEmp
+	30	:	LOG		: ##KeyVar + " - " + $$ListValue:CVEmp:##KeyVar
+	40	: 	LOG		: "Sorting Relatives by Key in Descending Order"
+	50	: 	LIST KEY SORT	: CVEmp[$$LoopIndex].Relatives	: No : String
+	60	:	FOR IN	: KeyVar1	: CVEmp[$$LoopIndex].Relatives
+	70	:		LOG		: ##KeyVar1 + " - " + ##CVEmp[@PrevLoopIndex].Relatives[$$LoopIndex]
+	80	:	END FOR
+	90	: END FOR
+
+[Function: CV List Sorting by Value]
+
+	Local Formula	: PrevLoopIndex	: $$LoopIndex:1
+
+;; These Local Formulae are not used within the Function, hence, commented since TD9 compiler returns an Error
+;	Local Formula	: ListRel		: $$ListValue:CVEmp:##KeyVar:@ListRelName
+;	Local Formula	: ListRelName	: $$LisValue:Relatives.##KeyVar1:Name
+
+	01	: LOG		: "Sorting by Value in Descending Order"
+	10	: LIST VALUE SORT	: CVEmp	: No : String
+	20	: FOR IN	: KeyVar	: CVEmp
+	30	:	LOG		: ##KeyVar + " - " + $$ListValue:CVEmp:##KeyVar
+	40	: 	LOG		: "Sorting Relatives by Value in Ascending Order"
+	50	: 	LIST VALUE SORT	: CVEmp[$$LoopIndex].Relatives	: No : String
+	60	:	FOR IN	: KeyVar1	: CVEmp[$$LoopIndex].Relatives
+	70	:		LOG				: ##KeyVar1 + " - " + ##CVEmp[@PrevLoopIndex].Relatives[$$LoopIndex].Name
+	80	:	END FOR
+	90	: END FOR
+
+;; Report Definition for Repeat without Collection
+
+[Report: CV Repeat without Collection]
+
+	Use		: CV List Values
+	Local	: Form	: CV List Values	: Height	: 100% Page
+	Local	: Form	: CV List Values	: Local		: Field	: Form SubTitle	: Info	: "List of Employee Names and Aliases"
+
+	Local	: Part	: CV List Values	: Set		: $$ListCount:CVEmp
+
+	Local	: Line	: CV List Values	: Local		: Field	: CV Alias	: Set As: $$ListKey:CVEmp:$$Line
+	Local	: Line	: CV List Values	: Local		: Field	: CV Name	: Set As: ##CVEmp[$$Line].Name
+	Local	: Line	: CV List Values	: Local		: Field	: CV Salary	: Set As: $$AsAmount:##CVEmp[$$Line].Salary
+	Local	: Line	: CV List Values	: Add		: Fields: NumberField
+	Local	: Field	: Number Field		: Set As	: $$Line
+	Local	: Field	: Number Field		: Invisible	: Yes
+	Local	: Part	: CV Relation		: Delete	: BreakOn
+	Local	: Part	: CV Relation		: Set		: $$ListCount:CVEmp[#NumberField].Relatives
+
+	Local	: Field	: CV Rel Alias		: Set As	: $$ListKey:CVEmp[#NumberField].Relatives:$$Line
+	Local	: Field	: CV Rel Name		: Set As	: ##CVEmp[#NumberField].Relatives[$$Line].Name
+	Local	: Field	: CV Rel Age		: Set As	: ##CVEmp[#NumberField].Relatives[$$Line].Age
+	Local	: Field	: CV Relation		: Set As	: ##CVEmp[#NumberField].Relatives[$$Line].Relation
+	Local	: Field	: CV Rel Salary 	: Set As	: $$AsAmount:##CVEmp[#NumberField].Relatives[$$Line].Salary
+
+;; Repeat Variable with Collection
+
+[Function: CV Repeat Variable with Collection]
+
+	00	: IF	: $$ListCount:CVEmp > 0
+	10	:	DISPLAY		: CV Repeat Variable with Collection
+	20	: ELSE	: 
+	30	:	MSGBOX		: "Error!"	: "Compound List Variable is Empty"
+	40	: 	QUERYBOX 	: "Do you want to add values now ?":Yes:No
+	50	:	IF	: $$LastResult
+	60	:		ALTER	: CV List Values
+	70	: 		CALL	: CV Repeat Variable with Collection
+	80	:	ENDIF
+	90	: ENDIF
+
+[Report: CV Repeat Variable with Collection]
+
+	Use		: CV List Values
+
+	Local	: Form	: CV List Values	: Height	: 100% Page
+	Local	: Form	: CV List Values	: Width		: 40% Page
+	Local	: Form	: CV List Values	: Local		: Field		: Form SubTitle	: Info	: "List of Employee Names"
+
+	Local	: Part	: CV List Values	: Repeat	: CV List Values		: CV List Collection
+
+	Local	: Line	: CV List Values	: Local		: Field		: CV Name	: Set As	: $Name
+	Local	: Line	: CV List Values	: Local		: Field		: CV Age	: Set As	: $Age
+	Local	: Line	: CV List Values	: Local		: Field		: CV Salary	: Set As	: $$AsAmount:$Salary
+	Local	: Field	: CV Alias			: Set As	: $$VarKey
+	Local	: Field	: CV Name			: Delete	: Border
+	Local	: Field	: Default			: Inactive	: No
+
+	Local	: Part	: CV Relation		: Repeat  	: CV List Rel Values	: Relatives
+	Local	: Part	: CV Relation		: Delete	: Set
+	Local	: Part	: CV Relation		: Delete	: BreakOn
+
+	Local	: Field	: CV Rel Alias		: Set As	: $$VarKey
+	Local	: Field	: CV Rel Name		: Set As	: $Name
+	Local	: Field	: CV Rel Age		: Set As	: $Age
+	Local	: Field	: CV Relation		: Set As	: $Relation
+	Local	: Field	: CV Rel Salary		: Set As	: $$AsAmount:$Salary
+
+[Collection: CV List Collection]
+
+	Data Source	: Variable	: CVEmp
+
+	Format		: $Name, 15
+	Format		: $Age, 10
+	Format		: $Salary, 10
+	Title		: "List of Employees"
+	SubTitle	: "Name", "Age", "Salary"
+	ClientOnly	: Yes
+
+;; Report Variable in Table
+
+[Report: CV Variable in Table]
+
+	Form		: CV Variable in Table
+
+[Form: CV Variable in Table]
+
+	Parts		: Form SubTitle, CV Variable in Table
+	Width		: 50% Page
+	Local: Field: Form SubTitle	: Info	: "Select name of Employee and Relative"
+
+[Part: CV Variable in Table]
+
+	Lines	: CV VIT Title, CV Variable in Table
+
+	[Line: CV VIT Title]
+
+		Use		: CV Variable in Table
+		Local	: Field	: Default			: Style	: Normal Bold
+		Local	: Field	: Default			: Align	: Centre
+		Local	: Field	: Default			: Lines	: 0
+
+		Local	: Field	: CV Variable		: Info	: "Employee"
+		Local	: Field	: CV Variable Sal	: Info	: "Salary"
+		Local	: Field	: CV Variable TotSal: Info	: "Family Income"
+		Local	: Field	: CV Dep Variable	: Info	: "Relative"
+		Border	: Thin Top Bottom
+		SpaceTop: 0
+
+	[Line: CV Variable in Table]
+
+		Fields	: CV Variable, CV Variable Sal, CV Variable TotSal, CV Dep Variable
+		Local	: Field	: Default			: Align	: Centre
+		SpaceTop: 1
+
+		[Field: CV Variable]
+
+			Use			: Name Field
+			Table		: CV List Collection
+			Show Table	: Always
+
+		[Field: CV Variable Sal]
+
+			Use			: Amount Forex Field
+			Set As		: $$AsAmount:$$Table:CVVariable:$Salary
+			Skip		: Yes
+			Set Always	: Yes
+
+		[Field: CV Variable Tot Sal]
+
+			Use			: Amount Forex Field
+			Set As		: #CVVariableSal + $$AsAmount:@CVRelSal
+			CVRelSal	: $$CollNumTotal:CVListChildCollection:$Salary
+			Skip		: Yes
+			Set Always	: Yes
+
+		[Field: CV Dep Variable]
+
+			Use			: Name Field
+			Table		: CV List Child Collection
+			Set As		: $$CollectionField:$Name:2:CVListChildCollection
+			Set Always	: Yes
+			Show Table	: Always
+			Dynamic		: ""
+
+[Collection: CV List Child Collection]
+
+	Source Collection	: CV List Collection
+	Walk		: Relatives
+	Fetch		: Name, Age, Salary
+	Compute		: ParName		: $..Name
+	Filter		: ParName
+
+	Format		: $Name, 15
+	Format		: $Age, 10
+	Format		: $Salary, 10
+	Title		: "List of Relatives"
+	SubTitle	: "Name", "Age", "Salary"
+
+	Aggr Compute: MaxAge	: Max	: $Age
+	Aggr Compute: MinAge	: Min	: $Age
+	Aggr Compute: TotSal	: Sum	: $Salary
+	ClientOnly	: Yes
+
+[System: Formula]
+
+	ParName		: $ParName = #CVVariable
+
+;; Report Variable Aggregation
+
+[Report: CV Variable Aggregation]
+
+	Use		: CV Variable in Table
+	Local	: Collection	: CV List Child Collection	: By			: Relation	: $Relation
+	Local	: Collection	: CV List Child Collection	: Aggr Compute	: MaxAge	: Max	: $Age
+	Local	: Collection	: CV List Child Collection	: Aggr Compute	: MinAge	: Min	: $Age
+	Local	: Collection	: CV List Child Collection	: Aggr Compute	: TotSal	: Sum	: $Salary
+
+	Local	: Collection	: CV List Child Collection	: Delete		: Format
+	Local	: Collection	: CV List Child Collection	: Add			: Format	: $Relation, 15
+	Local	: Collection	: CV List Child Collection	: Add			: Format	: $MaxAge, 10
+	Local	: Collection	: CV List Child Collection	: Add			: Format	: $MinAge, 10
+	Local	: Collection	: CV List Child Collection	: Add			: Format	: $TotSal, 10
+
+	Local	: Collection	: CV List Child Collection	: Delete		: SubTitle
+	Local	: Collection	: CV List Child Collection	: Add			: SubTitle	: "Relation", "MaxAge", "MinAge", "TotSal"
+
+	Local	: Line			: CV Variable in Table		: Local			: Field		: CV Variable TotSal: Set As	: $$Table:CVDepVariable:$TotSal
+
+;; Report Set with Dotted Notation
+
+[Report: CV Report Set with Dotted Notation]
+
+	Use		: CV Repeat without Collection
+	SET		: CVEmp[1].Name		: "Kishan"
+	PRINTSET: CVEmp[1].Name		: "Gopi"
+	Local	: Form	: Default	: Buttons	: Print Button
+
+;; Modifies with Dotted Notation
+
+[Report: CV Modifies with Dotted Notation]
+
+	Use     : Collection Variable
+	Local   : Line : Collection Variable : Field : Group Name
+	Local   : Field: MV Title            : Info  : $$LocaleString:"Enter Employee Name for Employee1"
+	Local   : Line : Collection Variable : Local : Field : Group Name	: Delete	: Table
+	Local   : Line : Collection Variable : Local : Field : Group Name	: Modifies	: CVEmp[1].Name
+	Local   : Line : Collection Variable : Local : Field : Group Name	: Set As	: ##CVEmp[1].Name
+
+;; Static Variable
+
+[Function: CV Static Variable]
+
+	Static Variable	: CV Emp Static
+	List Variable	: CV Emp
+
+	00	: SET		: CVEmpStatic.Name	: ##CVEmpStatic.Name + "-" + $$String:##CVEmpStatic.Age
+	10	: INCREMENT	: CVEmpStatic.Age	: 2
+	20	: LOG		: "Name - " + ##CVEmpStatic.Name + " , Age - " + $$String:##CVEmpStatic.Age
+
+	30	: LIST ADD	: CV Emp	: "R001"	: Name	: "Radhika"
+	40	: LIST ADD	: CV Emp	: "R001"	: Age	: 35
+	50	: LIST ADD	: CV Emp	: "R001"	: Salary: 30000
+
+	60	: LOG		: $$ListValue:CVEmp:"R001":Name
+
+;; Function to Delete List Variables
+
+[Function: CV Delete List Variables]
+
+	00	: LIST DELETE	: CVEmp
+
+;; Variable Definition
+
+[Variable: CV Emp]
+
+	Variable		: Name		: String
+	Variable		: Age		: Number
+	Variable		: Salary	: Number
+	List Variable	: Relatives
+	Persistent		: Yes
+
+[Variable: Relatives]
+
+	Variable		: Name		: String
+	Variable		: Age		: Number
+	Variable		: Relation	: String
+	Variable		: Salary	: Number
+
+[Variable: CV Emp Static]
+
+	Variable		: Name		: String	: "Radhe"
+	Variable		: Age		: Number	: 10
+
+[System: Variable]
+
+	List Variable	: CV Emp
+
+;; End-of-File

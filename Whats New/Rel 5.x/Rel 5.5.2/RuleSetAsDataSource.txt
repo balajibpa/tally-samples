@@ -1,0 +1,37 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Collection: RuleSetDataSource]
+	
+    Use         : Ledger
+	Report		: RuleSetDataSource
+
+[Report: RuleSetDataSource]
+
+	Title		: "RuleSet as Data Source"
+	
+	Use			: FlagSetDataSource
+	Local		: Part		: FlagSetDataSources	: Repeat	: FlagSetDataSources	: RuleSetDataSources
+	Delete		: Form		: FlagSetDataSources
+	Add			: Form		: RuleSetDataSources
+
+[Form: RuleSetDataSources]
+	
+	Use		: FlagSetDataSources
+	
+	Local	: Field	: FormSubTitle		: Info		: "Illustration for RuleSet as DataSource"
+
+	Local	: Field	: TSPL Smp Purpose	: Info		: "This helps to gather data pertaining to RULESET." +
+			+ "This data source can be used for customer facing reports using Value and User Description" +
+			+ "methods. This also an debugging aid for developers"
+	Local	: Field	: TSPL Smp Syntax	: Info		: "[Collection   : <CollectionName>]" + $$NewLine + "     DataSource : Rule Set : <Identity>" + 
+			+ $$NewLine	+ "where, "+ $$NewLine	+ "       Identity is a name of the Rule Set definition"
+
+	Local	: Field	: TSPL Smp Example	: Info		: "The example is to show the output of RuleSet for debbuging purpose"
+
+;; Collections with Data Sources
+
+[Collection: RuleSetDataSources]
+
+	Data Source	: Rule Set	: RuleNameWalkOn
+
+;; End-of-File

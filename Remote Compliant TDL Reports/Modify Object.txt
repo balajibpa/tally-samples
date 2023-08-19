@@ -1,0 +1,105 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+-	This code demonstrates the usage of Action 'Modify Object' in a remote 
+	environment
+-	From Ledger Collection, Name and Parent Methods are being fetched to display
+	in a Report in a Remote environment
+
+Last modification -
+-	Altered on 09-11-2009
+*/
+
+[Button: Modify Parent]
+
+    Key     	: F9
+    Title   	: $$LocaleString:"Change Parent"
+	Action List	: Accept Parent Name, Save Parent
+	Mode		: Display
+	Scope		: Selected
+
+[Button: Accept Parent Name]
+
+	Key		: F9
+	Action	: Alter : Accept Parent Name
+
+[Button: Save Parent]
+
+	Key 	: F9  
+	Action	: Modify Object	: Parent	:  ##SVParentName
+	Mode	: Display
+	Scope	: Current  
+
+[Report: Modify Remote Object]
+
+	Title	: "Modifying Remote Object"
+	Form	: Modify Remote Object
+	Variable: SV Parent Name
+	Local	: Collection	: Ledger	: Fetch	: Name, Parent
+ 
+[Form: Modify Remote Object]
+
+	Part		: Modify Remote Object
+	Buttons		: Modify Parent
+	Height		: 100 % Screen
+	Width		: 100 % Screen
+
+	[Part: Modify Remote Object]
+
+		Line	: MRO Title, MRO Details
+		Repeat	: MRO Details	: Ledger 
+		Scroll	: Vertical 
+
+		[Line: MRO Title]
+
+			Use	: MRO Details
+			Local	: Field	: Name Field	: Set as	: "Name"
+			Local	: Field	: Simple Field	: Set aS	: "Parent"
+			Border	: Column Titles 
+
+		[Line: MRO Details]
+
+			Field	: Name Field, Simple Field   
+			Local	: Field : Name Field	: Set as	: $Name
+			Local	: Field : Simple Field	: Set as	: $Parent
+
+[Report: Accept Parent Name]    ;;Auto Report
+
+   	Auto 	: Yes
+    Title	: $$LocaleString:"Select Parent"
+	Form	: Accept Parent Name
+
+[Form: Accept Parent Name]
+
+	Background      : @@SV_REPSTAT
+    Parts           : Accept Parent Name
+    Space Bottom    : 1
+    Full Width      : No
+    Full Height     : No
+    Horizontal Align: Centre
+    Vertical Align  : Centre
+	Option			: Small Size Form
+	Space Top		: 1
+
+[Part: Accept Parent Name]
+
+	Lines	: Accept Parent Name
+
+	[Line: Accept Parent Name]
+
+		Fields		: Simple Prompt
+		Right Fields: Name Field   
+
+		Local		: Field : Simple Prompt		: Set as	: "Parent :"
+		Local		: Field : Name Field		: Variable	: SVParentName
+		Local		: Field : Name Field		: Modifies	: SVParentName
+		Local		: Field : Name Field		: Table		: Group
+		Local		: Field : Name Field		: Show Table: Always
+		Space Top	: 1 
+
+[Variable: SV Parent Name]
+
+	Type	: String
+
+;; End-of-File

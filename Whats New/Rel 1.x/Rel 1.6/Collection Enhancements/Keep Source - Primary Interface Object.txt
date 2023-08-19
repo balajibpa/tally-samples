@@ -1,0 +1,162 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+-	This code demonstrates the enhancement of Collection Attribute 'Keep Source'
+-	This code displays the Exploded Trial Balance. Objects of the Parts are disjoint 
+	to demonstrate the usage of Keep Source
+
+Syntax -
+-	Keep Source uptil now was accepting values such as Yes/No/./../... and so on
+-	It has been enhanced to accept (). as a value which means retain the object of the 
+	source collection at the origin of the current Object.
+-	KEEP SOURCE	: ().
+
+Last Modification -
+-	Altered on 23-01-2010
+*/
+
+[Report: Smp TB Report KeepSrc]
+
+    Form        : SMP TB Report KeepSrc
+	
+[Form: Smp TB Report KeepSrc]
+
+	Button      : F2ChangePeriod, ChangeCompany
+	Keys        : ChangePeriod
+	Parts       : SMP TB Report KeepSrc Part
+    Height      : 100% Page
+    Width       : 100% Page
+		
+[Part: SMP TB Report KeepSrc Part]
+
+    Lines       : SMP TB Report KeepSrc Title, SMP TB Report KeepSrc Details
+    BottomLines : SMP TB Report KeepSrc Total
+    Repeat      : SMP TB Report KeepSrc Details	: SMP TB Report KeepSrc GroupsPri
+    Total       : SMP TB Report KeepSrc Dr Amt Field, SMP TB Report KeepSrc Cr Amt Field
+    Scroll      : Vertical
+    CommonBorder: Yes
+		
+    [Line: SMP TB Report KeepSrc Title]
+        
+        Use     : SMP TB Report KeepSrc Details
+        Local   : Field : Default           				: Type  : String
+        Local   : Field : Default           				: Align : Centre		
+        Local   : Field : SMP TB Report KeepSrc Name Field  : Set as: "Name"
+        Local   : Field : SMP TB Report KeepSrc ParNameField: Set as: "Parent"
+        Local   : Field : SMP TB Report KeepSrc Dr Amt Field: Set as: "Debit"
+        Local   : Field : SMP TB Report KeepSrc Cr Amt Field: Set as: "Credit"
+        Border  : Flush Totals
+ 
+    [Line: SMP TB Report KeepSrc Details]
+
+        Fields      : SMP TB Report KeepSrc Name Field, SMP TB Report KeepSrc ParName Field
+        Right Fields: SMP TB Report KeepSrc Dr Amt Field, SMP TB Report KeepSrc Cr Amt Field
+
+        Explode     : SMP TB Report KeepSrc Group Explosion
+
+        [Field: SMP TB Report KeepSrc Name Field]
+
+			Use         : Name Field
+			Set as      : $Name
+			Variable    : MyGroupName1
+			Width		: 40 % Screen
+			
+        [Field: SMP TB Report KeepSrc ParName Field]
+
+			Use         : Name Field
+			Set as      : $Parent
+			Border      : Thin Left
+
+        [Field: SMP TB Report KeepSrc Dr Amt Field]
+
+           	Use         : Amount Field
+		    Set as      : if $$IsDr:$ClosingBalance then $ClosingBalance else 0
+		    Border      : Thin Left
+
+        [Field: SMP TB Report KeepSrc Cr Amt Field]
+
+            Use         : Amount Field
+		    Set as      : if NOT $$IsDr:$ClosingBalance then $ClosingBalance else 0
+		    Border      : Thin Left
+		    					
+    [Line: SMP TB Report KeepSrc Total]
+
+        Use     : SMP TB Report KeepSrc Details
+        Local   : Field : SMP TB Report KeepSrc Name Field  : Align : Centre
+        Local   : Field : SMP TB Report KeepSrc Name Field  : Set as: "TOTAL"
+        Local   : Field : SMP TB Report KeepSrc Dr Amt Field: Set as: $$Total:SMPTBReportKeepSrcDrAmtField
+        Local   : Field : SMP TB Report KeepSrc Cr Amt Field: Set as: $$Total:SMPTBReportKeepSrcCrAmtField
+        Border  : Thin Top Bottom
+
+;; Explode Part
+
+[Part: SMP TB Report KeepSrc Group Explosion]
+
+    Lines       : SMP TB Report KeepSrc Details Explosion
+    Repeat      : SMP TB Report KeepSrc Details Explosion   : SMP TB Report KeepSrc SubGrp
+    Scroll      : Vertical
+    
+    [Line: SMP TB Report KeepSrc Details Explosion]
+    
+        Fields      : SMP TB Report KeepSrc Name Field, SMP TB Report KeepSrc ParName Field
+        Right Fields: SMP TB Report KeepSrc Dr Amt Field, SMP TB Report KeepSrc Cr Amt Field
+		
+		Explode     : SMP TB Report KeepSrc Group Explosion
+		Explode     : SMP TB Report KeepSrc Ledger Explosion
+		Indent      : If $$IsGroup Then 2  * $$ExplodeLevel Else 3  * $$ExplodeLevel 
+		Local       : Field : Default : Delete: Border
+
+;; Explode Part Ends here
+
+;; Explode Part - Ledgers
+
+[Part: SMP TB Report KeepSrc Ledger Explosion]
+
+	Use 	: SMP TB Report KeepSrc Group Explosion
+	Repeat  : SMP TB Report KeepSrc Details Explosion  : SMP TB Report KeepSrc Ledgers
+	Local	: Line	: SMP TB Report KeepSrc Details Explosion	: Delete : Explode
+	Local	: Line	: SMP TB Report KeepSrc Details Explosion	: Indent : 3 * $$ExplodeLevel
+	Local	: Field	: Default									: Style	 : Normal
+	Local	: Field	: SMP TB Report KeepSrc Name Field			: Style  : Normal Italic
+
+;; Explode Part - Ledgers  Ends here
+
+[Collection: SMP TB Report KeepSrcGroups]
+
+    Type 	: Group
+    Fetch	: Name, Parent, Closing Balance
+	 
+[Collection: SMP TB Report KeepSrc GroupsPri]
+
+	Source Collection 	: SMP TB Report KeepSrc Groups
+	Filter      		: PrimaryGrp 
+	By					: Name		: $Name
+	Compute				: Parent	: $Parent
+	Keep Source 		: ().
+
+;; Keep Source : (). retains the objects of the Source Collection 'SMP TB Report 
+;; KeepSrc Groups' so that it need not regather the source in subsequent parts or lines
+
+[Collection: SMP TB Report KeepSrc SubGrp]
+
+	Source Collection 	: SMP TB Report KeepSrc Groups
+	Filter      		: SubGrp 
+	By					: Name		: $Name
+	Compute				: Parent	: $Parent
+	Keep Source 		: ().
+
+[Collection: SMP TB Report KeepSrc Ledgers]
+
+    Type        : Ledger
+    Child Of    : #MyGroupName1
+    Filter      : Zero Filter
+    Fetch		: Name, Parent, Closing Balance
+	
+[System: Formula]
+
+    Zero Filter : $ClosingBalance > 0 AND NOT $$IsLedgerProfit
+	PrimaryGrp  : $$IsSysNameEqual:Primary:$Parent
+	SubGrp		: $Parent = #MyGroupName1
+
+;; End-of-File

@@ -1,0 +1,39 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This code demonstrates the usage of New Function $$ContextKeyword
+-	A New function $$ContextKeyword returns the Report or Menu Title 
+-	This Function takes an optional logical parameter to indicate if 
+	topmost report (current report) needs to be skipped. If no reports 
+	are active this parameter is ignored.
+
+Last modification – 
+-	Altered on 09/11/2009
+*/
+
+[Report: Context Keyword Function]
+
+	Form	: Context Keyword Function
+	Title	: "New Function Context Keyword"
+
+[Form: Context Keyword Function]
+
+	Parts	: Context Keyword Function
+
+[Part: Context Keyword Function]
+
+	Lines	: Context Keyword Function
+
+	[Line: Context Keyword Function]
+
+		Fields	: Context Keyword Function
+
+		[Field: Context Keyword Function]
+
+			Use		: Name Field
+			Set As	: $$ContextKeyword
+;; The above function returns the Report Title.  Commenting the Title attribute at the
+;; Report Definition will default to Report Name as the return value of this Function
+
+;; End-of-File

@@ -1,0 +1,116 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+-	This program demonstrates the capability of DLL XML Collection to post data from Tally 
+	to a DLL and retrieve the response XML in Collection.
+-	The XML response thus fetched from the DLL is displayed in a Report.
+
+Syntax -
+-	Collection Attribute 'Input Parameter'  
+
+Last modification – 
+-	Altered on 19/04/2010
+
+Dependencies -
+- `.NET Framework 3.5 envoirnment is required 
+-  `Sample3Installer needs to be installed
+*/
+
+;; Report Displaying XML response fetched 
+
+[Report: DLL Input]
+
+	Form		: DLL Input
+
+[Form: DLL Input]
+	
+	Parts		: DLL Input
+	On			: Form Accept	: Yes		: Display	: DLL XML Input Parameter
+	No Confirm	: Yes
+
+[Part: DLL Input]
+
+	Line	: DLL Input
+	
+	[Line: DLL Input]
+
+		Fields	: Long Prompt, DLL Input
+		Local	: Field	: Long Prompt	: Set AS	: "Input the value in Degree:"
+
+		[Field: DLL Input]
+
+			Use			: Name Field
+			Modifies	: DLL InputParameter : Yes
+			Table		: DLL InputParameterColl
+			Show Table	: Always
+
+[Collection: DLL InputParameterColl]
+	
+	Title 		 	 : "Enter Degree"
+	List				: 0
+	List   		 : 45
+	List   		 : 90
+	Align		: Centre
+	Client Only	:Yes
+
+[Report: DLL XML Input Parameter]
+
+	Form		: DLL XML Input Parameter
+	Title		: "Sending Input to DLL using 'Input Parameter'"
+
+[Form: DLL XML Input Parameter]
+
+	Parts		: DLL XML Input Parameter
+	
+[Part: DLL XML Input Parameter]
+	
+	Line		: DLL XML Input Parameter Title, DLL XML Input Parameter Details
+	Repeat  	: DLL XML Input Parameter Details 	: DLL XML Coll with Inp Parameter
+	CommonBorder: Yes
+
+	[Line: DLL XML Input Parameter Title]
+
+		Use		: DLL XML Input Parameter Details
+
+		Local	: Field	: DLL XML SIN	: Set As: "SIN (" + ##DLLInputParameter + ")"
+		Local	: Field : DLL XML COS	: Set As: "COS (" + ##DLLInputParameter + ")"
+		Local	: Field	: DLL XML TAN	: Set As: "TAN (" + ##DLLInputParameter + ")"
+		Border	: Thin Top Bottom
+
+	[Line: DLL XML Input Parameter Details]
+		
+		Fields	: DLL XML SIN, DLL XML COS, DLL XML TAN
+		Border	: Thin Bottom
+
+		[Field: DLL XML SIN]	
+			
+			Use		: Name Field
+			Set As	: $SIN
+			Align	: Centre
+				
+		[Field: DLL XML COS]	
+			
+			Use		: Name Field
+			Set As  : $COS
+			Border	: Thin Left Right
+			Align	: Centre
+			
+		[Field: DLL XML TAN]
+			
+			Use		: Name Field
+			Set As  : $TAN
+			Align	: Centre
+
+[Collection: DLL XML Coll with Inp Parameter]
+	
+	Data Source		: AxPlugin XML	: Sample4.Class1
+    XML Object Path	: Result
+	Input Parameter : ##DLLInputParameter
+	Client Only	:Yes
+	
+[System: Variable]
+	
+	Variable	: DLL InputParameter : String	: ""
+
+;; End-of-File

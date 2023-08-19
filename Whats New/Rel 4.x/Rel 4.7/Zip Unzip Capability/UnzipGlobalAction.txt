@@ -1,0 +1,119 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This code demonstrates the usage of Global Action 'Unzip' which is used to Unzip a Zip File
+
+Syntax – 
+-	UnZip	: <Target Folder>	: <Source Zip File>[ : <Password>[ : <Overwrite>[ : <Show Progress Bar>]]]]
+
+	Where 
+		<Target Folder> is the path of the Target folder where the Unzipped Files need to reside.
+
+		<Source Zip File> is the name of the Zip File to be unzipped.
+
+		<Password> is the Zip File Password without which Zip File bearing Password cannot be extracted.
+
+		<Overwrite> is the Logical Flag to specify the behaviour if the Target Files being unzipped in the Folder 
+		already exists.  If not specified, the default value is No.
+
+		<Show Progress Bar> is the Logical Flag to specify if Progress Bar needs to be shown during the Zipping 
+		Process.  Specifying a Yes will show the Progress Bar and No will not show the Progess Bar.  If not specified,
+		the default value is No.
+
+Last modification – 
+-	Created on 04/09/2013
+-	Altered on 17/09/2013
+*/
+
+[Report: TSPL Smp UnZip Interface]
+	
+	Form		: TSPL Smp UnZip Interface
+	Title		: "UnZip Interface"
+	
+[Form: TSPL Smp UnZip Interface]
+	
+	Parts		: Form SubTitle, TSPL Smp UnZip Interface
+	Background	: Very Light Orange
+	Local: Field: Form SubTitle		: Info		: "Unzip Files using Global Action 'UnZip'"
+	Height		: 20% Page
+	Width		: 100% Page
+	
+	On			: Form Accept		: Yes		: Call		: TSPL Smp UnZip Global Action	: ##TSPLSmpTgtFolder	: ##TSPLSmpSrcZipFile	: ##TSPLSmpPwd	: ##TSPLSmpOverwrite	: ##TSPLSmpProgressBar
+
+[Part: TSPL Smp UnZip Interface]
+	
+	Lines		: TSPL Smp UnZip Interface Info, TSPL Smp UnZip Interface Details
+	Bottom Line	: TSPL Smp UnZip Interface Syntax
+
+	[Line: TSPL Smp UnZip Interface Info]
+		
+		Use		: TSPL Smp UnZip Interface Details
+		
+		Local	: Field	: Default				: Type		: String
+		Local	: Field	: Default				: Skip		: Yes
+		Local	: Field	: Default				: Delete	: Modifies
+		Local	: Field	: Default				: Color		: Royal Blue
+
+		Local	: Field	: TSPL Smp Tgt Folder	: Set as	: "Unzip : Target Folder"
+		Local	: Field	: TSPL Smp Src Zip File	: Set as	: ": Source Zip File"
+		Local	: Field	: TSPL Smp Pwd			: Set as 	: ": Password"   
+		Local	: Field	: TSPL Smp Overwrite	: Set as	: ": Overwrite?"
+		Local	: Field	: TSPL Smp ProgressBar	: Set as	: ": Show Progress Bar?"
+		
+		Border	: Thin Top Bottom
+
+	[Line: TSPL Smp UnZip Interface Details]
+		
+		Field			: TSPL Smp Tgt Folder, TSPL Smp Src Zip File
+		Right Fields	: TSPL Smp Pwd, TSPL Smp Overwrite, TSPL Smp ProgressBar
+
+		Local	: Field	: Default				: Align		: Center
+
+		Local	: Field	: TSPL Smp Tgt Folder	: Tooltip	: "Enter Target Folder to Unzip Files"
+		Local	: Field	: TSPL Smp Src Zip File	: Tooltip	: "Enter the File to be unzipped"
+		Local	: Field	: TSPL Smp Src Zip File	: Set As	: ##TSPLSmpTgtFile
+		Local	: Field	: TSPL Smp Pwd			: Tooltip	: "Enter Password of the Zip File for Unzipping"
+		Local	: Field	: TSPL Smp Overwrite	: Tooltip	: "Do you want to Overwrite the Files in the Target, if exists?"
+		
+		[Field: TSPL Smp Tgt Folder]
+			
+			Use			: TSPL Smp Tgt File
+			Modifies	: TSPLSmpTgtFolder		: True
+
+		[Field: TSPL Smp Src Zip File]
+			
+			Use			: TSPL Smp Src Path
+			Modifies	: TSPLSmpSrcZipFile		: True
+
+	[Line: TSPL Smp UnZip Interface Syntax]
+
+		Use		: TSPL Smp UnZip Interface Info
+
+		Local	: Field	: TSPL Smp Tgt Folder	: Set as	: "Unzip : " + ##TSPLSmpTgtFolder
+		Local	: Field	: TSPL Smp Src Zip File	: Set as	: " : " + ##TSPLSmpSrcZipFile
+		Local	: Field	: TSPL Smp Pwd			: Set as 	: " : " + ##TSPLSmpPwd
+		Local	: Field	: TSPL Smp Overwrite	: Set as	: " : " + $$String:##TSPLSmpOverWrite
+		Local	: Field	: TSPL Smp ProgressBar	: Set as	: " : " + $$String:##TSPLSmpProgressBar
+		
+		Border	: Thin Top Bottom
+		
+[Function: TSPL Smp UnZip Global Action]
+
+	Parameter	: Target File : String
+	Parameter	: Source File : String
+	Parameter	: Password	  : String
+	Parameter	: OverWrite	  : Logical
+	Parameter	: ProgressBar : Logical
+	
+;; Global Action 'Unzip' is used to Unzip a Source Zipped File
+
+	00	: UnZip	: ##TargetFile	: ##SourceFile	: ##Password	: ##Overwrite	: ##ProgressBar
+
+[System: Variable]
+	
+	Variable	: TSPLSmpTgtFolder 	: String 	: ".\LogFiles"
+	Variable	: TSPLSmpSrcZipFile : String 	: "C:\TallyLogFiles.Zip"
+	
+;; End-of-File
+

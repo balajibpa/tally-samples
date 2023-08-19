@@ -1,0 +1,103 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+-	This code demonstrates the usage of enhanced Format Attribute where required Tail Units can be
+specified.
+-	
+
+Syntax -
+- 	[Field: <Field Name>]
+		Type	: Quantity	: Primary Units
+		Format	: "Tail Units:" + <String Expression evaluating to Unit Name>"
+
+where Unit Name is one of the Units within Compound Unit set as base unit in an Item.
+
+Dependencies -
+-	Stock Item 'Coldact' where base unit in Stock Item Master is set as Compound Units 
+'Box of 100 strips of 10 tablets'
+
+Updation History -
+-	Created on 09-02-2011
+*/
+
+[Report: TSPL Smp Format for Qty]
+	
+	Form		: TSPL Smp Format for Qty
+	Object		: Stock Item	: "Coldact"
+	Title		: "Quantity Format Enhancement"
+	Fetch Values: ClosingBalance
+	
+[Form: TSPL Smp Format for Qty]
+	
+	Parts	: TSPL Smp Info, TSPL Smp Report Title, TSPL Smp Format for Qty
+	Local	: Part	: TSPL Smp Info	: Local	: Line	: Info	: Local	: Field	: Info Field	: Info		 : "Field Attribute 'Format' is enhanced to accept 'Tail Units' which allows us to retrieve quantity in any unit from Compound Unit"
+
+[Part: TSPL Smp Report Title]
+
+	Lines	: TSPL Smp Report Title
+
+	[Line: TSPL Smp Report Title]
+		
+		Fields		: Form SubTitle
+		Local		: Field	: Form SubTitle		: Set As	: "Closing Balance of Item '" + $Name + "' where Compound Unit is set as '" + $BaseUnits + "'"
+		Space Bottom: 1
+
+[Part: TSPL Smp Format for Qty]
+	
+	Lines	: TSPL Smp Format for Qty Title, TSPL Smp Format for Qty
+	
+	[Line: TSPL Smp Format for Qty Title]
+		
+		Use		: TSPL Smp Format for Qty
+		
+		Local	: Field	: Default							: Type		: String
+		Local	: Field	: Default							: Align		: Centre
+		Local	: Field	: Default							: Style		: Normal Bold
+
+		Local	: Field	: TSPL Smp Compound Qty				: Info		: "Closing Quantity"
+		Local	: Field	: TSPL Smp Compound Qty	in Boxes	: Info		: "Closing Quantity in Boxes"
+		Local	: Field	: TSPL Smp Compound Qty	in Strips	: Info		: "Closing Quantity in Strips"
+		Local	: Field	: TSPL Smp Compound Qty	in Tablets	: Info		: "Closing Quantity in Tablets"
+		Border	: Thin Top Bottom
+
+	[Line: TSPL Smp Format for Qty]
+	
+		Fields	: TSPL Smp Compound Qty, TSPL Smp Compound Qty in Boxes, TSPL Smp Compound Qty in Strips, TSPL Smp Compound Qty in Tablets
+		Border	: Thin Bottom
+		Local	: Field	: Default	: Style		: Normal
+
+		[Field: TSPL Smp Compound Qty]
+
+			Use		: Qty Primary Field
+			Set As	: $ClosingBalance
+			Width	: 25% Page
+
+		[Field: TSPL Smp Compound Qty in Boxes]
+
+			Use		: Qty Primary Field
+			Set As	: $ClosingBalance
+			
+;; If the Quantity is required in Box, format must be set to 'TailUnits:Box'
+			Format	: "TailUnits:Box"
+			Width	: 25% Page
+			Border	: Thin Left Right
+
+		[Field: TSPL Smp Compound Qty in Strips]
+
+			Use		: Qty Primary Field
+			Set As	: $ClosingBalance
+;; If the Quantity is required in Strips, format must be set to 'TailUnits:Strips',
+			Format	: "TailUnits:Strips"
+			Width	: 25% Page
+
+		[Field: TSPL Smp Compound Qty in Tablets]
+
+			Use		: Qty Primary Field
+			Set As	: $ClosingBalance
+;; If the Quantity is required in Boxes, format must be set to 'TailUnits:Tablets',
+			Format	: "TailUnits:Tablets"
+			Width	: 25% Page
+			Border	: Thin Left
+
+;; End-of-File

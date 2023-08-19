@@ -1,0 +1,107 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This TDL File contains Variables and Buttons required for saving configurations
+	of the relevant reports
+
+Last modification – 
+-	Altered on 22/04/2010
+
+Dependencies - 
+-	File(s) :- Compound Var Usage in Report Config.txt, Sundry.txt, Functions.txt and
+			   UI Changes.txt
+*/
+
+[System: Variable]
+
+	List Variable	: Smp Save Config
+	Variable		: Smp Delete Config	: Logical
+
+[Variable: Smp Save Config]
+
+	Variable		: Smp Report Name	: String
+	Variable		: Smp Company Name	: String
+	Variable		: Smp User Name		: String
+	List Variable	: Smp Config
+	Persistent		: Yes
+
+[Variable: Smp Config]
+
+	Variable	: Smp Config Name 		: String
+
+;; Stock Summary
+
+	Variable	: Smp Show Qty			: Logical
+	Variable	: Smp Show Rate			: Logical
+	Variable	: Smp Show Value		: Logical
+
+	Variable	: Smp Show Open Bal		: Logical
+	Variable	: Smp Show Goods Inw	: Logical
+	Variable	: Smp Show Goods Outw	: Logical
+	Variable	: Smp Show Clos Bal		: Logical
+
+	Variable	: Smp Show All Items	: Logical
+	Variable	: Smp Show Cons GP		: Logical
+	Variable	: Smp Show Alt Units	: Logical
+	Variable	: Smp Show Tail Units	: Logical
+	Variable	: Smp Appear Item Name	: String
+
+;; Trial Balance
+
+	Variable	: Smp Show Trans		: Logical
+	Variable	: Smp Show Nett	Trans	: Logical
+	Variable	: Smp Show Percent		: Logical
+	Variable	: Smp Show Percent		: Logical
+	Variable	: Smp Show Percent Type	: String
+
+	Variable	: Smp Appear Names		: String
+	Variable	: Smp Scale Factor		: String
+	Variable	: Smp Sorting Method	: String
+	Variable	: Smp Explode All Levels: Logical
+
+;; Button Definition and Usage
+
+[#Form: DSP Configure]
+
+	Add		: Buttons 	: Smp Save Config, Smp Retrieve Config, Smp Delete Config, Smp Set As Default, Smp Restore Defaults
+
+[Button: Smp Save Config]
+
+	Key		: Alt + S
+	Action 	: CALL		: Smp Save Config
+	Title	: "Save Config"
+
+[Button: Smp Retrieve Config]
+
+	Key		: Alt + R
+	Action 	: CALL		: Smp Retrieve Config
+	Title	: "Retrieve Config"
+
+[Button: Smp Delete Config]
+
+	Key		: Alt + D
+	Action 	: CALL		: Smp Delete Config
+	Title	: "Delete Config"
+
+[Button: Smp Set As Default]
+
+	Key		: Alt + E
+;;	Action 	: CALL		: Smp Set Default
+	Title	: "Set as Default"
+
+[Button: Smp Restore Defaults]
+
+	Key		: Alt + F
+;;	Action 	: CALL		: Smp Restore Default
+	Title	: "Restore Defaults"
+
+[#Form: Group Summary]
+
+	Add		: Buttons 	: Smp Retrieve Config
+
+[#Form: Stock Summary]
+
+	Add		: Buttons 	: Smp Retrieve Config
+
+;; End-of-File

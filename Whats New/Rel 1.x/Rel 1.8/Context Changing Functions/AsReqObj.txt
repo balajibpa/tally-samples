@@ -1,0 +1,95 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This Code demonstrates the usage of Object Context changing function
+	'AsReqObj'
+-	'AsReqobj' Function sets the current object as the Requestor for 
+	future reference when referred using $$ReqObject
+
+Updation History – 
+-	Created on 20/04/2010
+*/
+
+[#Field: EI PreCarriage]
+
+;; Table will contain the Vehicles which have not been used in any Sales Vouchers
+	Table		: List of Vehicles, Not Applicable
+	Show Table	: Always
+
+[Collection: List of Vehicles]
+
+	Object	: Veh1, Veh2, Veh3
+
+	Format	: $Number
+	Format	: $Brand
+
+;; Filters for Available Vehicles, i.e., the ones not entered in any Sales Transaction
+	Filter	: IsVehNoAvailable
+	Title	: "List of Vehicles"
+
+[Object: Veh1]
+
+	Number	: KA 51 P 1234
+	Brand	: Maruti
+	ObjType	: Car
+
+[Object: Veh2]
+
+	Number	: KA 51 P 5678
+	Brand	: Maruti
+	ObjType	: Car
+
+[Object: Veh3]
+
+	Number	: KA 51 P 9012
+	Brand	: Maruti
+	ObjType	: Van
+
+[System: Formula]
+
+	IsVehNoAvailable	: $$AsReqObj:$$FilterCount:ListofSalesVch:VehValidate = 0
+	Veh Validate	: $BasicShippedBy = @@VehNumber
+	Veh Number		: $$ReqObject:$Number
+
+	NotCurrentVoucher	: $VoucherNumber != $$ReportObject:$VoucherNumber
+
+[Collection: List of Sales Vch]
+
+	Type	: Vouchers	: VoucherType
+	ChildOf	: $$VchTypeSales
+	Filter	: NotCurrentVoucher
+	Fetch	: VoucherTypeName, VoucherNumber, BasicShippedBy
+
+;; Sales Voucher Creation
+
+[Function: Smp Sales Voucher]
+
+	Variable: IsExplodeOwnerDemo	: Logical	: Yes
+	Variable: Info Msg				: String	: "In Supplementary Screen, select Despatched Thru info from Table, save the current Voucher & observe the table in subsequent voucher"
+
+	00	: Create Collection	: Smp Sales Voucher
+
+[Collection: Smp Sales Voucher]
+
+	Report	: Smp Sales Voucher
+	
+[Report: Smp Sales Voucher]
+
+	Use		: Voucher
+	Form	: Voucher
+	Set 	: SVVoucherType		: Sales
+	Set 	: InvoicingModeFlag : Yes
+
+;; To print the Info Message for user
+
+[#Form: VCHBASIC Form]
+
+	Option	: VCHBASIC Form ExpOwner: ##IsExplodeOwnerDemo
+
+	[!Form: VCHBASIC Form ExpOwner]
+
+		Add		: Parts : Before		: VCH Title	: Form SubTitle
+		Local	: Field	: Form SubTitle	: Info		: ##InfoMsg
+
+;; End-of-File

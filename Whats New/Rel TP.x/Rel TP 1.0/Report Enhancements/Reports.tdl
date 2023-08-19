@@ -1,0 +1,21 @@
+;; Menu for report enhancements
+[Menu: TSPL Report Enhancements]
+	
+	Title		: "Report Enhancements"
+	Key Item	: "Reports on GoTo Button"		: G : Display	: TSPL Custom GoTo Report Illustration
+	Item		: Blank
+	Key Item	: "Query Report"				: U	: Alter		: TSPL Report For Query
+	Key Item	: "Message Report"				: M	: Display	: TSPL MessageReport Illustration	
+	Item		: Blank	
+	Key Item	: "PreLoad Control"				: O	: Display	: TSPL PreLoadControl Illustration
+	Key Item	: "PreLoad Check"				: H	: Display	: TSPL PreLoadCheck Illustration
+	
+
+
+[Include: GoTo.tdl]
+[Include: QueryReport.tdl]
+[Include: MessageReport.tdl]
+[Include: PreloadControl.tdl]
+[Include: PreloadCheck.tdl]
+
+;;End of file

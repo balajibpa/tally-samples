@@ -1,0 +1,80 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+-	This Sample TDL demonstrates the usage of new function FileReadRaw and the difference of the same against
+existing function FileRead
+
+Syntax -
+-    $$FileReadRaw:[<Number>]	;; Where Number denotes the number of characters to be read from the file
+
+Last Modification -
+-	Updated on 16-08-2012
+*/
+
+[Function: TSPL Smp Function FileReadRaw]
+	
+	Variable: GetSrcPath			: String	: "TextSource.txt"
+	Variable: GetTgtPath			: String	: "TextTarget.txt"
+    Variable: Get_DownLoad_FileLine	: String
+	
+	Variable: TmpFileRead			: String
+	
+	Local Formula	: CurrentDate	: $$SysInfo:SystemDate
+	Local Formula	: CurrentTime	: $$SysInfo:SystemTimeHMS
+   
+	000 : IF : $$IsFileExists:##GetSrcPath
+	005 : 	Open File	: ##GetSrcPath	: Text 		: Read
+	010	: Open File : ##GetTgtPath	: Text		: Write
+	020	: Truncate File
+
+	030	: Write File Line	: "Writing the file begins on " + $$String:@CurrentDate + " at " + @CurrentTime
+	040	: Write File Line	: "---------------------------------------------------"
+	
+	050	: Write File Line	: "Reading the File using Function 'FileRead'"
+	060	: Write File Line	: ""
+
+	070 : While		: (TRUE)
+	080	:	Write File	: ($$String:$$LoopIndex) + ". "
+	090	: 	Set			: TmpFileRead	: $$FileRead
+	100	:	Write File 	: ##TmpFileRead
+	110	: 	If		: ##TmpFileRead = "No"
+	120	:		Write File : " 				(Observe an Error in the Calculator Panel as the Function FileRead is unable to read the current line as there are opening quotes and no corresponding closing quotes)"
+	130	:	End If
+	140	:	Write File Line	: ""
+	150	:	If		: $$FileIsEOF
+	160	:		Break
+	170	:	End If
+	180	: End While
+	190	: Close File
+	200	: Write File Line	: ""
+	210	: Write File Line	: "Observations - "
+	220	: Write File Line	: "- The first, third and fourth line could not be read due to quotes as ending quotes were not found thereby, resulting in a logical value NO returned by system."
+	230	: Write File Line	: "- Also only partial information being read in some lines due to the Comments i.e., ; or /**/"
+
+	240	: Open File : ##GetSrcPath	: Text	: Read
+	250	: Write File Line	: ""
+	260	: Write File Line	: "Reading the File using new Function 'FileReadRaw'"
+	270	: Write File Line	: ""
+	280 : While		: (TRUE)
+	290	:	Write File		: ($$String:$$LoopIndex) + ". "
+	300	: 	Write File Line	: $$FileReadRaw		;; Can Read Line with quotes, comment characters, line continuation, spaces, tabs, etc.
+	310	:	If		: $$FileIsEOF
+	320	:		Break
+	330	:	End If
+	340	: End While
+	350	: Close File
+	360	: Write File Line	: ""
+	370	: Write File Line	: "Conclusion - "
+	380	: Write File Line	: "- Please observe the difference between the Functions FileRead and FileReadRaw here. The whole text from within a line is being read irrespective of whether comments or quotes are encountered."
+	390	: Write File Line	: ""
+	400	: Write File Line	: "Writing the file ends on " + $$String:@CurrentDate + " at " + @CurrentTime
+	410	: Write File Line	: "-------------------------------------------------"
+	420	: Write File Line	: ""
+	430	: Close Target File
+	440	: Exec Command		: "Notepad.exe"		: ##GetTgtPath
+	450 : ELSE
+	460	: 	MsgBox :"Error" : "Please copy the Source File- 'TextSource.txt' to the Application Folder"
+	470 : END IF	
+
+;; End-of-File

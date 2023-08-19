@@ -1,0 +1,17 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Menu: Event Framework Changes]
+
+	Key Item	: "Start Timer for Backup every hour"	: S : CALL	: TSPL Smp Start Backup Timer
+	Key Item	: "End Timer for Backup"				: E : CALL	: TSPL Smp End Backup Timer
+	Key Item	: "Refresh Data - Balance Sheet"		: R : CALL	: TSPL Smp Refresh Balance Sheet
+
+	Control		:  "Start Timer for Backup every hour"	: NOT $$IsRemoteCompany
+	Control		:  "End Timer for Backup"				: NOT $$IsRemoteCompany
+
+;; Include Files
+
+[Include: Timer\Timer.txt]
+[Include: Timer\Refresh Data.txt]
+
+;; End-of-File

@@ -1,0 +1,17 @@
+;;Menu for TallyPrime Release 3.0
+
+[Menu: Release 3.0]
+	
+	Title		: "TallyPrime Release 3.0"
+	Item		: Blank
+	
+	Key Item	: Report Filter					: R : Menu		: TSPL Report Filter
+	Item		: Blank	
+
+	
+	Key Item	: Object Map					: O : Menu		: TSPL Object Map
+	Item		: Blank
+
+[Include:Report Filter\TSPLReportFilter.tdl]
+[Include:Object Map\ObjectMapmenu.tdl]
+

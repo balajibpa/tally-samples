@@ -1,0 +1,24 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+-	This Sample TDL demonstrates the usage of Function IsInternetActive
+-   This TDL opens the URL www.tallysolutions.com if Internet is active else responds with an error message
+Internet not connected.
+
+Syntax -
+-   $$IsInternetActive
+
+Last Modification -
+-	Updated on 01-06-2012
+*/
+
+[Function: TSPL Smp IsInternetActive]
+	
+	00	: IF	: $$IsInternetActive
+	10	:	BROWSE URL	: "www.tallysolutions.com"
+	20	: ELSE	: 
+	30	: 	MSGBOX		: "Error!!"		: "Internet not \n connected"
+	40	: ENDIF
+
+;; End-of-File

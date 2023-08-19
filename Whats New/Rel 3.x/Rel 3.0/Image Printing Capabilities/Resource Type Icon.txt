@@ -1,0 +1,42 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This program demonstrates the Image rendering capability with a Newly
+introduced Resource Definition
+-	The following report prints/exports a Image as specified by the Source/
+Resource and Resource Type
+
+Syntax -
+-	Part Attribute 'Image' introduced to accept Resource Name
+
+	[Part: <Part Name>]
+		Image	: <Resource Name>
+
+- 	Resource Definition introduced to declare Sources/Resources of Image
+
+	[Resource: <Resource Name>]
+		Source	: <Path of the Image File>  ;; Can also accept HTTP/FTP
+		Resource: <Resource Object Name> [: Application Path]
+		Resource Type : <Type of the Image> ;; BMP/JPEG/Cursor/Icon
+
+Updation History – 
+-	Created on 04/02/2011
+*/ 
+
+[Report: TSPL Smp Resource Type Icon]
+	
+	Form	: TSPL Smp Resource Type
+	Local	: Part	: TSPL Smp Resource Type	: Delete: Image
+	Local	: Part	: TSPL Smp Resource Type	: Add	: Image	: TSPL Smp Resource Icon
+	
+	Local	: Form	: TSPL Smp Resource Type	: Local	: Part	: TSPL Smp Info	: Local	: Line	: Info	: Local	: Field : Info Field	: Info	: "Image of Type 'Icon' rendered using Part Attribute 'Image' and corresponding definition 'Resource'"
+	Title	: "Resource Type - Icon"
+
+[Resource: TSPL Smp Resource Icon]
+	
+;; Icon File Path is entered as Source and Resource Type is declared as 'Icon'
+	Source			: Images\1303.Ico
+	Resource Type	: Icon
+
+;; End-of-File

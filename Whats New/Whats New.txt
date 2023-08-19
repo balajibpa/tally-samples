@@ -1,0 +1,38 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Menu for Whats New in TAlly.ERP 9
+*/
+
+[Menu	: Tally.ERP9]
+	
+	Title		: "What's New in Tally.ERP 9"
+	Key Item	: "Tally.ERP 9 Release 6.x"		 				: 6 : Menu	: Release 6.x
+	Item		: Blank
+	
+	Key Item	: "Tally.ERP 9 Release 5.x"		 				: 5 : Menu	: Release 5.x
+	Item		: Blank
+	
+	Key Item	: "Tally.ERP 9 Release 4.x"		 				: 4 : Menu	: Release 4.x
+	Item		: Blank
+	
+	Key Item	: "Tally.ERP 9 Release 3.x"		 				: 3 : Menu	: Release 3.x
+	Item		: Blank
+	
+	Key Item	: "Tally.ERP 9 Release 2.x"		 				: 2 : Menu	: Release 2.x
+	Item		: Blank
+	
+	Key Item	: "Tally.ERP 9 Release 1.x"		 				: 1 : Menu	: Release 1.x
+	Item		: Blank
+	
+;; Include Files
+
+[Include: Rel TP.x\Rel TP 1.x.tdl]
+[Include: Rel 6.x\Rel 6.x.txt]
+[Include: Rel 5.x\Rel 5.x.txt]
+[Include: Rel 4.x\Rel 4.x.txt]
+[Include: Rel 3.x\Rel 3.x.txt]
+[Include: Rel 2.x\Rel 2.x.txt]
+[Include: Rel 1.x\Rel 1.x.txt]
+
+;; End-of-File

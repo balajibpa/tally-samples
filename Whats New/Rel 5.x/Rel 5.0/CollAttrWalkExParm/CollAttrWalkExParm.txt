@@ -1,0 +1,100 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Report: TSPL Smp Walk Ex with Parm]
+	
+	Use		: DSP Template
+	Form	: TSPL Smp Walk Ex with Parm
+
+[Form: TSPL Smp Walk Ex with Parm]
+
+	Use		: DSP Template
+	Parts	: TSPL Smp Walk Ex with Parm
+	
+[Part: TSPL Smp Walk Ex with Parm]
+
+	Lines			: TSPL Smp WEP TopLine, TSPL Smp WEP Details
+	Repeat			: TSPL Smp WEP Details		: TSPL Smp Walk Vch Coll
+	Scroll			: Vertical
+	Common Border	: Yes
+	
+	[Line: TSPL Smp WEP TopLine]
+		
+		Use		: TSPL Smp WEP Details
+			
+		Local	: Field		: Default					: Type		: String
+		Local	: Field		: Default					: Align		: Centre
+		Local	: Field		: Default					: Style		: Normal Bold
+		
+		Local	: Field		: Uni Date Field			: Set as	: "Date"
+		Local	: Field		: Name Field				: Set as	: "Type"
+		Local	: Field		: TSPL Smp VoucherTypeName	: Set as	: "VoucherTypeName"
+		Local	: Field		: TSPL Smp VoucherNumber	: Set as	: "Voucher Number"
+		Local	: Field		: TSPL Smp VoucherAmount	: Set as	: "Amount"
+		
+		Border	: Thin Top Bottom
+
+	[Line: TSPL Smp WEP Details]
+
+		Fields		: Uni Date Field, Name Field
+		Right Fields: TSPL Smp VoucherTypeName, TSPL Smp Voucher Number, TSPL Smp Voucher Amount
+
+		Local: Field: UniDate Field	: Set as	: $Date
+		Local: Field: Name Field	: Set as	: $$Type
+		Local: Field: Name Field	: Border	: Thin Left
+		
+		[Field: TSPL Smp VoucherTypeName]
+			
+			Use		: Name Field
+			Set as	: $VoucherTypeName
+			Border	: Thin Left
+		
+		[Field: TSPL Smp VoucherNumber]
+			
+			Use		: Name Field
+			Set as	: $VoucherNumber
+			Border	: Thin Left
+
+		[Field: TSPL Smp Voucher Amount]
+			
+			Use		: Amount Field
+			Set as 	: $Amount
+			Border	: Thin Left
+
+;; Collection Definitions begin here
+
+[Collection: TSPL Smp Voucher Collection]
+
+	Type	: Voucher
+	Fetch	: Amount, AllLedgerEntries.*, AllInventoryEntries.*
+	
+[Collection: TSPL Smp Walk Vch Coll]
+	
+	Source Collection : TSPL Smp Voucher Collection
+	Walk	: TSPL Smp Named Coll
+
+	Compute	: Date				: $Date
+	Compute	: VoucherTypeName	: $VoucherTypeName
+	Compute	: VoucherNumber		: $VoucherNumber
+	
+	Fetch	: Amount, AllLedgerEntries.*, AllInventoryEntries.*
+
+[Collection: TSPL Smp Named Coll]
+	
+	Source Collection	: Default
+
+	WalkEx	: TSPL Smp LedColl	: $$IsEmptyCollection:AllInventoryEntries
+	WalkEx	: TSPL Smp InvColl	: NOT $$IsEmptyCollection:AllInventoryEntries
+	
+	Fetch	: Amount, AllLedgerEntries.*
+	
+[Collection: TSPL Smp LedColl]
+	
+	Walk    : AllLedgerEntries
+	Fetch	: Amount
+	
+[Collection: TSPL Smp InvColl]
+	
+	Walk    : AllInventoryEntries
+	Fetch	: Amount
+
+;; End-of-File

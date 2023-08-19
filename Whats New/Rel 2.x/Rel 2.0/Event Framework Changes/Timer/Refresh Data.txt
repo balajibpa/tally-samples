@@ -1,0 +1,27 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) -
+-	This code demonstrates the usage of Timer Events and Refresh Data Action
+-	With this code, any Report for e.g., Balance Sheet gets updated every minute
+-	Generally, this will help in a Multi User environment where uptodate info will be
+	available though the Report Screen is left on for hours
+
+Syntax -
+-	REFRESH DATA
+
+Last Modification -
+-	Created on 14-08-2010
+*/
+
+[Function: TSPL Smp Refresh Balance Sheet]
+
+	00	: MSGBOX		: "Refresh Data" 		: "This will refresh the Reports every minute which is very useful in a multi user environment"
+	05	: START TIMER	: TSPL Smp Refresh Data	: 60
+	10	: DISPLAY		: Balance Sheet
+
+[System: Event]
+
+	TSPL Smp RefreshData: TIMER	: TRUE	: Refresh Data
+
+;; End-of-File

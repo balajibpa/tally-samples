@@ -1,0 +1,38 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+;; XML Request for Method 3
+
+;<ENVELOPE>
+;	<HEADER>
+;		<VERSION>1</VERSION>
+;   	<TALLYREQUEST>Export</TALLYREQUEST>
+;   	<TYPE>Data</TYPE>
+;   	<ID>Sec XML Request3</ID>
+; 	</HEADER>
+;	<BODY>
+;		<DESC>
+;			<STATICVARIABLES>
+;       		<SVEXPORTFORMAT>$$SysName:XML</SVEXPORTFORMAT>
+;       		<EncString>Madhav</EncString>
+;       		<Password>Kishore</Password>
+;   		</STATICVARIABLES>
+;		</DESC>
+;	</BODY>
+;</ENVELOPE>
+
+[Report: Sec XML Request3]
+
+	Use		: Sec XML Request2
+	Variable: EncString	: String
+	Variable: Password	: String
+
+;; Commented the below since the TD9 Compiler considers @@LicSlNo:##Password as single Formula and returns an Error
+;	Local	: Line		: Sec XML Req SerialNo	: Local	: Field	: Name Field	: Set As	: $$EncryptStr:@@LicSlNo:##Password
+
+	Variable: LicSlNo	: String
+	Set		: LicSlNo	: $$LicenseInfo:SerialNumber
+
+	Local	: Line		: Sec XML Req SerialNo	: Local	: Field	: Name Field	: Set As	: $$EncryptStr:##LicSlNo:##Password
+	Local	: Line		: Sec XML Req EncString	: Local	: Field	: Name Field	: Set As	: $$EncryptStr:##EncString:##Password
+
+;; End-of-File

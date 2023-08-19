@@ -1,0 +1,152 @@
+<Envelope>
+	<LeaveDetails>
+		<Employee>Rashmi Reddy</Employee>
+		<EmpId>5989</EmpId>
+		<Gender>Female</Gender>
+		<LeaveInfo>
+			<Type>Earned Leave</Type>
+			<Entitled>24</Entitled>
+			<Availed>10</Availed>
+		</LeaveInfo>
+		<LeaveInfo>
+			<Type>Sick Leave</Type>
+			<Entitled>10</Entitled>
+			<Availed>6</Availed>
+		</LeaveInfo>
+		<LeaveInfo>
+			<Type>Relocation Leave</Type>
+			<Entitled>5</Entitled>
+			<Availed>0</Availed>
+		</LeaveInfo>
+		<LeaveInfo>
+			<Type>Paternity Leave</Type>
+			<Entitled>0</Entitled>
+			<Availed>0</Availed>
+		</LeaveInfo>
+		<LeaveInfo>
+			<Type>Maternity Leave</Type>
+			<Entitled>180</Entitled>
+			<Availed>190</Availed>
+		</LeaveInfo>
+	</LeaveDetails>
+	<LeaveDetails>
+		<Employee>John Fernandes</Employee>
+		<EmpId>5145</EmpId>
+		<Gender>Male</Gender>
+		<LeaveInfo>
+			<Type>Earned Leave</Type>
+			<Entitled>24</Entitled>
+			<Availed>17</Availed>
+		</LeaveInfo>
+		<LeaveInfo>
+			<Type>Sick Leave</Type>
+			<Entitled>10</Entitled>
+			<Availed>3</Availed>
+		</LeaveInfo>
+		<LeaveInfo>
+			<Type>Relocation Leave</Type>
+			<Entitled>5</Entitled>
+			<Availed>0</Availed>
+		</LeaveInfo>
+		<LeaveInfo>
+			<Type>Paternity Leave</Type>
+			<Entitled>5</Entitled>
+			<Availed>0</Availed>
+		</LeaveInfo>
+		<LeaveInfo>
+			<Type>Maternity Leave</Type>
+			<Entitled>0</Entitled>
+			<Availed>0</Availed>
+		</LeaveInfo>
+	</LeaveDetails>
+	<LeaveDetails>
+		<Employee>Arvind Kumar</Employee>
+		<EmpId>5178</EmpId>
+		<Gender>Male</Gender>
+		<LeaveInfo>
+			<Type>Earned Leave</Type>
+			<Entitled>24</Entitled>
+			<Availed>12</Availed>
+		</LeaveInfo>
+		<LeaveInfo>
+			<Type>Sick Leave</Type>
+			<Entitled>10</Entitled>
+			<Availed>5</Availed>
+		</LeaveInfo>
+		<LeaveInfo>
+			<Type>Relocation Leave</Type>
+			<Entitled>5</Entitled>
+			<Availed>0</Availed>
+		</LeaveInfo>
+		<LeaveInfo>
+			<Type>Paternity Leave</Type>
+			<Entitled>5</Entitled>
+			<Availed>5</Availed>
+		</LeaveInfo>
+		<LeaveInfo>
+			<Type>Maternity Leave</Type>
+			<Entitled>0</Entitled>
+			<Availed>0</Availed>
+		</LeaveInfo>
+	</LeaveDetails>
+	<LeaveDetails>
+		<Employee>Mohammed Shehzan</Employee>
+		<EmpId>5696</EmpId>
+		<Gender>Male</Gender>
+		<LeaveInfo>
+			<Type>Earned Leave</Type>
+			<Entitled>24</Entitled>
+			<Availed>23</Availed>
+		</LeaveInfo>
+		<LeaveInfo>
+			<Type>Sick Leave</Type>
+			<Entitled>10</Entitled>
+			<Availed>7</Availed>
+		</LeaveInfo>
+		<LeaveInfo>
+			<Type>Relocation Leave</Type>
+			<Entitled>5</Entitled>
+			<Availed>3</Availed>
+		</LeaveInfo>
+		<LeaveInfo>
+			<Type>Paternity Leave</Type>
+			<Entitled>5</Entitled>
+			<Availed>0</Availed>
+		</LeaveInfo>
+		<LeaveInfo>
+			<Type>Maternity Leave</Type>
+			<Entitled>0</Entitled>
+			<Availed>0</Availed>
+		</LeaveInfo>
+	</LeaveDetails>
+	<LeaveDetails>
+		<Employee>Jessica Jones</Employee>
+		<EmpId>5147</EmpId>
+		<Gender>Female</Gender>
+		<LeaveInfo>
+			<Type>Earned Leave</Type>
+			<Entitled>24</Entitled>
+			<Availed>14</Availed>
+		</LeaveInfo>
+		<LeaveInfo>
+			<Type>Sick Leave</Type>
+			<Entitled>10</Entitled>
+			<Availed>9</Availed>
+		</LeaveInfo>
+		<LeaveInfo>
+			<Type>Relocation Leave</Type>
+			<Entitled>5</Entitled>
+			<Availed>2</Availed>
+		</LeaveInfo>
+		<LeaveInfo>
+			<Type>Paternity Leave</Type>
+			<Entitled>0</Entitled>
+			<Availed>0</Availed>
+		</LeaveInfo>
+		<LeaveInfo>
+			<Type>Maternity Leave</Type>
+			<Entitled>180</Entitled>
+			<Availed>0</Availed>
+		</LeaveInfo>
+	</LeaveDetails>
+</Envelope>

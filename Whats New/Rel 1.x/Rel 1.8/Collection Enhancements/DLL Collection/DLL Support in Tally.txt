@@ -1,0 +1,33 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Demo TDLs for DLL XML Collection
+*/
+
+[Menu: DLL Samples]
+
+	Indent		: "Using CALLDLL Function"
+	Item 		: Blank
+	Key Item	: "Compound Interest Calculator"		: C : Execute 	: CallDLL Func
+	Item 		: Blank
+	Indent		: "Using DLL Collection"
+	Item 		: Blank
+	Key Item 	: "Retrieve XML from DLL"				: X : Display 	: DLL XML Get CollObjPath
+	Key Item 	: "Retrieve XML Sub Collection from DLL": S : Display 	: DLL XML Get Required CollObjPath 
+	Key Item	: "DLL with Pre-Request Report"			: P : Display	: DLL XML Post PreReq Collection
+	Key Item    : "Input Parameter to DLL Collection"   : I : Alter   	: DLL Input
+	Item 		: Blank
+
+;; Include Files
+
+[Include: CallDLL.txt]
+[Include: Access Method.txt]
+[Include: Access Sub Collection.txt]
+[Include: Input XML.txt]
+[Include: Input Parameter.txt]
+
+;; Supporting Files
+
+[Include: DLL XML Data.txt]
+
+;; End-of-File

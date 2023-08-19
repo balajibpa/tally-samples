@@ -1,0 +1,37 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	The objective of this program is to demonstrate the usage and purpose of new Form Attribute Confirm Text
+-	This Attribute overrides the text displayed while saving the form, i.e., by default, Accept is displayed
+if not overriden using this Attribute
+
+Syntax -
+[Form: <Form Name>]
+  Confirm Text : <String Expression> OR Query Text : <String Expression>
+  
+Alias for Confirm Text is Query Text
+
+Last modification – 
+-	Created on 10/01/2016
+*/
+
+[Collection: TSPL Smp FormAttrConfirmText]
+	
+	Use			: Ledger Coll
+	Report		: TSPL Smp FormAttrConfirmText
+
+[Report: TSPL Smp FormAttrConfirmText]
+
+	Use			: Final Led Report
+
+;; Confirm Text overrides the default query text Accept, while accepting the Form
+	Local		: Form	: Default		: Confirm Text	: @@TSPLSmpConfirmTextString
+	Local		: Field	: Default		: Skip Forward	: Yes
+	On: Load	: Yes	: Trigger Key	: Enter
+
+[System: Formulae]
+	
+	TSPL Smp Confirm Text String	: "Save Ledger ?"
+
+;; End-of-File

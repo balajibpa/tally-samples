@@ -1,0 +1,49 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Menu: Whats New in Rel 1.5]
+
+	Indent		: "Collection Enhancements"
+	Item		: Blank
+	Key Item	: Compute Var 		 		: O : Display	: Compute Var
+	Key Item	: Src, Cmp and Filter Var 	: S : Display	: SCF CFBK Rep
+	Key Item	: TGTObject Function 		: T : Display	: TgtObject Coll
+	Item		: Blank
+
+	Indent		: "Variable Enhancements"
+	Item		: Blank
+	Key Item	: List Var - Function 		: F : CALL		: List Var in Func
+	Key Item	: List Var - Report			: R : Alter		: List Var in Rep
+	Item		: Blank
+
+	Indent		: "General Enhancements"
+	Item		: Blank
+	Key Item	: Dynamic action 			: C : Display	: Dynamic Action Rep
+	Key Item	: Function 	Context Keyword : C : Display	: Context Keyword Function
+	Key Item	: Attribute TriggerEx		: I : Alter		: FieldTriggerEx
+	Item		: Blank
+
+	Indent		: "Additional Samples"
+	Item		: Blank
+	Key Item	: Source Collection Default	: D : CALL		: Source Collection Default
+	Key Item	: Data Source HTTP Unicode	: U : Display	: DSU XML Get Collection
+	Key Item	: Data Source HTTP ASCII	: A : Display	: DSA XML Get Collection
+	Title		: "Rel 1.5 Enhancements"
+
+	Control		:  Attribute TriggerEx	: NOT $$IsRemoteCompany
+
+[Include: Compute Var.txt]
+[Include: SCF Var.txt]
+[Include: Function TgtObject at Collection.txt]
+
+[Include: List Var-Function.txt]
+[Include: List Var-Report.txt]
+
+[Include: Dynamic Actions.txt]
+[Include: FuncContextKeyword.txt]
+[Include: Attribute TriggerEx.txt]
+
+[Include: Source Collection Default.txt]
+[Include: XML Data Source-Unicode.txt]
+[Include: XML Data Source-ASCII.txt]
+
+;; End-of-File

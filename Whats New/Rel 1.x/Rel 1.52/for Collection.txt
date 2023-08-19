@@ -1,0 +1,80 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This code demonstrates the Enhancement done on loop constructs
+	for Collection within User Defined Function.
+- 	For Collection takes a variable as its first parameter, Object Name 
+	as its second parameter, formula to be passed to variable and reverse 
+	sorting order as its last parameter.  By default, reverse sorting order 
+	is No.
+-	By default, the variable accepts Name method as the default value
+	if third parameter is not specified.  If specified, it can accept 
+	value of any data type.
+- 	From a Report, the Function can be called and some value for e.g, Totals
+	can be computed and returned to the calling report.
+
+Last modification – 
+-	Altered on 09/11/2009
+*/
+
+[Function: for Collection within Function]
+	<InUse:Collection:AllGroups>
+
+	00	: SET FILE LOG ON
+
+;; Name is used by default if no value expression specified
+	01	: LOG	: "Default Value Name passed"
+	02	: LOG	: ""
+	10	: FOR COLLECTION	: i : AllGroups
+	20	: 	LOG	: ##i
+	30	: END FOR
+	31	: LOG	: ""
+
+;; Parent is the value expression specified to Iterator Variable i
+	32	: LOG	: "Parent is passed as value expression"
+	33	: LOG	: ""
+
+	40	: FOR COLLECTION	: i : AllGroups	: $Parent
+	50	: 	LOG	: ##i
+	60	: END FOR
+	61	: LOG	: ""
+
+;; ClosingBalance is the value expression specified to Iterator Variable i
+	62	: LOG	: "ClosingBalance is passed as value expression"
+	63	: LOG	: ""
+
+	70	: FOR COLLECTION	: i : AllGroups	: $ClosingBalance
+	80	: 	LOG	: ##i
+	90	: END FOR
+	91	: LOG	: ""
+
+;; ClosingBalance is the value expression specified to Iterator Variable i 
+;; and Collection is looped in reverse order
+	92	: LOG	: "ClosingBalance is passed as value expression and Collection is looped in reverse order"
+	93	: LOG	: ""
+
+	100	: FOR COLLECTION	: i : AllGroups	: $ClosingBalance	: Yes
+	110	: 	LOG	: ##i
+	120	: END FOR
+	121	: LOG	: ""
+
+;; Logical value expression ClosingBalance > 1000 is the value expression 
+;; specified to Iterator Variable i
+	122	: LOG	: "Logical Value from the result ClosingBalance > 1000 is passed as value expression"
+	123	: LOG	: ""
+
+	130	: FOR COLLECTION	: i : AllGroups	: $ClosingBalance > 1000
+	140	: 	LOG	: "The value of i = " + $$String:##i
+	150	: END FOR
+	151	: LOG	: "----- End -------"
+
+	160	: SET FILE LOG OFF
+	170	: EXEC COMMAND		: "TDLFunc.LOG"
+	
+[Collection : AllGroups]
+	
+	Type	: Group
+	Fetch	: Name, Parent, ClosingBalance
+
+;; End-of-File

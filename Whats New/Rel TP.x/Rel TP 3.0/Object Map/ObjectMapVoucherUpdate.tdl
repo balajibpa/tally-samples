@@ -1,0 +1,101 @@
+
+
+/*	
+	How to use Object Map in TallyPrime
+	
+		Objective : Set the value from one source to another source using Object Map.
+
+    Follow the steps given below to achieve the same
+
+		1. Define the Object Map and set as the source
+		2. Create a report, set the voucher type and associate an object with it
+		3. Set the stoarge values in that field (Which is defined in Object Map)
+		4. In form level use the 'PreLoad Object Map : TSPL Ledger Source Object' to gather the values from source object Map
+
+*/	
+
+[Report: TSPL Object Map Set Value Source to Target]
+	
+	Title			: $$LocaleString:"Set Value of Source to Target using Object Map "
+	Form			: TSPL Object Map Set Value Source to Target
+	
+[Form: TSPL Object Map Set Value Source to Target]
+	
+	
+	Use				: TSPL SMP Illustration
+	
+	Add  			: Button : Object Map Source                                     ;; Added button  
+	
+	Height			: 100% Screen
+	Width			: 100% Screen
+	
+	Local	: Part	: TSPL SMP Syntax		: Invisible	: Yes
+	Local	: Field	: FormSubTitle			: Info		: $$LocaleString:"Illustration for Object Map"
+		
+	Local	: Field	: TSPL Smp Purpose		: Indent	: 2
+	Local	: Field	: TSPL Smp Purpose		: Info		: $$NewLine + $$LocaleString:"Set the value from Ledger to voucher using Object Map." + $$NewLine + $$NewLine + +
+														  $$LocaleString:"Define the 'PreLoad Object Map' in form level to Map the value."
+			
+	
+	Local	: Field	: TSPL SMP Example		: Info		: $$NewLine	+ "[Object Map: TSPL Ledger Source Object]" + $$NewLine + $$NewLine + +
+																			'Source Object: ..'		            + $$NewLine + +
+																			'Set as	: PartycontdetUDF	:  $..LedgerName +"   -   "+ ($LedgerMobile:Ledger:$Ledgername) +"  -  "+ ($Parent:Ledger:$Ledgername) ' + $$NewLine + $$NewLine + +
+																	  "[Report: TSPL Object Map Source Object]"    + $$NewLine + $$NewLine + +
+																			'Object	: Voucher: "ID:1"' 		    + $$NewLine + +
+																			'Form	: Voucher' 				    + $$NewLine  + +
+																			'Local	: Form	: Voucher	:  PreLoad Object Map : TSPL Ledger Source Object' + $$NewLine + $$NewLine + +
+																	  "[Field: TSPL Party Contact Details]" + $$NewLine + $$NewLine + +
+																			'Use	 : Name Field' + $$NewLine + +
+																			'Storage: PartyContDetUDF'
+																			
+	Local	: Field	: TSPL SMP ExampleNote	: Info		: "You can set the ledger contact details in voucher using Object Map. To experience the same, click on the Button 'Set Ledger Value'"
+
+
+
+[Button: Object Map Source]
+	
+	Title  : $$LocaleString:"Set Ledger Value"
+	Key	   : F8
+	Action : Alter: TSPL Object Map Source Object
+	
+[Object Map: TSPL Ledger Source Object]
+	
+	Source Object: ..
+	
+	Set as	: PartyContDetUDF	:  $..LedgerName +"   -   "+ ($LedgerMobile:Ledger:$Ledgername) +"  -  "+ ($Parent:Ledger:$Ledgername) 
+	
+[Report: TSPL Object Map Source Object]
+	
+	Use		: Voucher
+	Set 	: SVVoucherType		: $$VchTypeSales
+	
+	Object	: Voucher: "ID:1"
+	Form	: Voucher
+	
+	Local	: Form	: Voucher		:  PreLoad Object Map : TSPL Ledger Source Object
+	Local	: Form	: Default		:  Local	: Part    : VCH Narration	: Add: Line	:  At Beginning :Form Subtitle, TSPL VCH Source Title
+	Local	: Field	: Form Subtitle	: Set as	: "Party Details"
+	
+	[Line: TSPL VCH Source Title]
+	
+		Use	: TSPL VCH Target Object
+	
+		Local	: Field	: Default					: Type	: String 
+		Local	: Field	: Default					: Delete: Storage 
+		Local	: Field	: TSPL Party Contact Details: Info	: "Contact Details"
+	
+	
+	[Line: TSPL VCH Target Object]
+	
+		Field: TSPL Party Contact Details
+	
+		[Field: TSPL Party Contact Details]
+	
+			Use		: Name field
+			Storage	: PartyContDetUDF
+
+[System: UDF]
+	
+	PartyContDetUDF	: String	: 9001
+
+; End of file

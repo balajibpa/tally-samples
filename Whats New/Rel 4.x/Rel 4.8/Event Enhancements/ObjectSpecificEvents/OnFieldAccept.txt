@@ -1,0 +1,173 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s):-
+	- Creates/ Alters the Ledger from a Field on setting Yes at the Field Definition
+	- To understand the event 'Accept' at the field level
+
+Capabilities Used:-
+	- Field Event 'On Accept'
+
+Syntax -
+	- On : <Event>	: <Logical Condition> : <Action>	: <Action Parameters>
+	- On : Accept	: <Logical Condition> : <Action>	: <Action Parameters>
+
+Updaion History:-
+	- Created on 14-2-2014
+*/
+
+[Report: TSPL Smp Evnt Field Accept]
+	
+	Auto	: Yes
+	Title	: "Field Accept"
+
+[Form: TSPL Smp Evnt Field Accept]
+	
+	Part	: Form Subtitle, TSPL Smp Evnt Field Accept
+	Buttons : TSPL Smp DisplayGroupColl, TSPL Smp DisplayLedgerColl, Blank Button
+	Buttons	: TSPL Smp AlterGroupColl, TSPL Smp AlterLedgerColl
+	Local	: Field	: Form Subtitle : Info		: "Group/ Ledger Master Updation (Creation/ Alteration)"
+	Width	: 50% Screen
+	Height	: 30% Screen
+
+	[Part: TSPL Smp Evnt Field Accept]
+		
+		Lines		: TSPL Smp Evnt Fld Accept Title, TSPL Smp Evnt Fld Accept Details
+		Repeat		: TSPL Smp Evnt Fld Accept Details
+		Break On	: $$IsEnd:#TSPLSmpFldAcceptObjType
+		Scroll		: Vertical
+		Height		: 30% Screen
+		CommonBorder: Yes
+		
+		[Line: TSPL Smp Evnt Fld Accept Title]
+			
+			Use		: TSPL Smp Evnt Fld Accept Details
+			
+			Local	: Field	: Default						: Type		: String
+			Local	: Field	: Default						: Align		: Center
+			Local	: Field	: Default						: Inactive	: No
+			Local	: Field	: Default						: Lines		: 0
+
+			Local	: Field	: TSPL Smp Fld Accept ObjType	: Info		: "Object Type"
+			Local	: Field	: TSPL Smp Fld Accept Name		: Info		: "Name"
+			Local	: Field	: TSPL Smp Fld Accept Parent	: Info		: "Parent"
+			Local	: Field	: TSPL Smp Fld Accept OB		: Info		: "Opening Balance"
+			Local	: Field	: TSPL Smp Fld Accept Save		: Info		: "Update Now"
+			
+			Border	: Thin Top Bottom
+
+		[Line: TSPL Smp Evnt Fld Accept Details]
+			
+			Fields	: TSPL Smp Fld Accept ObjType, TSPL Smp Fld Accept Name, TSPL Smp Fld Accept Parent
+			Fields	: TSPL Smp Fld Accept OB, TSPL Smp Fld Accept Save
+			Local	: Field	: Default						: Align		: Center
+			
+			[Field: TSPL Smp Fld Accept ObjType]
+				
+				Use			: Name Field
+				Width		: 10
+				Set as		: if $$Line = 1 then "Ledger" else $$PrevLineField
+				Table		: TSPLSmpGroupLedger, End Of List
+	
+			[Field: TSPL Smp Fld Accept Name]
+				
+				Use			: Name Field
+				Tooltip		: "Enter the Ledger Name to be created/ altered"
+				Border		: Thin Left
+				Variable	: SLedger
+				Inactive	: $$IsEnd:#TSPLSmpFldAcceptObjType
+				
+			[Field: TSPL Smp Fld Accept Parent]
+				
+				Use			: Name Field
+				Set as		: $Parent:Ledger:#TSPLSmpFldAcceptName
+				Border		: Thin Left
+				Table		: Group
+				Inactive	: $$IsEnd:#TSPLSmpFldAcceptObjType
+				Tooltip		: "Select the Group"
+
+			[Field: TSPL Smp Fld Accept OB]
+				
+				Use			: Amount Forex Field
+				Set as		: $OpeningBalance:Ledger:#TSPLSmpFldAcceptName
+				Border		: Thin Left
+				Inactive	: $$IsEnd:#TSPLSmpFldAcceptObjType OR #TSPLSmpFldAcceptObjType != "Ledger"
+				Tooltip		: "Enter the Opening Balance for the Ledger"
+				
+			[Field: TSPL Smp Fld Accept Save]
+				
+				Use			: Logical Field
+				Set as		: Yes
+				Border		: Thin Left
+				Width		: 15
+				Inactive	: $$IsEnd:#TSPLSmpFldAcceptObjType
+				Tooltip		: "Create/ Alter the Ledger (Y/N)"
+				
+;; Event On : Accept is triggered on acceptance of this Field and if $$Value is No, the Actions will not be executed
+				On			: Accept	: $$Value	: Call		: TSPL Smp Ledger Updation
+				On			: Accept	: $$Value	: Field Accept
+
+[Table: TSPLSmpGroupLedger]
+	
+	List Name	: "Group", "Ledger"
+	Title		: "Object Types"
+
+[Function: TSPL Smp Ledger Updation]
+
+	Variable	: IsCreateMode		: Logical
+	
+	00	: Set	: IsCreateMode		: $$IsEmpty:$$Evaluate:("$Name:" + #TSPLSmpFldAcceptObjType + ":'" + #TSPLSmpFldAcceptName + "'")
+
+	10	: If	: ##IsCreateMode
+	20	: 	Action		: New Object		: #TSPLSmpFldAcceptObjType
+	30	: Else	: 
+	40	:	If	: #TSPLSmpFldAcceptObjType = "Group"
+	50	:		New Object		: Group		: #TSPLSmpFldAcceptName
+	60	: 	Else:
+	70	:		New Object		: Ledger	: #TSPLSmpFldAcceptName
+	80	:	End If
+	90	: End If
+
+	100	: Set Value		: Name				: #TSPLSmpFldAcceptName
+	110	: Set Value		: Parent			: #TSPLSmpFldAcceptParent
+	120	: Set Value		: OpeningBalance	: #TSPLSmpFldAcceptOB
+	130	: Save Target
+
+	140	: If	: $$LastResult
+	150	: 	Msg Box		: "Status"			: #TSPLSmpFldAcceptObjType + " Details updated using Field Event Accept"
+	160	: Else	: 
+	170	:	Msg Box		: "Error"			: $$LastError
+	180	: End If
+
+[Button: TSPL Smp DisplayGroupColl]
+	
+;;The button Alt+G has been used in default code of TallyPrime
+;;	Key		: Alt + G
+
+	Key		: Alt + B
+	Action	: Display Collection	: Group
+	Title	: "Display Group"
+
+[Button: TSPL Smp DisplayLedgerColl]
+	
+	Key		: Alt + L
+	Action	: Display Collection	: Ledger
+	Title	: "Display Ledger"
+
+[Button: TSPL Smp AlterGroupColl]
+	
+
+	Key		: Alt + R
+	Action	: Alter Collection		: Group
+	Title	: "Alter Group"
+
+[Button: TSPL Smp AlterLedgerColl]
+	
+;;To incorporate the change in TallyPrime
+;;	Key		: Alt + R
+
+	Key		: Alt + Q
+	Action	: Alter Collection		: Ledger
+	Title	: "Alter Ledger"
+
+;; End-of-File

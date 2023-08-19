@@ -1,0 +1,38 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+;; Demo TDLs for Licensing Binding Mechanism
+
+[Menu: Licensing Binding Mechanism]
+	<InUse:Report:Sec XML Request2, Sec XML Request3, Sec XML Request4>
+
+	Key Item: Approach 1	: 1	: CALL	: Approach 1
+	Key Item: Approach 2	: 2	: CALL	: Approach 2
+	Key Item: Approach 3	: 3	: CALL	: Approach 3
+	Key Item: Approach 4	: 4	: CALL	: Approach 4
+	Title	: "License Binding Mechanism"
+
+;; Functions to invoke External Application
+
+[Function: Approach 1]
+
+	00	: EXEC COMMAND	: "Licensing Binding Mechanism\Approach 1\RequestTally.exe"
+
+[Function: Approach 2]
+
+	00	: EXEC COMMAND	: "Licensing Binding Mechanism\Approach 2\RequestTally.exe"
+
+[Function: Approach 3]
+
+	00	: EXEC COMMAND	: "Licensing Binding Mechanism\Approach 3\RequestTally.exe"
+
+[Function: Approach 4]
+
+	00	: EXEC COMMAND	: "Licensing Binding Mechanism\Approach 4\RequestTally.exe"
+
+;; Include Files
+
+[Include: Approach 2\Sec_XML_Req_Approach_2.txt]
+[Include: Approach 3\Sec_XML_Req_Approach_3.txt]
+[Include: Approach 4\Sec_XML_Req_Approach_4.txt]
+
+;; End-of-File

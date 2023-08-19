@@ -1,0 +1,86 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+/*
+Objective(s) – 
+- 	This program demonstrates the events during Import
+-	While Importing an Object, we can carry out any actions before importing,
+while importing or after importing the Objects
+-	While importing the Vouchers, this code converts only the Receipt Vouchers
+to Payment and also alters the Narration with Date and Time of Updation.
+
+Syntax -
+-	[#Import File : <Import File Name>]
+	On : Start Import	: <Logical Condition> 	: <Action>	: <Action Parameters>
+	On : Import	Object	: <Logical Condition> 	: <Action>	: <Action Parameters>
+	On : Import	Object	: Yes					: Import Object
+	On : End Import		: <Logical Condition> 	: <Action>	: <Action Parameters>
+
+where Import File Name could be either 'All Masters' or 'Vouchers'
+
+Events
+	-	Start Import  - Actions executed at the beginning i.e., before the 
+	Object is Imported
+	-	Import Object - Actions executed while Importing. During this period,
+	the Objects can be manipulated as per requirement
+	-	End Import    - Actions executed post Import i.e., after the Importing 
+	process is completed
+- 	As the default Import Process is overridden by the Events specified, Action 
+'Import Object' is mandatory at Event 'Import Object' for the Object to be imported.
+- 	These events are added to the Definition 'Import File'. So at the time of Importing
+the Object, these events trigger the required action.
+
+Updation History – 
+-	Created on 03/02/2011
+-   Last Updated on 07/06/2012
+*/ 
+
+;;A Variable is introduced to selectively enable Import Event so that deletion @Remote Client will work smoothly
+
+[Variable: TSPL Smp Import Flag]
+	Type	: Logical
+
+[System: Variable]
+	TSPL Smp Import Flag	: NO
+
+[Function: TSPL Smp ImportVouchers]
+
+	Variable	: Import File	: String
+
+	10	: MSGBOX	: "Import Vouchers"		: "This will convert all Receipt Vouchers as Payment while Importing the Vouchers"
+	20	: SET		: Import File			: ".\XMLData\Receipt.XML"
+	30  : SET		: TSPL Smp Import Flag	: YES
+	40	: IMPORT	: Vouchers
+	50  : SET		: TSPL Smp Import Flag	: NO
+	
+[#Import File: Vouchers]
+
+;; Actions with 'Start Import' Events get executed prior to starting the Import process
+	On  : Start Import  : ##TSPLSmpImportFlag  	: Call  	: TSPL Smp Start Import
+;; Actions with 'Import Object' Events get executed during Importing the Object where
+;; current Object context will be available for manipulation
+    On  : Import Object : ##TSPLSmpImportFlag 	: Call  	: TSPL Smp Change Values
+    On  : Import Object : ##TSPLSmpImportFlag	: Import Object
+;; Actions with 'End Import' Events get executed after Importing the Object
+    On 	: End Import    : ##TSPLSmpImportFlag	: Call  	: TSPL Smp End Import
+	
+[Function: TSPL Smp Start Import]
+
+	00 	: MSGBOX		: "Status"			: "Import Started..."
+
+[Function: TSPL Smp Change Values]
+
+	Local Formula		: DateTimeUpdation	: "Updated on " + ($$String:@DateUpdation) + " at " + ($$SysInfo:SystemTime)
+	Local Formula		: DateUpdation		: $$SysInfo:SystemDate
+
+;; Since current voucher context is available, Default External Voucher Method 'IsReceipt' 
+;; is available in this function context
+	00 	: IF	: $IsReceipt
+	10	: 	SET VALUE  	: VoucherTypeName	: "Payment"
+	20 	: 	SET VALUE  	: Narration 		: if $$IsEmpty:$Narration then @DateTimeUpdation else $Narration + " - " + @DateTimeUpdation
+	30	: ENDIF
+
+[Function: TSPL Smp End Import]
+
+	00 	: MSGBOX		: "Status"			: "Import Completed..."
+
+;; End-of-File

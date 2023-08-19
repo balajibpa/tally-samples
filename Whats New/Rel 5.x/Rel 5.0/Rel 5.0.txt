@@ -1,0 +1,13 @@
+;; Sri Ganeshji : Sri Balaji : Sri Pitreshwarji : Sri Durgaji : Sri Venkateshwara
+
+[Menu: Whats New in Rel 5.0]
+
+	Key Item	: "Print Using Productivity Suite"		: P	: Create Collection	: Company AccVouchers	: NOT $$IsEmpty:$$SelectedCmps
+	Key Item	: "Query Box Definition"				: Q : Call				: TSPL Smp Query Box
+
+;; Include Files
+
+[Include: Print Using Productivity Suite\Invoice Word.txt]
+[Include: Query Box\Query Box.txt]
+
+;; End-of-File

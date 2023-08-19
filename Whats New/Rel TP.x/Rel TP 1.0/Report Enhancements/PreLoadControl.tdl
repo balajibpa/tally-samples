@@ -1,0 +1,33 @@
+;;Program to add custom report in Go To
+
+[Report: TSPL PreLoadControl Illustration]
+
+	Title			: $$LocaleString:"Illustrating the capability PreLoad Control"
+	Form			: TSPL PreLoadControl Illustration
+	
+[Form: TSPL PreLoadControl Illustration]
+	
+	Use				: TSPL SMP Illustration
+		
+	Height			: 100% Screen
+	Width			: 100% Screen
+	
+	Local	: Part	: TSPL SMP Syntax		: Invisible	: Yes
+	Local	: Field	: FormSubTitle			: Info		: $$LocaleString:"Illustration for report attribute - Pre Load Control"
+		
+	Local	: Field	: TSPL Smp Purpose		: Indent	: 2
+	Local	: Field	: TSPL Smp Purpose		: Info		: "The attribute Preload Control is used to open a message box with a message and prevents opening the report if the first parameter is true."
+	Local	: Field	: TSPL SMP Example		: Info		: $$NewLine	+ "[#Report: VCH Print Configure]" + $$NewLine + $$NewLine + +
+														'PreLoadControl	: ($$IsEmpty:$Amount)	: "Blank Voucher. Not allowed to Print!"'
+														
+															
+	Local	: Field	: TSPL SMP ExampleNote	: Info		: "In this example, Restricted the user from printing a blank voucher. Try printing a blank voucher to experience the behaviour." 	
+
+;;The code for restricing to print the blank voucher
+
+[#Report: VCH Print Configure] 
+
+	PreLoadControl	: ($$IsEmpty:$Amount)	: "Blank Voucher. Not allowed to Print!"
+
+
+;;End of File
